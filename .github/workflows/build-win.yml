@@ -1,0 +1,45 @@
+# insightAllX — Windows-only build (unsigned), manual trigger.
+# No SignPath token in the fork, so produce an unsigned NSIS installer.
+
+name: Build Windows
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-win:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Prefer HTTPS for public GitHub git dependencies
+        shell: bash
+        run: |
+          git config --global "url.https://github.com/.insteadOf" "git@github.com:"
+          git config --global --add "url.https://github.com/.insteadOf" "ssh://git@github.com/"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Windows
+        run: pnpm run package:win
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: win-x64-exe
+          path: release/*.exe
+          retention-days: 7
