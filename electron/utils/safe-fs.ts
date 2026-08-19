@@ -30,7 +30,7 @@ function resolveRealPath(input: string): string {
 
 function removeLinkEntry(entryPath: string): void {
   // Never recursively remove a link. In particular, an NTFS junction may point
-  // at the bundled OpenClaw runtime outside the plugin tree.
+  // at the bundled insightAll runtime outside the plugin tree.
   try {
     unlinkSync(entryPath);
   } catch (error) {

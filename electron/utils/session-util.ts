@@ -3,7 +3,7 @@
  */
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { getOpenClawConfigDir } from './paths';
+import { getinsightAllConfigDir } from './paths';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -30,7 +30,7 @@ export async function resolveAccountIdFromSessionHistory(
   toAddress: string,
   channelType: string,
 ): Promise<string | null> {
-  const agentsDir = join(getOpenClawConfigDir(), 'agents');
+  const agentsDir = join(getinsightAllConfigDir(), 'agents');
 
   let agentDirs: Array<{ name: string; isDirectory: () => boolean }>;
   try {

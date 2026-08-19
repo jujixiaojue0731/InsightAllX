@@ -79,7 +79,7 @@ vi.mock('react-i18next', () => ({
         'acp.attachment.openFailed': 'Could not open attachment',
         'fileCard.openWith': 'Open with',
         'fileCard.openWithFile': 'Open {{name}} with',
-        'fileCard.openInBuiltInBrowser': 'Open in ClawX Preview',
+        'fileCard.openInBuiltInBrowser': 'Open in insightAllX Preview',
         'fileCard.openInSystemBrowser': 'Open in system browser',
         'fileCard.searchingApplications': 'Searching for applications',
         'fileCard.showInFinder': 'Show in Finder',
@@ -273,7 +273,7 @@ describe('ACP chat timeline components', () => {
     const earlierSegment = container.querySelector('[data-acp-item-id="msg-a:0"]');
     const activeSegment = container.querySelector('[data-acp-item-id="msg-a:1"]');
     const thought = screen.getByTestId('acp-thought-block');
-    const activeStreamdownRoot = activeSegment?.querySelectorAll('.clawx-streamdown')[1];
+    const activeStreamdownRoot = activeSegment?.querySelectorAll('.insightallx-streamdown')[1];
     const activeParagraph = activeStreamdownRoot?.querySelector('p');
 
     expect(activeSegment?.querySelector('strong')).toHaveTextContent('streamed bold');
@@ -288,7 +288,7 @@ describe('ACP chat timeline components', () => {
     expect(activeStreamdownRoot).not.toHaveClass('space-y-0');
 
     rerender(<AcpTimeline snapshot={state} isStreaming={false} />);
-    const settledStreamdownRoot = activeSegment?.querySelectorAll('.clawx-streamdown')[1];
+    const settledStreamdownRoot = activeSegment?.querySelectorAll('.insightallx-streamdown')[1];
     expect(settledStreamdownRoot).toBe(activeStreamdownRoot);
     expect(settledStreamdownRoot?.querySelector('p')).toBe(activeParagraph);
     expect(activeParagraph).toHaveTextContent('Stable paragraph.');
@@ -771,7 +771,7 @@ describe('ACP chat timeline components', () => {
 
     await openAttachmentMenu('site/report #1.html');
     const items = screen.getAllByRole('menuitem');
-    expect(items[0]).toHaveTextContent('Open in ClawX Preview');
+    expect(items[0]).toHaveTextContent('Open in insightAllX Preview');
     expect(items[1]).toHaveTextContent('Open in system browser');
     fireEvent.click(items[0]);
 
@@ -1226,7 +1226,7 @@ describe('ACP chat timeline components', () => {
 
     await openAttachmentMenu('site one.html');
     const items = screen.getAllByRole('menuitem');
-    expect(items[0]).toHaveTextContent('Open in ClawX Preview');
+    expect(items[0]).toHaveTextContent('Open in insightAllX Preview');
     expect(items[1]).toHaveTextContent('Open in system browser');
     fireEvent.click(items[0]);
 
@@ -1790,7 +1790,7 @@ describe('ACP chat timeline components', () => {
 
   it('renders a user image attachment as a thumbnail with a filename hover overlay', async () => {
     const ref = {
-      sessionKey: 'agent:main:s1', generation: 1, uri: '/tmp/clawx-staging/photo.png', stagingId: 'stage-photo',
+      sessionKey: 'agent:main:s1', generation: 1, uri: '/tmp/insightallx-staging/photo.png', stagingId: 'stage-photo',
     };
     thumbnailsMock.mockResolvedValueOnce({
       'opaque-photo': {
@@ -1837,7 +1837,7 @@ describe('ACP chat timeline components', () => {
 
   it('shows a user file path after its name without MIME or size and keeps preview routing', () => {
     const ref = {
-      sessionKey: 'agent:main:s1', generation: 1, uri: '/tmp/clawx-staging/notes.txt', stagingId: 'stage-notes',
+      sessionKey: 'agent:main:s1', generation: 1, uri: '/tmp/insightallx-staging/notes.txt', stagingId: 'stage-notes',
     };
     const state = snapshot({
       itemOrder: ['msg-u:0'],
@@ -1881,7 +1881,7 @@ describe('ACP chat timeline components', () => {
 
   it('opens an unsupported user file through the scoped system-open route', async () => {
     const ref = {
-      sessionKey: 'agent:main:s1', generation: 1, uri: '/tmp/clawx-staging/archive.zip', stagingId: 'stage-zip',
+      sessionKey: 'agent:main:s1', generation: 1, uri: '/tmp/insightallx-staging/archive.zip', stagingId: 'stage-zip',
     };
     const state = snapshot({
       itemOrder: ['msg-u:0'],

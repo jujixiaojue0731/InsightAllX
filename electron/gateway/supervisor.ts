@@ -1,7 +1,7 @@
 import { app, utilityProcess } from 'electron';
 import path from 'path';
 import { existsSync } from 'fs';
-import { getOpenClawDir, getOpenClawEntryPath } from '../utils/paths';
+import { getinsightAllDir, getinsightAllEntryPath } from '../utils/paths';
 import { getUvMirrorEnv } from '../utils/uv-env';
 import { isPythonReady, setupManagedPython } from '../utils/uv-setup';
 import { logger } from '../utils/logger';
@@ -262,11 +262,11 @@ export async function findExistingGatewayProcess(options: {
   }
 }
 
-export async function runOpenClawDoctorRepair(): Promise<boolean> {
-  const openclawDir = getOpenClawDir();
-  const entryScript = getOpenClawEntryPath();
+export async function runinsightAllDoctorRepair(): Promise<boolean> {
+  const openclawDir = getinsightAllDir();
+  const entryScript = getinsightAllEntryPath();
   if (!existsSync(entryScript)) {
-    logger.error(`Cannot run OpenClaw doctor repair: entry script not found at ${entryScript}`);
+    logger.error(`Cannot run insightAll doctor repair: entry script not found at ${entryScript}`);
     return false;
   }
 
@@ -285,7 +285,7 @@ export async function runOpenClawDoctorRepair(): Promise<boolean> {
   const uvEnv = await getUvMirrorEnv();
   const doctorArgs = ['doctor', '--fix', '--yes', '--non-interactive'];
   logger.info(
-    `Running OpenClaw doctor repair (entry="${entryScript}", args="${doctorArgs.join(' ')}", cwd="${openclawDir}", bundledBin=${binPathExists ? 'yes' : 'no'})`,
+    `Running insightAll doctor repair (entry="${entryScript}", args="${doctorArgs.join(' ')}", cwd="${openclawDir}", bundledBin=${binPathExists ? 'yes' : 'no'})`,
   );
 
   return await new Promise<boolean>((resolve) => {
@@ -309,7 +309,7 @@ export async function runOpenClawDoctorRepair(): Promise<boolean> {
     };
 
     const timeout = setTimeout(() => {
-      logger.error('OpenClaw doctor repair timed out after 120000ms');
+      logger.error('insightAll doctor repair timed out after 120000ms');
       try {
         child.kill();
       } catch {
@@ -320,7 +320,7 @@ export async function runOpenClawDoctorRepair(): Promise<boolean> {
 
     child.on('error', (err) => {
       clearTimeout(timeout);
-      logger.error('Failed to spawn OpenClaw doctor repair process:', err);
+      logger.error('Failed to spawn insightAll doctor repair process:', err);
       finish(false);
     });
 
@@ -345,11 +345,11 @@ export async function runOpenClawDoctorRepair(): Promise<boolean> {
     child.on('exit', (code: number) => {
       clearTimeout(timeout);
       if (code === 0) {
-        logger.info('OpenClaw doctor repair completed successfully');
+        logger.info('insightAll doctor repair completed successfully');
         finish(true);
         return;
       }
-      logger.warn(`OpenClaw doctor repair exited (code=${code})`);
+      logger.warn(`insightAll doctor repair exited (code=${code})`);
       finish(false);
     });
   });

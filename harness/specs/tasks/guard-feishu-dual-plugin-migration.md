@@ -26,7 +26,7 @@ touchedAreas:
 expectedUserBehavior:
   - Migrated Feishu/Lark users do not end up with duplicate message handling because only one Feishu plugin remains active.
   - Saving Feishu channel settings rewrites stale plugin registration state to a single canonical external plugin and disables the bundled plugin when required.
-  - Removing Feishu channel configuration clears stale Feishu plugin registrations from the OpenClaw config.
+  - Removing Feishu channel configuration clears stale Feishu plugin registrations from the insightAll config.
 requiredProfiles:
   - fast
   - comms
@@ -34,7 +34,7 @@ requiredTests:
   - tests/unit/openclaw-auth.test.ts
   - tests/unit/channel-config.test.ts
 acceptance:
-  - `sanitizeOpenClawConfig()` keeps at most one active Feishu plugin identity in `plugins.allow` / `plugins.entries`.
+  - `sanitizeinsightAllConfig()` keeps at most one active Feishu plugin identity in `plugins.allow` / `plugins.entries`.
   - Bundled `feishu` is explicitly disabled when the canonical Feishu plugin is external.
   - Residual Feishu plugin registrations are removed when the Feishu channel is not configured.
 docs:

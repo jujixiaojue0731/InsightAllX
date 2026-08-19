@@ -28,7 +28,7 @@ conditionalProfiles:
   comms:
     when:
       - plugin activation changes Gateway startup or runtime message delivery
-      - channel/provider plugin ownership changes OpenClaw runtime config
+      - channel/provider plugin ownership changes insightAll runtime config
   e2e:
     when:
       - plugin status, install, recovery, or diagnostics behavior is visible in the UI
@@ -47,11 +47,11 @@ Plugin lifecycle management covers bundled and external plugins as one system wi
 Lifecycle stages:
 
 - Declare: plugin manifests describe package identity, source expectations, compatibility, and provided capabilities.
-- Discover: ClawX scans bundled and external sources and produces a factual inventory. Discovery does not choose active owners.
-- Resolve: ClawX chooses canonical package/capability owners, applies migration rules, and marks conflicts before config activation.
-- Materialize: ClawX installs, upgrades, copies, links, or verifies the physical package selected by resolution.
-- Validate: ClawX verifies package manifests, dependencies, capability config, ownership uniqueness, and startup requirements.
-- Activate: only resolved and validated capabilities enter final OpenClaw runtime config.
+- Discover: insightAllX scans bundled and external sources and produces a factual inventory. Discovery does not choose active owners.
+- Resolve: insightAllX chooses canonical package/capability owners, applies migration rules, and marks conflicts before config activation.
+- Materialize: insightAllX installs, upgrades, copies, links, or verifies the physical package selected by resolution.
+- Validate: insightAllX verifies package manifests, dependencies, capability config, ownership uniqueness, and startup requirements.
+- Activate: only resolved and validated capabilities enter final insightAll runtime config.
 - Recover: failed upgrades, stale registrations, conflicts, and removed channels converge to a single diagnosable state with rollback or cleanup paths.
 - Package: cleanup and pruning keep packaged artifacts small without deleting target runtime assets; macOS universal packages keep both x64 and arm64 native payloads.
 

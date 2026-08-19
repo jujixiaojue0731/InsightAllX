@@ -7,7 +7,7 @@ import { AcpSessionAccessRegistry } from '../../electron/services/acp-session-ac
 const temporaryDirectories: string[] = [];
 
 function createDirectories() {
-  const parent = mkdtempSync(join(tmpdir(), 'clawx-acp-access-'));
+  const parent = mkdtempSync(join(tmpdir(), 'insightallx-acp-access-'));
   temporaryDirectories.push(parent);
   const workspaceRoot = join(parent, 'workspace');
   const executionCwd = join(workspaceRoot, 'packages', 'app');

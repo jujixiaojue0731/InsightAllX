@@ -1,6 +1,6 @@
 import {
   isAcpWorkingDirectoryTruncatedTitle,
-  isOpenClawSessionIdFallbackTitle,
+  isinsightAllSessionIdFallbackTitle,
 } from '@shared/chat/session-title';
 import type { ChatSession } from './types';
 
@@ -79,12 +79,12 @@ export function getSessionLabelHydrationCandidate(
 
   const sidebarLabel = normalizeLabelValue(sessionLabels[session.key]);
   const hasSidebarLabel = sidebarLabel != null
-    && !isOpenClawSessionIdFallbackTitle(sidebarLabel, session.sessionId);
-  const explicitLabel = isOpenClawSessionIdFallbackTitle(session.label || '', session.sessionId)
+    && !isinsightAllSessionIdFallbackTitle(sidebarLabel, session.sessionId);
+  const explicitLabel = isinsightAllSessionIdFallbackTitle(session.label || '', session.sessionId)
     ? null
     : normalizeLabelValue(session.label);
   const derivedTitle = isAcpWorkingDirectoryTruncatedTitle(session.derivedTitle || '')
-    || isOpenClawSessionIdFallbackTitle(session.derivedTitle || '', session.sessionId)
+    || isinsightAllSessionIdFallbackTitle(session.derivedTitle || '', session.sessionId)
     ? null
     : normalizeLabelValue(session.derivedTitle);
   const backendLabel = explicitLabel ?? derivedTitle;

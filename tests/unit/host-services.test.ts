@@ -14,7 +14,7 @@ const {
   deleteChannelConfigMock,
   ensureFeishuPluginInstalledMock,
   ensureScopedChannelBindingMock,
-  ensureClawXContextMock,
+  ensureinsightAllXContextMock,
   ensureWeChatPluginInstalledMock,
   getAllSettingsMock,
   getChannelFormValuesMock,
@@ -29,7 +29,7 @@ const {
   migrateLegacyChannelWideBindingMock,
   providerAccountToConfigMock,
   providerServiceMock,
-  readOpenClawConfigMock,
+  readinsightAllConfigMock,
   readLogFileMock,
   removeAgentWorkspaceDirectoryMock,
   resetSettingsMock,
@@ -41,8 +41,8 @@ const {
   syncDeletedProviderToRuntimeMock,
   syncSavedProviderToRuntimeMock,
   syncLaunchAtStartupSettingFromStoreMock,
-  syncProxyConfigToOpenClawMock,
-  testOpenClawConfigDir,
+  syncProxyConfigToinsightAllMock,
+  testinsightAllConfigDir,
   updateAgentNameMock,
   validateApiKeyWithProviderMock,
   saveWeChatAccountStateMock,
@@ -59,13 +59,13 @@ const {
   deleteChannelConfigMock: vi.fn(),
   ensureFeishuPluginInstalledMock: vi.fn(),
   ensureScopedChannelBindingMock: vi.fn(),
-  ensureClawXContextMock: vi.fn(),
+  ensureinsightAllXContextMock: vi.fn(),
   ensureWeChatPluginInstalledMock: vi.fn(),
   getAllSettingsMock: vi.fn(),
   getChannelFormValuesMock: vi.fn(),
   getSettingMock: vi.fn(),
   listLogFilesMock: vi.fn(),
-  logDir: '/tmp/clawx-host-services-test-logs',
+  logDir: '/tmp/insightallx-host-services-test-logs',
   listAgentsSnapshotFromConfigMock: vi.fn(),
   listAgentsSnapshotMock: vi.fn(),
   listConfiguredChannelAccountsFromConfigMock: vi.fn(),
@@ -106,7 +106,7 @@ const {
     setDefaultAccount: vi.fn(),
     updateAccount: vi.fn(),
   },
-  readOpenClawConfigMock: vi.fn(),
+  readinsightAllConfigMock: vi.fn(),
   readLogFileMock: vi.fn(),
   removeAgentWorkspaceDirectoryMock: vi.fn(),
   resetSettingsMock: vi.fn(),
@@ -118,8 +118,8 @@ const {
   syncDeletedProviderToRuntimeMock: vi.fn(),
   syncSavedProviderToRuntimeMock: vi.fn(),
   syncLaunchAtStartupSettingFromStoreMock: vi.fn(),
-  syncProxyConfigToOpenClawMock: vi.fn(),
-  testOpenClawConfigDir: '/tmp/clawx-host-services-openclaw',
+  syncProxyConfigToinsightAllMock: vi.fn(),
+  testinsightAllConfigDir: '/tmp/insightallx-host-services-openclaw',
   updateAgentNameMock: vi.fn(),
   validateApiKeyWithProviderMock: vi.fn(),
   saveWeChatAccountStateMock: vi.fn(),
@@ -135,7 +135,7 @@ vi.mock('@electron/utils/store', () => ({
 }));
 
 vi.mock('@electron/utils/openclaw-proxy', () => ({
-  syncProxyConfigToOpenClaw: (...args: unknown[]) => syncProxyConfigToOpenClawMock(...args),
+  syncProxyConfigToinsightAll: (...args: unknown[]) => syncProxyConfigToinsightAllMock(...args),
 }));
 
 vi.mock('@electron/main/proxy', () => ({
@@ -153,7 +153,7 @@ vi.mock('@electron/utils/logger', async (importOriginal) => {
       info: vi.fn(),
       warn: vi.fn(),
       getLogDir: () => logDir,
-      getLogFilePath: () => join(logDir, 'clawx-current.log'),
+      getLogFilePath: () => join(logDir, 'insightallx-current.log'),
       getRecentLogs: vi.fn(),
       listLogFiles: (...args: unknown[]) => listLogFilesMock(...args),
       readLogFile: (...args: unknown[]) => readLogFileMock(...args),
@@ -170,7 +170,7 @@ vi.mock('@electron/utils/channel-config', () => ({
   listConfiguredChannelAccountsFromConfig: (...args: unknown[]) => listConfiguredChannelAccountsFromConfigMock(...args),
   listConfiguredChannels: (...args: unknown[]) => listConfiguredChannelsMock(...args),
   listConfiguredChannelsFromConfig: (...args: unknown[]) => listConfiguredChannelsFromConfigMock(...args),
-  readOpenClawConfig: (...args: unknown[]) => readOpenClawConfigMock(...args),
+  readinsightAllConfig: (...args: unknown[]) => readinsightAllConfigMock(...args),
   saveChannelConfig: (...args: unknown[]) => saveChannelConfigMock(...args),
   setChannelDefaultAccount: (...args: unknown[]) => setChannelDefaultAccountMock(...args),
   setChannelEnabled: (...args: unknown[]) => setChannelEnabledMock(...args),
@@ -206,7 +206,7 @@ vi.mock('@electron/utils/plugin-install', () => ({
 }));
 
 vi.mock('@electron/utils/openclaw-workspace', () => ({
-  ensureClawXContext: (...args: unknown[]) => ensureClawXContextMock(...args),
+  ensureinsightAllXContext: (...args: unknown[]) => ensureinsightAllXContextMock(...args),
 }));
 
 vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
@@ -218,12 +218,12 @@ vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
   syncProviderApiKeyToRuntime: vi.fn(),
   syncSavedProviderToRuntime: (...args: unknown[]) => syncSavedProviderToRuntimeMock(...args),
   syncUpdatedProviderToRuntime: vi.fn(),
-  getOpenClawProviderKey: vi.fn((type: string) => type),
+  getinsightAllProviderKey: vi.fn((type: string) => type),
 }));
 
 vi.mock('@electron/utils/openclaw-auth', () => ({
-  removeProviderFromOpenClaw: vi.fn(),
-  saveProviderKeyToOpenClaw: vi.fn(),
+  removeProviderFrominsightAll: vi.fn(),
+  saveProviderKeyToinsightAll: vi.fn(),
 }));
 
 vi.mock('@electron/services/providers/provider-service', () => ({
@@ -271,11 +271,11 @@ vi.mock('@electron/utils/whatsapp-login', () => ({
 
 vi.mock('@electron/utils/paths', () => ({
   expandPath: (path: string) => path,
-  getOpenClawConfigDir: () => testOpenClawConfigDir,
-  getOpenClawDir: () => testOpenClawConfigDir,
-  getOpenClawResolvedDir: () => testOpenClawConfigDir,
-  resolveOpenClawConfigDir: () => testOpenClawConfigDir,
-  resolveOpenClawStateDir: () => testOpenClawConfigDir,
+  getinsightAllConfigDir: () => testinsightAllConfigDir,
+  getinsightAllDir: () => testinsightAllConfigDir,
+  getinsightAllResolvedDir: () => testinsightAllConfigDir,
+  resolveinsightAllConfigDir: () => testinsightAllConfigDir,
+  resolveinsightAllStateDir: () => testinsightAllConfigDir,
 }));
 
 vi.mock('@electron/utils/proxy-fetch', () => ({
@@ -312,7 +312,7 @@ describe('host services', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getAllSettingsMock.mockResolvedValue(baseSettings);
-    readOpenClawConfigMock.mockResolvedValue({ channels: {} });
+    readinsightAllConfigMock.mockResolvedValue({ channels: {} });
     listConfiguredChannelsMock.mockResolvedValue([]);
     listConfiguredChannelsFromConfigMock.mockResolvedValue([]);
     listConfiguredChannelAccountsFromConfigMock.mockReturnValue({});
@@ -344,11 +344,11 @@ describe('host services', () => {
     validateApiKeyWithProviderMock.mockResolvedValue({ valid: true });
     ensureFeishuPluginInstalledMock.mockResolvedValue({ installed: true });
     ensureWeChatPluginInstalledMock.mockResolvedValue({ installed: true });
-    ensureClawXContextMock.mockResolvedValue(undefined);
+    ensureinsightAllXContextMock.mockResolvedValue(undefined);
     rmSync(logDir, { recursive: true, force: true });
-    rmSync(testOpenClawConfigDir, { recursive: true, force: true });
+    rmSync(testinsightAllConfigDir, { recursive: true, force: true });
     mkdirSync(logDir, { recursive: true });
-    mkdirSync(join(testOpenClawConfigDir, 'logs'), { recursive: true });
+    mkdirSync(join(testinsightAllConfigDir, 'logs'), { recursive: true });
   });
 
   it('runs proxy side effects and restarts a running gateway after settings.set', async () => {
@@ -364,7 +364,7 @@ describe('host services', () => {
     })).resolves.toEqual({ success: true });
 
     expect(setSettingMock).toHaveBeenCalledWith('proxyServer', 'http://127.0.0.1:7890');
-    expect(syncProxyConfigToOpenClawMock).toHaveBeenCalledWith(baseSettings, {
+    expect(syncProxyConfigToinsightAllMock).toHaveBeenCalledWith(baseSettings, {
       preserveExistingWhenDisabled: false,
     });
     expect(applyProxySettingsMock).toHaveBeenCalledWith(baseSettings);
@@ -385,7 +385,7 @@ describe('host services', () => {
     expect(setSettingMock).toHaveBeenCalledWith('launchAtStartup', true);
     expect(resetSettingsMock).toHaveBeenCalledTimes(1);
     expect(syncLaunchAtStartupSettingFromStoreMock).toHaveBeenCalledTimes(2);
-    expect(syncProxyConfigToOpenClawMock).toHaveBeenCalledTimes(1);
+    expect(syncProxyConfigToinsightAllMock).toHaveBeenCalledTimes(1);
     expect(gatewayManager.restart).not.toHaveBeenCalled();
   });
 
@@ -398,10 +398,10 @@ describe('host services', () => {
       restart: vi.fn(),
     } as never);
 
-    await expect(api.set({ key: 'chatWorkspacePath', value: '/Users/alex/workspace/ClawX' })).resolves.toEqual({ success: true });
-    await expect(api.set({ key: 'recentWorkspacePaths', value: ['/Users/alex/workspace/ClawX'] })).resolves.toEqual({ success: true });
-    expect(setSettingMock).toHaveBeenCalledWith('chatWorkspacePath', '/Users/alex/workspace/ClawX');
-    expect(setSettingMock).toHaveBeenCalledWith('recentWorkspacePaths', ['/Users/alex/workspace/ClawX']);
+    await expect(api.set({ key: 'chatWorkspacePath', value: '/Users/alex/workspace/insightAllX' })).resolves.toEqual({ success: true });
+    await expect(api.set({ key: 'recentWorkspacePaths', value: ['/Users/alex/workspace/insightAllX'] })).resolves.toEqual({ success: true });
+    expect(setSettingMock).toHaveBeenCalledWith('chatWorkspacePath', '/Users/alex/workspace/insightAllX');
+    expect(setSettingMock).toHaveBeenCalledWith('recentWorkspacePaths', ['/Users/alex/workspace/insightAllX']);
   });
 
   it('routes validated generic gateway rpc directly to the manager', async () => {
@@ -679,7 +679,7 @@ describe('host services', () => {
         },
       },
     };
-    readOpenClawConfigMock.mockResolvedValue(openClawConfig);
+    readinsightAllConfigMock.mockResolvedValue(openClawConfig);
     listConfiguredChannelsFromConfigMock.mockResolvedValue(['feishu']);
     listConfiguredChannelAccountsFromConfigMock.mockReturnValue({
       feishu: {
@@ -727,7 +727,7 @@ describe('host services', () => {
   });
 
   it('lists channel targets from session history and validates channel type', async () => {
-    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    const sessionsDir = join(testinsightAllConfigDir, 'agents', 'main', 'sessions');
     mkdirSync(sessionsDir, { recursive: true });
     writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
       sessions: [
@@ -1116,9 +1116,9 @@ describe('host services', () => {
   });
 
   it('returns diagnostics snapshot with channel view and log tails', async () => {
-    writeFileSync(join(testOpenClawConfigDir, 'logs', 'gateway.log'), 'gateway-one\ngateway-two\n');
-    readLogFileMock.mockResolvedValue('clawx-log-tail');
-    readOpenClawConfigMock.mockResolvedValue({
+    writeFileSync(join(testinsightAllConfigDir, 'logs', 'gateway.log'), 'gateway-one\ngateway-two\n');
+    readLogFileMock.mockResolvedValue('insightallx-log-tail');
+    readinsightAllConfigMock.mockResolvedValue({
       channels: {
         feishu: {
           defaultAccount: 'default',
@@ -1169,7 +1169,7 @@ describe('host services', () => {
           accounts: [expect.objectContaining({ accountId: 'default', agentId: 'main' })],
         }),
       ],
-      clawxLogTail: 'clawx-log-tail',
+      insightallxLogTail: 'insightallx-log-tail',
       gateway: expect.objectContaining({
         state: 'healthy',
         capabilities: { rpc: true },
@@ -1217,9 +1217,9 @@ describe('host services', () => {
   });
 
   it('reads only selected log files from the log directory', async () => {
-    const selectedLog = join(logDir, 'clawx-selected.log');
+    const selectedLog = join(logDir, 'insightallx-selected.log');
     writeFileSync(selectedLog, 'one\ntwo\nthree\n');
-    listLogFilesMock.mockResolvedValue([{ name: 'clawx-selected.log', path: selectedLog, size: 14, modified: 'now' }]);
+    listLogFilesMock.mockResolvedValue([{ name: 'insightallx-selected.log', path: selectedLog, size: 14, modified: 'now' }]);
     const { createLogsApi } = await import('@electron/services/logs-api');
 
     await expect(createLogsApi().readFile({ path: selectedLog, tailLines: 2 })).resolves.toEqual({
@@ -1246,7 +1246,7 @@ describe('host services', () => {
   });
 
   it('loads session summaries and transcript history through the typed sessions service', async () => {
-    const sessionsDir = join(testOpenClawConfigDir, 'agents', 'main', 'sessions');
+    const sessionsDir = join(testinsightAllConfigDir, 'agents', 'main', 'sessions');
     mkdirSync(sessionsDir, { recursive: true });
     writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({
       sessions: [

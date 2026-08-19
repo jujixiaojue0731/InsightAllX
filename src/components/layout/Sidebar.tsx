@@ -184,7 +184,7 @@ export function Sidebar() {
   const navigate = useNavigate();
   const isOnChat = useLocation().pathname === '/';
 
-  const openControlUi = async (label = 'OpenClaw Page') => {
+  const openControlUi = async (label = 'insightAll Page') => {
     try {
       const result = await hostApi.gateway.controlUi();
       if (result.success && result.url) {
@@ -198,7 +198,7 @@ export function Sidebar() {
   };
 
   const openDevConsole = async () => {
-    await openControlUi('OpenClaw Page');
+    await openControlUi('insightAll Page');
   };
 
   const { t, i18n } = useTranslation(['common', 'chat']);
@@ -485,8 +485,8 @@ export function Sidebar() {
       >
         {!sidebarCollapsed && (
           <div className="flex items-center gap-2 px-2 overflow-hidden">
-            <img src={logoSvg} alt="ClawX" className="h-5 w-auto shrink-0" />
-            <span className="text-sm font-semibold truncate whitespace-nowrap text-foreground/90">ClawX</span>
+            <img src={logoSvg} alt="insightAllX" className="h-5 w-auto shrink-0" />
+            <span className="text-sm font-semibold truncate whitespace-nowrap text-foreground/90">insightAllX</span>
           </div>
         )}
         <Button

@@ -1,21 +1,21 @@
-import { mutateOpenClawConfig } from '../gateway/config-delivery';
-import type { OpenClawConfig } from './channel-config';
+import { mutateinsightAllConfig } from '../gateway/config-delivery';
+import type { insightAllConfig } from './channel-config';
 import { resolveProxySettings, type ProxySettings } from './proxy';
 import { logger } from './logger';
 
 interface SyncProxyOptions {
   /**
    * When true, keep an existing channels.telegram.proxy value if proxy is
-   * currently disabled in ClawX settings.
+   * currently disabled in insightAllX settings.
    */
   preserveExistingWhenDisabled?: boolean;
 }
 
 /**
- * Sync ClawX global proxy settings into OpenClaw channel config where the
+ * Sync insightAllX global proxy settings into insightAll channel config where the
  * upstream runtime expects an explicit per-channel proxy knob.
  */
-export async function syncProxyConfigToOpenClaw(
+export async function syncProxyConfigToinsightAll(
   settings: ProxySettings,
   options: SyncProxyOptions = {},
 ): Promise<void> {
@@ -26,9 +26,9 @@ export async function syncProxyConfigToOpenClaw(
     : '';
   const syncState: { result: 'unchanged' | 'preserved' | 'updated' } = { result: 'unchanged' };
 
-  await mutateOpenClawConfig((snapshot) => {
+  await mutateinsightAllConfig((snapshot) => {
     syncState.result = 'unchanged';
-    const config = snapshot as OpenClawConfig;
+    const config = snapshot as insightAllConfig;
     const telegramConfig = config.channels?.telegram;
 
     if (!telegramConfig) {
@@ -64,8 +64,8 @@ export async function syncProxyConfigToOpenClaw(
   });
 
   if (syncState.result === 'preserved') {
-    logger.info('Skipped Telegram proxy sync because ClawX proxy is disabled and preserve mode is enabled');
+    logger.info('Skipped Telegram proxy sync because insightAllX proxy is disabled and preserve mode is enabled');
   } else if (syncState.result === 'updated') {
-    logger.info(`Synced Telegram proxy to OpenClaw config (${nextProxy || 'disabled'})`);
+    logger.info(`Synced Telegram proxy to insightAll config (${nextProxy || 'disabled'})`);
   }
 }

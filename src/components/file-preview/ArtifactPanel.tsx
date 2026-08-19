@@ -36,7 +36,7 @@ export interface ArtifactPanelProps {
   uniqueFileCount: number;
   /** Currently selected agent (drives the workspace tab). */
   agent: AgentSummary | null;
-  /** Effective chat workspace path resolved from OpenClaw session cwd or global selection. */
+  /** Effective chat workspace path resolved from insightAll session cwd or global selection. */
   workspacePath?: string | null;
   /** Display label for the effective workspace path. */
   workspaceLabel?: string;

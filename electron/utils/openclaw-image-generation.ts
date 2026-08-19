@@ -1,15 +1,15 @@
 /**
  * Read/write agents.defaults.imageGenerationModel and per-agent auth readiness.
  */
-import { mutateOpenClawConfig } from '../gateway/config-delivery';
-import { readOpenClawConfig } from './channel-config';
+import { mutateinsightAllConfig } from '../gateway/config-delivery';
+import { readinsightAllConfig } from './channel-config';
 import {
-  getOAuthTokenFromOpenClaw,
-  getProviderApiKeyFromOpenClaw,
+  getOAuthTokenFrominsightAll,
+  getProviderApiKeyFrominsightAll,
   readOpenAiCompatibleImageRelayState,
   syncOpenAiCompatibleImageRelay,
 } from './openclaw-auth';
-import { ensureClawXOpenAiImagePluginInstalled } from './plugin-install';
+import { ensureinsightAllXOpenAiImagePluginInstalled } from './plugin-install';
 import {
   listAgentsSnapshot,
   listAgentsSnapshotFromConfig,
@@ -22,8 +22,8 @@ import {
 } from './openclaw-image-generation-runtime';
 import { OPENAI_CODEX_RUNTIME_PROVIDER_KEY } from './provider-keys';
 import {
-  CLAWX_OPENAI_IMAGE_DEFAULT_MODEL,
-  CLAWX_OPENAI_IMAGE_PROVIDER_KEY,
+  INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL,
+  INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY,
 } from './openclaw-image-relay-constants';
 
 export interface ImageGenerationModelConfig {
@@ -179,11 +179,11 @@ export async function isImageProviderAuthenticated(
   agentId: string,
 ): Promise<boolean> {
   for (const candidate of authProviderCandidates(providerKey)) {
-    const apiKey = await getProviderApiKeyFromOpenClaw(candidate, agentId);
+    const apiKey = await getProviderApiKeyFrominsightAll(candidate, agentId);
     if (apiKey) {
       return true;
     }
-    const oauth = await getOAuthTokenFromOpenClaw(candidate, agentId);
+    const oauth = await getOAuthTokenFrominsightAll(candidate, agentId);
     if (oauth) {
       return true;
     }
@@ -192,7 +192,7 @@ export async function isImageProviderAuthenticated(
 }
 
 export async function readImageGenerationConfig(): Promise<ImageGenerationModelConfig> {
-  const config = await readOpenClawConfig();
+  const config = await readinsightAllConfig();
   const defaults = getAgentsDefaults(config);
   if (!defaults) {
     return { primary: null, fallbacks: [], timeoutMs: null };
@@ -213,7 +213,7 @@ export async function setImageGenerationConfig(
   }
 
   let savedConfig: ImageGenerationModelConfig | undefined;
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     const agents = (config.agents && typeof config.agents === 'object'
       ? { ...(config.agents as Record<string, unknown>) }
       : {}) as Record<string, unknown>;
@@ -232,9 +232,9 @@ export async function setImageGenerationConfig(
     } else {
       delete defaults.imageGenerationModel;
     }
-    // ClawX image generation is configured as one explicit custom endpoint.
-    // Keep OpenClaw from appending other authenticated image providers such as
-    // minimax-portal/image-01 after the configured ClawX image provider.
+    // insightAllX image generation is configured as one explicit custom endpoint.
+    // Keep insightAll from appending other authenticated image providers such as
+    // minimax-portal/image-01 after the configured insightAllX image provider.
     defaults.mediaGenerationAutoProviderFallback = false;
 
     agents.defaults = defaults;
@@ -303,8 +303,8 @@ function resolveOpenAiImageRelayModelId(
     const slash = primary.indexOf('/');
     if (slash > 0 && slash < primary.length - 1) {
       const provider = primary.slice(0, slash).toLowerCase();
-      if (provider === CLAWX_OPENAI_IMAGE_PROVIDER_KEY || provider === 'openai') {
-        return primary.slice(slash + 1).trim() || CLAWX_OPENAI_IMAGE_DEFAULT_MODEL;
+      if (provider === INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY || provider === 'openai') {
+        return primary.slice(slash + 1).trim() || INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL;
       }
     }
   }
@@ -314,13 +314,13 @@ function resolveOpenAiImageRelayModelId(
     ? (models as Record<string, unknown>).providers
     : null;
   const providerEntry = providers && typeof providers === 'object'
-    ? (providers as Record<string, unknown>)[CLAWX_OPENAI_IMAGE_PROVIDER_KEY]
+    ? (providers as Record<string, unknown>)[INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]
     : null;
-  return extractModelIdFromProviderEntry(providerEntry) ?? CLAWX_OPENAI_IMAGE_DEFAULT_MODEL;
+  return extractModelIdFromProviderEntry(providerEntry) ?? INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL;
 }
 
 export async function getImageGenerationSettingsSnapshot(): Promise<ImageGenerationSettingsSnapshot> {
-  const openclawConfig = await readOpenClawConfig();
+  const openclawConfig = await readinsightAllConfig();
   const defaults = getAgentsDefaults(openclawConfig);
   const config = parseImageGenerationModelConfig(defaults?.imageGenerationModel);
   const snapshot = await listAgentsSnapshotFromConfig(openclawConfig);
@@ -328,7 +328,7 @@ export async function getImageGenerationSettingsSnapshot(): Promise<ImageGenerat
 
   const providerKey = config.primary ? parseProviderFromModelRef(config.primary) : null;
   const relayState = readOpenAiCompatibleImageRelayState(openclawConfig as Record<string, unknown>);
-  const relayAuthProvider = relayState.providerKey === 'openai' ? 'openai' : CLAWX_OPENAI_IMAGE_PROVIDER_KEY;
+  const relayAuthProvider = relayState.providerKey === 'openai' ? 'openai' : INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY;
   const relayKeyConfigured = await isImageProviderAuthenticated(relayAuthProvider, snapshot.defaultAgentId);
 
   return {
@@ -353,9 +353,9 @@ export async function applyOpenAiImageRelaySettings(params: {
   model?: string | null;
 }): Promise<void> {
   if (params.enabled) {
-    const plugin = await ensureClawXOpenAiImagePluginInstalled();
+    const plugin = await ensureinsightAllXOpenAiImagePluginInstalled();
     if (!plugin.installed) {
-      throw new Error(plugin.warning || 'Failed to install ClawX OpenAI Image plugin');
+      throw new Error(plugin.warning || 'Failed to install insightAllX OpenAI Image plugin');
     }
   }
   const imageModelIds: string[] = [];
@@ -365,7 +365,7 @@ export async function applyOpenAiImageRelaySettings(params: {
     imageModelIds.push(slash > 0 ? explicitModel.slice(slash + 1).trim() : explicitModel);
   }
   if (imageModelIds.length === 0) {
-    imageModelIds.push(CLAWX_OPENAI_IMAGE_DEFAULT_MODEL);
+    imageModelIds.push(INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL);
   }
 
   await syncOpenAiCompatibleImageRelay({
@@ -377,13 +377,13 @@ export async function applyOpenAiImageRelaySettings(params: {
 }
 
 export async function listImageGenerationProvidersFromRuntime(): Promise<ImageGenerationProviderRow[]> {
-  const cfg = await readOpenClawConfig();
+  const cfg = await readinsightAllConfig();
   const snapshot = await listAgentsSnapshotFromConfig(cfg);
   const rows = await listImageGenerationProvidersInProcess({
     config: cfg,
     isProviderConfigured: (providerId) => isImageProviderAuthenticated(providerId, snapshot.defaultAgentId),
   });
-  return rows.filter((row) => row.id === CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+  return rows.filter((row) => row.id === INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
 }
 
 function resolveAgentDirForTest(agentId: string, snapshot: AgentsSnapshot): string {
@@ -433,7 +433,7 @@ export async function runImageGenerationTest(params: {
   const command = `runtime:generateImage model=${model} agentDir=${agentDir}`;
 
   try {
-    const openclawConfig = await readOpenClawConfig();
+    const openclawConfig = await readinsightAllConfig();
     const result = await generateImageInProcess({
       config: openclawConfig,
       agentDir,

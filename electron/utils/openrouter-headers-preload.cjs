@@ -1,11 +1,11 @@
 /**
  * Gateway fetch preload — loaded via NODE_OPTIONS --require before
- * the OpenClaw Gateway starts.
+ * the insightAll Gateway starts.
  *
  * Patches globalThis.fetch so that every request whose URL contains
- * "openrouter.ai" carries the ClawX app-attribution headers.
+ * "openrouter.ai" carries the insightAllX app-attribution headers.
  *
- * The OpenAI SDK (used by OpenClaw) captures globalThis.fetch in its
+ * The OpenAI SDK (used by insightAll) captures globalThis.fetch in its
  * constructor, so patching here guarantees all SDK requests go through
  * the interceptor.
  */
@@ -14,10 +14,10 @@
 (function () {
   var _f = globalThis.fetch;
   if (typeof _f !== 'function') return;
-  if (globalThis.__clawxFetchPatched) return;
-  globalThis.__clawxFetchPatched = true;
+  if (globalThis.__insightallxFetchPatched) return;
+  globalThis.__insightallxFetchPatched = true;
 
-  globalThis.fetch = function clawxFetch(input, init) {
+  globalThis.fetch = function insightallxFetch(input, init) {
     var url =
       typeof input === 'string' ? input
         : input && typeof input === 'object' && typeof input.url === 'string'
@@ -39,7 +39,7 @@
       delete flat['x-openrouter-title'];
       delete flat['X-OpenRouter-Title'];
       flat['HTTP-Referer'] = 'https://claw-x.com';
-      flat['X-OpenRouter-Title'] = 'ClawX';
+      flat['X-OpenRouter-Title'] = 'insightAllX';
       init.headers = flat;
     }
     return _f.call(globalThis, input, init);

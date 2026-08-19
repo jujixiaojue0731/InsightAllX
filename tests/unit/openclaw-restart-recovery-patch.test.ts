@@ -52,7 +52,7 @@ function assertValidUnifiedDiffHunks(patch: string): void {
   expect(hunkCount).toBeGreaterThan(0);
 }
 
-describe('OpenClaw restart recovery patch', () => {
+describe('insightAll restart recovery patch', () => {
   it('registers the pinned runtime patch through the pnpm workspace', async () => {
     const workspace = await readFile(path.join(root, 'pnpm-workspace.yaml'), 'utf8');
     const lockfile = await readFile(path.join(root, 'pnpm-lock.yaml'), 'utf8');

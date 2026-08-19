@@ -6,9 +6,9 @@ const state = vi.hoisted(() => ({
   authoritativeConfig: {} as Record<string, unknown>,
 }));
 
-const { mutateOpenClawConfigMock, readOpenClawConfigSnapshotMock, readFileMock, writeFileMock } = vi.hoisted(() => ({
-  mutateOpenClawConfigMock: vi.fn(),
-  readOpenClawConfigSnapshotMock: vi.fn(),
+const { mutateinsightAllConfigMock, readinsightAllConfigSnapshotMock, readFileMock, writeFileMock } = vi.hoisted(() => ({
+  mutateinsightAllConfigMock: vi.fn(),
+  readinsightAllConfigSnapshotMock: vi.fn(),
   readFileMock: vi.fn(),
   writeFileMock: vi.fn(),
 }));
@@ -23,15 +23,15 @@ vi.mock('fs/promises', async () => {
 });
 
 vi.mock('@electron/gateway/config-delivery', () => ({
-  mutateOpenClawConfig: mutateOpenClawConfigMock,
-  readOpenClawConfigSnapshot: readOpenClawConfigSnapshotMock,
+  mutateinsightAllConfig: mutateinsightAllConfigMock,
+  readinsightAllConfigSnapshot: readinsightAllConfigSnapshotMock,
 }));
 
 vi.mock('@electron/utils/paths', () => ({
-  getOpenClawDir: () => '/runtime/openclaw',
-  getOpenClawResolvedDir: () => '/runtime/openclaw',
+  getinsightAllDir: () => '/runtime/openclaw',
+  getinsightAllResolvedDir: () => '/runtime/openclaw',
   getResourcesDir: () => '/resources',
-  resolveOpenClawConfigPath: () => '/configured/openclaw.json5',
+  resolveinsightAllConfigPath: () => '/configured/openclaw.json5',
 }));
 
 describe('skill config mutations', () => {
@@ -41,11 +41,11 @@ describe('skill config mutations', () => {
     state.authoritativeConfig = {};
     readFileMock.mockResolvedValue(JSON.stringify({ staleLocalValue: true }));
     writeFileMock.mockResolvedValue(undefined);
-    readOpenClawConfigSnapshotMock.mockImplementation(async () => ({
+    readinsightAllConfigSnapshotMock.mockImplementation(async () => ({
       config: structuredClone(state.authoritativeConfig),
       exists: true,
     }));
-    mutateOpenClawConfigMock.mockImplementation(async (
+    mutateinsightAllConfigMock.mockImplementation(async (
       mutator: (config: Record<string, unknown>) => void | Promise<void>,
     ) => {
       const before = structuredClone(state.authoritativeConfig);
@@ -77,7 +77,7 @@ describe('skill config mutations', () => {
         },
       },
     });
-    expect(mutateOpenClawConfigMock).toHaveBeenCalledOnce();
+    expect(mutateinsightAllConfigMock).toHaveBeenCalledOnce();
     expect(readFileMock).not.toHaveBeenCalled();
     expect(writeFileMock).not.toHaveBeenCalled();
   });
@@ -103,7 +103,7 @@ describe('skill config mutations', () => {
         },
       },
     });
-    expect(mutateOpenClawConfigMock).toHaveBeenCalledOnce();
+    expect(mutateinsightAllConfigMock).toHaveBeenCalledOnce();
     expect(readFileMock).not.toHaveBeenCalled();
     expect(writeFileMock).not.toHaveBeenCalled();
   });
@@ -115,7 +115,7 @@ describe('skill config mutations', () => {
     const { getSkillConfig } = await import('@electron/utils/skill-config');
 
     await expect(getSkillConfig('authoritative')).resolves.toEqual({ enabled: true });
-    expect(readOpenClawConfigSnapshotMock).toHaveBeenCalledOnce();
+    expect(readinsightAllConfigSnapshotMock).toHaveBeenCalledOnce();
     expect(readFileMock).not.toHaveBeenCalled();
   });
 });

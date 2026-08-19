@@ -34,7 +34,7 @@ export function normalizePiAiModelCost(existing: unknown): PiAiModelCostRates {
   };
 }
 
-/** Entry shape suitable for OpenClaw agent `models.json` provider.models[]. */
+/** Entry shape suitable for insightAll agent `models.json` provider.models[]. */
 export function piAiModelsJsonModelEntry(
   id: string,
   name: string = id,

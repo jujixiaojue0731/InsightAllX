@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const electronState = vi.hoisted(() => ({
   isPackaged: false,
-  appPath: '/workspace/clawx',
+  appPath: '/workspace/insightallx',
 }));
 
 vi.mock('electron', () => ({
@@ -78,7 +78,7 @@ function isWindowsNativeHandlerRecord(value: unknown): value is WindowsNativeHan
 }
 
 async function temporaryTextFile(): Promise<string> {
-  const directory = await mkdtemp(join(tmpdir(), 'clawx-open-with-'));
+  const directory = await mkdtemp(join(tmpdir(), 'insightallx-open-with-'));
   temporaryDirectories.push(directory);
   const filePath = join(directory, 'native smoke.txt');
   await writeFile(filePath, 'attachment open-with native smoke\n', 'utf8');
@@ -272,7 +272,7 @@ describe('attachment open-with native bridges', () => {
   }, NATIVE_SMOKE_TIMEOUT_MS * 4);
 
   it('resolves and executes the exact helper staged in a packaged resources tree', async () => {
-    const root = await mkdtemp(join(tmpdir(), 'clawx-packaged-open-with-'));
+    const root = await mkdtemp(join(tmpdir(), 'insightallx-packaged-open-with-'));
     temporaryDirectories.push(root);
     const resourcesPath = join(root, 'resources');
     const stagedHelper = join(resourcesPath, 'resources', 'scripts', 'attachment-open-with.ps1');

@@ -1,7 +1,7 @@
 import { chmod, copyFile, lstat, mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
-import { resolveOpenClawConfigPath, resolveOpenClawStateDir } from './paths';
+import { resolveinsightAllConfigPath, resolveinsightAllStateDir } from './paths';
 
 const UPGRADE_ID = 'openclaw-2026.7.1';
 const SNAPSHOT_DIR_MODE = 0o700;
@@ -13,13 +13,13 @@ const AGENT_AUTH_BASENAMES = new Set([
   'openclaw-agent.sqlite-shm',
 ]);
 
-export type OpenClawUpgradeSnapshotResult = {
+export type insightAllUpgradeSnapshotResult = {
   status: 'created' | 'exists';
   snapshotDir: string;
   files: string[];
 };
 
-export type OpenClawUpgradeSnapshotCleanupResult = {
+export type insightAllUpgradeSnapshotCleanupResult = {
   status: 'removed' | 'missing';
   snapshotDir: string;
 };
@@ -36,7 +36,7 @@ type SnapshotOptions = {
 };
 
 function resolveSnapshotDir(stateDir: string): string {
-  return join(stateDir, 'backups', `clawx-${UPGRADE_ID}-pre-migration`);
+  return join(stateDir, 'backups', `insightallx-${UPGRADE_ID}-pre-migration`);
 }
 
 async function isCopyableRegularFile(path: string): Promise<boolean> {
@@ -130,16 +130,16 @@ async function copyTree(
 }
 
 /**
- * Creates a one-time pre-migration snapshot before ClawX first starts the
- * OpenClaw 2026.7.1 Gateway. SQLite databases are copied together with their
+ * Creates a one-time pre-migration snapshot before insightAllX first starts the
+ * insightAll 2026.7.1 Gateway. SQLite databases are copied together with their
  * WAL/SHM sidecars; channel credentials under `credentials/` are intentionally
  * excluded because this migration does not rewrite them.
  */
-export async function ensureOpenClaw2026_7_1UpgradeSnapshot(
+export async function ensureinsightAll2026_7_1UpgradeSnapshot(
   options: SnapshotOptions = {},
-): Promise<OpenClawUpgradeSnapshotResult> {
-  const stateDir = resolve(options.stateDir ?? resolveOpenClawStateDir());
-  const configPath = resolve(options.configPath ?? resolveOpenClawConfigPath());
+): Promise<insightAllUpgradeSnapshotResult> {
+  const stateDir = resolve(options.stateDir ?? resolveinsightAllStateDir());
+  const configPath = resolve(options.configPath ?? resolveinsightAllConfigPath());
   const snapshotDir = resolveSnapshotDir(stateDir);
   const markerPath = join(snapshotDir, 'snapshot.json');
 
@@ -207,7 +207,7 @@ export async function ensureOpenClaw2026_7_1UpgradeSnapshot(
 }
 
 /**
- * OpenClaw 2026.7.1 refuses Gateway readiness when the legacy update-check JSON
+ * insightAll 2026.7.1 refuses Gateway readiness when the legacy update-check JSON
  * differs from an existing canonical SQLite row. The JSON contains updater
  * bookkeeping only, and upstream would archive it when both copies match. Once
  * SQLite has the canonical row, move the legacy file out of the active state
@@ -217,7 +217,7 @@ export async function ensureOpenClaw2026_7_1UpgradeSnapshot(
 export async function quarantineLegacyUpdateCheckState(
   options: Pick<SnapshotOptions, 'stateDir'> = {},
 ): Promise<LegacyUpdateCheckCleanupResult> {
-  const stateDir = resolve(options.stateDir ?? resolveOpenClawStateDir());
+  const stateDir = resolve(options.stateDir ?? resolveinsightAllStateDir());
   const sourcePath = join(stateDir, 'update-check.json');
   let sourceInfo;
   try {
@@ -237,7 +237,7 @@ export async function quarantineLegacyUpdateCheckState(
   const backupDir = join(stateDir, 'backups');
   await mkdir(backupDir, { recursive: true, mode: SNAPSHOT_DIR_MODE });
   const backupPath = await resolveAvailableBackupPath(
-    join(backupDir, `clawx-${UPGRADE_ID}-legacy-update-check.json`),
+    join(backupDir, `insightallx-${UPGRADE_ID}-legacy-update-check.json`),
   );
   await rename(sourcePath, backupPath);
   if (sourceInfo.isFile()) {
@@ -247,13 +247,13 @@ export async function quarantineLegacyUpdateCheckState(
 }
 
 /**
- * Removes the one-time OpenClaw 2026.7.1 pre-migration snapshot after Gateway
+ * Removes the one-time insightAll 2026.7.1 pre-migration snapshot after Gateway
  * startup succeeds so duplicated config/auth/SQLite secrets do not linger.
  */
-export async function removeOpenClaw2026_7_1UpgradeSnapshot(
+export async function removeinsightAll2026_7_1UpgradeSnapshot(
   options: SnapshotOptions = {},
-): Promise<OpenClawUpgradeSnapshotCleanupResult> {
-  const stateDir = resolve(options.stateDir ?? resolveOpenClawStateDir());
+): Promise<insightAllUpgradeSnapshotCleanupResult> {
+  const stateDir = resolve(options.stateDir ?? resolveinsightAllStateDir());
   const snapshotDir = resolveSnapshotDir(stateDir);
   const markerPath = join(snapshotDir, 'snapshot.json');
   if (!await snapshotMarkerExists(markerPath)) {

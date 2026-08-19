@@ -69,13 +69,13 @@ This distinction is required: ordinary paths own local shell authority, while sc
 
 ## DOCX Rendering
 
-`DocxViewer` creates a new detached body container and style container for each target generation. It invokes `renderAsync()` while both are disconnected, then appends the current generation's completed containers to an open Shadow Root on the React-owned host. Generated document CSS and DOM therefore cannot rewrite ClawX layout, and stale reads or renders cannot replace the selected document.
+`DocxViewer` creates a new detached body container and style container for each target generation. It invokes `renderAsync()` while both are disconnected, then appends the current generation's completed containers to an open Shadow Root on the React-owned host. Generated document CSS and DOM therefore cannot rewrite insightAllX layout, and stale reads or renders cannot replace the selected document.
 
 The render options are exact:
 
 ```ts
 {
-  className: 'clawx-docx',
+  className: 'insightallx-docx',
   inWrapper: true,
   ignoreWidth: false,
   ignoreHeight: false,
@@ -97,11 +97,11 @@ The render options are exact:
 
 `renderAltChunks: false` prevents embedded HTML parts from entering the preview. Comments and tracked changes are disabled. `useBase64URL: true` avoids library-created Blob URL lifetime and keeps generated resources releasable with the Shadow Root containers.
 
-Capturing `click` and `auxclick` listeners on the Shadow Root prevent the default action of every generated anchor. Hash, HTTP(S), file, and custom-protocol links are all non-interactive; DOCX preview cannot navigate the ClawX window or invoke shell authority.
+Capturing `click` and `auxclick` listeners on the Shadow Root prevent the default action of every generated anchor. Hash, HTTP(S), file, and custom-protocol links are all non-interactive; DOCX preview cannot navigate the insightAllX window or invoke shell authority.
 
-Pages remain centered, vertical, authored-size paper sheets. A `ResizeObserver` resets body CSS `zoom` to `1`, measures the widest `section.clawx-docx`, and applies `Math.min(1, host.clientWidth / widestPageWidth)`. Chromium CSS zoom scales dimensions and flow together. The viewer scales down to fit but never enlarges above authored size.
+Pages remain centered, vertical, authored-size paper sheets. A `ResizeObserver` resets body CSS `zoom` to `1`, measures the widest `section.insightallx-docx`, and applies `Math.min(1, host.clientWidth / widestPageWidth)`. Chromium CSS zoom scales dimensions and flow together. The viewer scales down to fit but never enlarges above authored size.
 
-On target replacement or unmount, ClawX disconnects the observer, removes generated style/body containers, clears their children, and drops its direct byte and DOM references. An uncancellable render may finish after cleanup, but generation checks prevent it from attaching stale content.
+On target replacement or unmount, insightAllX disconnects the observer, removes generated style/body containers, clears their children, and drops its direct byte and DOM references. An uncancellable render may finish after cleanup, but generation checks prevent it from attaching stale content.
 
 ## PPTX Rendering And Scheduling
 
@@ -133,7 +133,7 @@ The `ResizeObserver` uses a 100 ms trailing debounce. The callback does not rend
 
 Workspace and Preview surfaces remain mounted to preserve surrounding UI state, but each conditionally mounts its PPTX child only while its artifact tab is active. CSS-only hiding is insufficient. A development assertion rejects a second concurrent viewer. The owning Workspace and Preview surfaces retain slide positions in maps keyed by target identity; switching away destroys and unmounts the viewer, and switching back reparses the deck and restores the clamped position.
 
-Cleanup queues the active instance's public `destroy()` exactly once after preceding dependency work. ClawX removes all listeners, observers, timers, animation frames, queued request references, and its direct instance and Canvas ownership. The dependency limitations below mean this does not claim full internal reclamation.
+Cleanup queues the active instance's public `destroy()` exactly once after preceding dependency work. insightAllX removes all listeners, observers, timers, animation frames, queued request references, and its direct instance and Canvas ownership. The dependency limitations below mean this does not claim full internal reclamation.
 
 ## Fullscreen Preview Surface
 

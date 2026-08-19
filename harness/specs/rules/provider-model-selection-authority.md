@@ -6,7 +6,7 @@ appliesTo:
   - gateway-backend-communication
 ---
 
-Provider model IDs created through the ClawX settings UI are immutable. Existing
+Provider model IDs created through the insightAllX settings UI are immutable. Existing
 provider edit forms must not submit model changes and must direct users to delete
 and recreate the provider when they need a different model ID.
 
@@ -16,7 +16,7 @@ OAuth, or browser OAuth. Historical runtime model rows may remain available for
 capability preservation, but must not reappear as alternate built-in selections
 through synchronized `metadata.customModels`.
 
-Before writing a selected model ID to OpenClaw, strip one leading provider
+Before writing a selected model ID to insightAll, strip one leading provider
 prefix when it exactly matches the resolved runtime provider key. Preserve all
 other slashes because they may be part of a valid model ID.
 

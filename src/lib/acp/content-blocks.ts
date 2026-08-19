@@ -47,15 +47,15 @@ function uriBasename(uri: string): string {
   return withoutQuery.split(/[\\/]/).filter(Boolean).at(-1) ?? uri;
 }
 
-function clawxUserMetadata(block: ContentBlock, role: ContentBlockRenderContext['role']): {
+function insightallxUserMetadata(block: ContentBlock, role: ContentBlockRenderContext['role']): {
   stagingId?: string;
   fileName?: string;
 } {
   if (role !== 'user') return {};
   const meta = recordValue(block._meta);
-  const clawx = recordValue(meta?.clawx);
-  const stagingId = nonEmptyString(clawx?.stagingId);
-  const fileName = nonEmptyString(clawx?.fileName);
+  const insightallx = recordValue(meta?.insightallx);
+  const stagingId = nonEmptyString(insightallx?.stagingId);
+  const fileName = nonEmptyString(insightallx?.fileName);
   return {
     ...(stagingId ? { stagingId } : {}),
     ...(fileName ? { fileName } : {}),
@@ -91,14 +91,14 @@ export function contentBlockToRenderPart(block: ContentBlock, context: ContentBl
       return { kind: 'markdown', text: block.text };
     case 'image': {
       const uri = optionalString(block.uri);
-      const clawx = clawxUserMetadata(block, context.role);
+      const insightallx = insightallxUserMetadata(block, context.role);
       if (context.role === 'user' && uri) {
         return attachmentPart({
           context,
           uri,
-          name: clawx.fileName,
+          name: insightallx.fileName,
           mimeType: block.mimeType,
-          stagingId: clawx.stagingId,
+          stagingId: insightallx.stagingId,
         });
       }
       const source = isSafeImageUri(uri)
@@ -107,7 +107,7 @@ export function contentBlockToRenderPart(block: ContentBlock, context: ContentBl
       return { kind: 'image', source, mimeType: block.mimeType };
     }
     case 'resource_link': {
-      const clawx = clawxUserMetadata(block, context.role);
+      const insightallx = insightallxUserMetadata(block, context.role);
       return attachmentPart({
         context,
         uri: block.uri,
@@ -115,7 +115,7 @@ export function contentBlockToRenderPart(block: ContentBlock, context: ContentBl
         title: nonEmptyString(block.title),
         mimeType: block.mimeType ?? undefined,
         size: block.size ?? undefined,
-        stagingId: clawx.stagingId,
+        stagingId: insightallx.stagingId,
       });
     }
     case 'resource': {

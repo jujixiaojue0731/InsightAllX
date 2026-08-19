@@ -1,5 +1,5 @@
 /**
- * OpenClaw CLI utilities — cross-platform auto-install
+ * insightAll CLI utilities — cross-platform auto-install
  */
 import { app } from 'electron';
 import {
@@ -14,7 +14,7 @@ import {
 import { spawn, type ForkOptions } from 'node:child_process';
 import { homedir } from 'node:os';
 import { delimiter, join, dirname } from 'node:path';
-import { getOpenClawDir, getOpenClawEntryPath } from './paths';
+import { getinsightAllDir, getinsightAllEntryPath } from './paths';
 import { logger } from './logger';
 
 // ── Quoting helpers ──────────────────────────────────────────────────────────
@@ -39,8 +39,8 @@ function getPackagedWindowsNodePath(): string | null {
 
 // ── CLI command string (for display / copy) ──────────────────────────────────
 
-export function getOpenClawCliCommand(): string {
-  const entryPath = getOpenClawEntryPath();
+export function getinsightAllCliCommand(): string {
+  const entryPath = getinsightAllEntryPath();
   const platform = process.platform;
 
   if (platform === 'darwin' || platform === 'linux') {
@@ -57,7 +57,7 @@ export function getOpenClawCliCommand(): string {
   }
 
   if (!app.isPackaged) {
-    const openclawDir = getOpenClawDir();
+    const openclawDir = getinsightAllDir();
     const nodeModulesDir = dirname(openclawDir);
     const binName = platform === 'win32' ? 'openclaw.cmd' : 'openclaw';
     const binPath = join(nodeModulesDir, '.bin', binName);
@@ -98,26 +98,26 @@ export function getOpenClawCliCommand(): string {
   return `node ${quoteForPosix(entryPath)}`;
 }
 
-export type OpenClawCliSpawnSpec = {
+export type insightAllCliSpawnSpec = {
   command: string;
   args: string[];
   env?: NodeJS.ProcessEnv;
   shell?: boolean;
 };
 
-type OpenClawEmbeddedForkOptions = ForkOptions & { windowsHide?: boolean };
+type insightAllEmbeddedForkOptions = ForkOptions & { windowsHide?: boolean };
 
-export type OpenClawEmbeddedForkSpec = {
+export type insightAllEmbeddedForkSpec = {
   modulePath: string;
   args: string[];
-  options: OpenClawEmbeddedForkOptions;
+  options: insightAllEmbeddedForkOptions;
 };
 
 function fileExists(path: string): boolean {
   return existsSync(path);
 }
 
-function getWindowsCmdWrapperSpawnSpec(cmdPath: string): OpenClawCliSpawnSpec {
+function getWindowsCmdWrapperSpawnSpec(cmdPath: string): insightAllCliSpawnSpec {
   return {
     command: process.env.ComSpec || 'cmd.exe',
     args: ['/d', '/s', '/c', `"${cmdPath}"`],
@@ -139,8 +139,8 @@ function getDevNodeExecPath(): string | null {
   return getExecutableFromPath(nodeCommand);
 }
 
-export function getOpenClawCliSpawnSpec(): OpenClawCliSpawnSpec {
-  const entryPath = getOpenClawEntryPath();
+export function getinsightAllCliSpawnSpec(): insightAllCliSpawnSpec {
+  const entryPath = getinsightAllEntryPath();
   const platform = process.platform;
 
   if (platform === 'darwin' || platform === 'linux') {
@@ -155,7 +155,7 @@ export function getOpenClawCliSpawnSpec(): OpenClawCliSpawnSpec {
   }
 
   if (!app.isPackaged) {
-    const openclawDir = getOpenClawDir();
+    const openclawDir = getinsightAllDir();
     const nodeModulesDir = dirname(openclawDir);
     const binName = platform === 'win32' ? 'openclaw.cmd' : 'openclaw';
     const binPath = join(nodeModulesDir, '.bin', binName);
@@ -196,12 +196,12 @@ export function getOpenClawCliSpawnSpec(): OpenClawCliSpawnSpec {
   return { command: 'node', args: [entryPath] };
 }
 
-function getOpenClawEmbeddedExecPath(): { execPath: string; electronRunAsNode: boolean } {
+function getinsightAllEmbeddedExecPath(): { execPath: string; electronRunAsNode: boolean } {
   if (!app.isPackaged) {
     const nodeExecPath = getDevNodeExecPath();
     if (nodeExecPath) return { execPath: nodeExecPath, electronRunAsNode: false };
     if (process.versions?.electron) {
-      throw new Error('Node executable not found on PATH for embedded OpenClaw launch');
+      throw new Error('Node executable not found on PATH for embedded insightAll launch');
     }
   }
 
@@ -213,7 +213,7 @@ function getOpenClawEmbeddedExecPath(): { execPath: string; electronRunAsNode: b
   if (app.isPackaged && process.platform === 'darwin') {
     const helperPath = getPackagedMacOSHelperPath();
     if (!helperPath) {
-      throw new Error('ClawX Helper executable not found for embedded OpenClaw launch');
+      throw new Error('insightAllX Helper executable not found for embedded insightAll launch');
     }
     return { execPath: helperPath, electronRunAsNode: true };
   }
@@ -221,12 +221,12 @@ function getOpenClawEmbeddedExecPath(): { execPath: string; electronRunAsNode: b
   return { execPath: process.execPath, electronRunAsNode: Boolean(process.versions?.electron) };
 }
 
-export function getOpenClawEmbeddedForkSpec(args: string[] = []): OpenClawEmbeddedForkSpec {
-  const { execPath, electronRunAsNode } = getOpenClawEmbeddedExecPath();
+export function getinsightAllEmbeddedForkSpec(args: string[] = []): insightAllEmbeddedForkSpec {
+  const { execPath, electronRunAsNode } = getinsightAllEmbeddedExecPath();
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     OPENCLAW_NO_RESPAWN: '1',
-    OPENCLAW_EMBEDDED_IN: 'ClawX',
+    OPENCLAW_EMBEDDED_IN: 'insightAllX',
     OPENCLAW_EXEC_SHELL_SNAPSHOT: '0',
   };
 
@@ -237,10 +237,10 @@ export function getOpenClawEmbeddedForkSpec(args: string[] = []): OpenClawEmbedd
   }
 
   return {
-    modulePath: getOpenClawEntryPath(),
+    modulePath: getinsightAllEntryPath(),
     args,
     options: {
-      cwd: getOpenClawDir(),
+      cwd: getinsightAllDir(),
       env,
       execPath,
       execArgv: [],
@@ -292,7 +292,7 @@ function getCliTargetPath(): string {
   return join(homedir(), '.local', 'bin', 'openclaw');
 }
 
-export async function installOpenClawCli(): Promise<{
+export async function installinsightAllCli(): Promise<{
   success: boolean; path?: string; error?: string;
 }> {
   const platform = process.platform;
@@ -323,10 +323,10 @@ export async function installOpenClawCli(): Promise<{
 
     symlinkSync(wrapperSrc, target);
     chmodSync(wrapperSrc, 0o755);
-    logger.info(`OpenClaw CLI symlink created: ${target} -> ${wrapperSrc}`);
+    logger.info(`insightAll CLI symlink created: ${target} -> ${wrapperSrc}`);
     return { success: true, path: target };
   } catch (error) {
-    logger.error('Failed to install OpenClaw CLI:', error);
+    logger.error('Failed to install insightAll CLI:', error);
     return { success: false, error: String(error) };
   }
 }
@@ -438,8 +438,8 @@ function ensureLocalBinInPath(): void {
     if (content.includes(marker)) return;
 
     const line = shell.includes('fish')
-      ? '\n# Added by ClawX\nfish_add_path "$HOME/.local/bin"\n'
-      : '\n# Added by ClawX\nexport PATH="$HOME/.local/bin:$PATH"\n';
+      ? '\n# Added by insightAllX\nfish_add_path "$HOME/.local/bin"\n'
+      : '\n# Added by insightAllX\nexport PATH="$HOME/.local/bin:$PATH"\n';
 
     appendFileSync(profileFile, line);
     logger.info(`Added ~/.local/bin to PATH in ${profileFile}`);
@@ -481,7 +481,7 @@ export async function autoInstallCliIfNeeded(
   }
 
   logger.info('Auto-installing openclaw CLI...');
-  const result = await installOpenClawCli();
+  const result = await installinsightAllCli();
   if (result.success) {
     logger.info(`CLI auto-installed at ${result.path}`);
     ensureLocalBinInPath();
@@ -502,7 +502,7 @@ function getNodeExecForCli(): string {
 export function generateCompletionCache(): void {
   if (!app.isPackaged) return;
 
-  const entryPath = getOpenClawEntryPath();
+  const entryPath = getinsightAllEntryPath();
   if (!existsSync(entryPath)) return;
 
   const execPath = getNodeExecForCli();
@@ -512,7 +512,7 @@ export function generateCompletionCache(): void {
       ...process.env,
       ELECTRON_RUN_AS_NODE: '1',
       OPENCLAW_NO_RESPAWN: '1',
-      OPENCLAW_EMBEDDED_IN: 'ClawX',
+      OPENCLAW_EMBEDDED_IN: 'insightAllX',
     },
     stdio: 'ignore',
     detached: false,
@@ -521,9 +521,9 @@ export function generateCompletionCache(): void {
 
   child.on('close', (code) => {
     if (code === 0) {
-      logger.info('OpenClaw completion cache generated');
+      logger.info('insightAll completion cache generated');
     } else {
-      logger.warn(`OpenClaw completion cache generation exited with code ${code}`);
+      logger.warn(`insightAll completion cache generation exited with code ${code}`);
     }
   });
 
@@ -536,7 +536,7 @@ export function installCompletionToProfile(): void {
   if (!app.isPackaged) return;
   if (process.platform === 'win32') return;
 
-  const entryPath = getOpenClawEntryPath();
+  const entryPath = getinsightAllEntryPath();
   if (!existsSync(entryPath)) return;
 
   const execPath = getNodeExecForCli();
@@ -549,7 +549,7 @@ export function installCompletionToProfile(): void {
         ...process.env,
         ELECTRON_RUN_AS_NODE: '1',
         OPENCLAW_NO_RESPAWN: '1',
-        OPENCLAW_EMBEDDED_IN: 'ClawX',
+        OPENCLAW_EMBEDDED_IN: 'insightAllX',
       },
       stdio: 'ignore',
       detached: false,
@@ -559,9 +559,9 @@ export function installCompletionToProfile(): void {
 
   child.on('close', (code) => {
     if (code === 0) {
-      logger.info('OpenClaw completion installed to shell profile');
+      logger.info('insightAll completion installed to shell profile');
     } else {
-      logger.warn(`OpenClaw completion install exited with code ${code}`);
+      logger.warn(`insightAll completion install exited with code ${code}`);
     }
   });
 

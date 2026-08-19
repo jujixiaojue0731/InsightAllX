@@ -23,7 +23,7 @@ function getCronHistoryMessageText(content: RawMessage['content']): string {
 
 /**
  * Project authoritative cron run summaries into ACP's in-memory timeline shape.
- * This is used only when OpenClaw returns no ACP replay for a cron base session.
+ * This is used only when insightAll returns no ACP replay for a cron base session.
  */
 export function buildCronHistoryAcpNotifications(
   sessionKey: string,

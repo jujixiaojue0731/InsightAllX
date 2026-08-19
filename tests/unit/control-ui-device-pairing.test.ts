@@ -10,9 +10,9 @@ vi.mock('@electron/utils/store', () => ({
 }));
 
 vi.mock('@electron/utils/paths', () => ({
-  getOpenClawConfigDir: () => '/tmp/openclaw',
-  getOpenClawDir: () => '/tmp/openclaw/pkg',
-  getOpenClawEntryPath: () => '/tmp/openclaw/pkg/openclaw.mjs',
+  getinsightAllConfigDir: () => '/tmp/openclaw',
+  getinsightAllDir: () => '/tmp/openclaw/pkg',
+  getinsightAllEntryPath: () => '/tmp/openclaw/pkg/openclaw.mjs',
 }));
 
 import {

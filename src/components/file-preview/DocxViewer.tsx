@@ -28,7 +28,7 @@ type LoadState =
   | { identity: string; status: 'ready' };
 
 const DOCX_RENDER_OPTIONS = {
-  className: 'clawx-docx',
+  className: 'insightallx-docx',
   inWrapper: true,
   ignoreWidth: false,
   ignoreHeight: false,
@@ -62,12 +62,12 @@ const DOCX_SURFACE_CSS = `
     transform-origin: top left;
   }
 
-  .clawx-docx-wrapper {
+  .insightallx-docx-wrapper {
     background: transparent !important;
     padding: 0 !important;
   }
 
-  section.clawx-docx {
+  section.insightallx-docx {
     margin: 0 auto 24px !important;
     background: white;
     color: #111;
@@ -223,7 +223,7 @@ export default function DocxViewer({
           if (!bodyContainer || !host) return;
           bodyContainer.style.zoom = '1';
           const widestPageWidth = Array.from(
-            bodyContainer.querySelectorAll<HTMLElement>('section.clawx-docx'),
+            bodyContainer.querySelectorAll<HTMLElement>('section.insightallx-docx'),
           ).reduce((widest, page) => Math.max(widest, page.offsetWidth), 0);
           if (host.clientWidth > 0 && widestPageWidth > 0) {
             bodyContainer.style.zoom = String(Math.min(1, host.clientWidth / widestPageWidth));

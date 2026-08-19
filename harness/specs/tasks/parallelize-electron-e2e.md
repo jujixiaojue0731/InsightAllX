@@ -45,7 +45,7 @@ acceptance:
   - The ordinary E2E project uses more than one worker by default and can be overridden for constrained machines.
   - OS-global clipboard tests execute in a one-worker prerequisite project.
   - Renderer performance profiles execute alone after functional E2E tests.
-  - Per-test HOME, Electron profile, OpenClaw state, and Host API configuration remain isolated.
+  - Per-test HOME, Electron profile, insightAll state, and Host API configuration remain isolated.
   - CI opts into the checked-in parallel worker policy on every supported OS.
   - A durable policy and automated guard explain how future global-resource tests enter the exclusive lane.
 docs:
@@ -54,4 +54,4 @@ docs:
 
 ## Scope
 
-This task changes only Electron E2E scheduling and fixture isolation. It does not change application transport behavior, production Host API routing, or user-visible ClawX features.
+This task changes only Electron E2E scheduling and fixture isolation. It does not change application transport behavior, production Host API routing, or user-visible insightAllX features.

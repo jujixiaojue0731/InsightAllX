@@ -124,15 +124,15 @@ export async function runGatewayStartupSequence(hooks: StartupHooks): Promise<vo
       if (recoveryAction === 'repair') {
         configRepairAttempted = true;
         logger.warn(
-          'Detected invalid OpenClaw config during Gateway startup; running doctor repair before retry',
+          'Detected invalid insightAll config during Gateway startup; running doctor repair before retry',
         );
         const repaired = await hooks.runDoctorRepair();
         if (repaired) {
-          logger.info('OpenClaw doctor repair completed; retrying Gateway startup');
+          logger.info('insightAll doctor repair completed; retrying Gateway startup');
           hooks.onDoctorRepairSuccess();
           continue;
         }
-        logger.error('OpenClaw doctor repair failed; not retrying Gateway startup');
+        logger.error('insightAll doctor repair failed; not retrying Gateway startup');
       }
 
       if (recoveryAction === 'retry') {

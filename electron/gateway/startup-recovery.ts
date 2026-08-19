@@ -33,7 +33,7 @@ const TRANSIENT_START_ERROR_PATTERNS: RegExp[] = [
   /Gateway process exited before becoming ready/i,
   /Timed out waiting for connect\.challenge/i,
   /Connect handshake timeout/i,
-  // OpenClaw can emit connect.challenge before the connect RPC is accepted.
+  // insightAll can emit connect.challenge before the connect RPC is accepted.
   /gateway starting/i,
   // Port occupied after orphan kill: transient, worth retrying with backoff
   /Port \d+ still occupied after \d+ms/i,
@@ -47,7 +47,7 @@ function normalizeLogLine(value: string): string {
 }
 
 /**
- * Returns true when text appears to indicate OpenClaw config validation failure.
+ * Returns true when text appears to indicate insightAll config validation failure.
  */
 export function isInvalidConfigSignal(text: string): boolean {
   const normalized = normalizeLogLine(text);
@@ -57,7 +57,7 @@ export function isInvalidConfigSignal(text: string): boolean {
 
 /**
  * Returns true when either startup stderr lines or startup error message
- * indicate an OpenClaw config validation failure.
+ * indicate an insightAll config validation failure.
  */
 export function hasInvalidConfigFailureSignal(
   startupError: unknown,
@@ -85,7 +85,7 @@ function startupFailureCandidates(startupError: unknown, startupStderrLines: str
   ];
 }
 
-/** Returns true for OpenClaw runtime/SQLite failures that doctor cannot repair. */
+/** Returns true for insightAll runtime/SQLite failures that doctor cannot repair. */
 export function hasFatalRuntimeFailureSignal(
   startupError: unknown,
   startupStderrLines: string[],
@@ -94,7 +94,7 @@ export function hasFatalRuntimeFailureSignal(
     .some((text) => FATAL_RUNTIME_PATTERNS.some((pattern) => pattern.test(text)));
 }
 
-/** Returns true while another/stale OpenClaw startup migration lease is active. */
+/** Returns true while another/stale insightAll startup migration lease is active. */
 export function hasStartupMigrationLockSignal(
   startupError: unknown,
   startupStderrLines: string[],

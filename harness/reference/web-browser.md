@@ -1,6 +1,6 @@
 # Local HTML Preview Architecture
 
-ClawX no longer exposes a general-purpose embedded Web Browser. The remaining Electron webview is used only to render an authorized local `.html` or `.htm` file inside the existing Preview tab.
+insightAllX no longer exposes a general-purpose embedded Web Browser. The remaining Electron webview is used only to render an authorized local `.html` or `.htm` file inside the existing Preview tab.
 
 ## User flow
 
@@ -13,7 +13,7 @@ ClawX no longer exposes a general-purpose embedded Web Browser. The remaining El
 
 All links are inert:
 
-- ClawX-rendered Markdown/content links are plain text.
+- insightAllX-rendered Markdown/content links are plain text.
 - Inside HTML Preview, Main injects user-origin CSS that removes anchor and area styling and pointer interaction.
 - Main also prevents navigation independently, so scripts, forms, synthetic clicks, hash navigation, redirects, and popups cannot bypass the visual restriction.
 - Downloads and network requests are canceled.
@@ -31,10 +31,10 @@ The host has no browser chrome. It exists only for an HTML `focusedFile`, remain
 - `navigate`: load one validated local HTML URL in the registered guest.
 - `openExternal`: revalidate the selected local HTML URL, then call `shell.openExternal`; it does not accept web destinations.
 
-Main retains the exact guest identity gate, one-live-guest registry, fixed isolated `persist:clawx-web-browser` partition and User-Agent, sandbox, context isolation, web security, and disabled Node/preload surface.
+Main retains the exact guest identity gate, one-live-guest registry, fixed isolated `persist:insightallx-web-browser` partition and User-Agent, sandbox, context isolation, web security, and disabled Node/preload surface.
 
 The dedicated Session denies all permissions, cancels downloads, blocks network protocols, and rejects non-HTML main documents. The guest policy denies all child windows and every guest-initiated top-level or in-page navigation.
 
 ## Security consequence
 
-The preview can execute self-contained local HTML scripts for rendering, but it cannot follow links, leave its selected document, request network data, download files, obtain device permissions, or access ClawX/Electron APIs.
+The preview can execute self-contained local HTML scripts for rendering, but it cannot follow links, leave its selected document, request network data, download files, obtain device permissions, or access insightAllX/Electron APIs.

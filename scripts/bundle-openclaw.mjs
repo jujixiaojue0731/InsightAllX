@@ -18,7 +18,7 @@
 
 import 'zx/globals';
 import { ELECTRON_MAIN_RUNTIME_PACKAGES, EXTRA_BUNDLED_PACKAGES } from './openclaw-bundle-config.mjs';
-import { patchExtensionOpenClawSelfImports } from './openclaw-self-import-patch.mjs';
+import { patchExtensionInsightAllSelfImports } from './openclaw-self-import-patch.mjs';
 
 const ROOT = path.resolve(__dirname, '..');
 const OUTPUT = path.join(ROOT, 'build', 'openclaw');
@@ -44,7 +44,7 @@ if (!fs.existsSync(openclawLink)) {
 const openclawReal = fs.realpathSync(openclawLink);
 echo`   openclaw resolved: ${openclawReal}`;
 
-function shouldCopyOpenClawPackageEntry(src) {
+function shouldCopyInsightAllPackageEntry(src) {
   const rel = path.relative(openclawReal, src);
   if (!rel || rel.startsWith('..')) return true;
   const parts = rel.split(path.sep);
@@ -58,7 +58,7 @@ function shouldCopyOpenClawPackageEntry(src) {
   return true;
 }
 
-function trimBundledOpenClawSkills(skillsRoot) {
+function trimBundledInsightAllSkills(skillsRoot) {
   if (!fs.existsSync(skillsRoot)) return { removed: 0, kept: [...BUNDLED_OPENCLAW_SKILL_ALLOWLIST] };
 
   let removed = 0;
@@ -112,12 +112,12 @@ echo`   Copying openclaw package...`;
 fs.cpSync(openclawReal, OUTPUT, {
   recursive: true,
   dereference: true,
-  filter: shouldCopyOpenClawPackageEntry,
+  filter: shouldCopyInsightAllPackageEntry,
 });
 
-const bundledSkillsTrim = trimBundledOpenClawSkills(path.join(OUTPUT, 'skills'));
+const bundledSkillsTrim = trimBundledInsightAllSkills(path.join(OUTPUT, 'skills'));
 if (bundledSkillsTrim.removed > 0) {
-  echo`   Trimmed bundled OpenClaw skills: removed ${bundledSkillsTrim.removed}, kept ${bundledSkillsTrim.kept.join(', ')}`;
+  echo`   Trimmed bundled insightAll skills: removed ${bundledSkillsTrim.removed}, kept ${bundledSkillsTrim.kept.join(', ')}`;
 }
 
 // 4. Recursively collect ALL transitive dependencies via pnpm virtual store BFS
@@ -252,7 +252,7 @@ while (queue.length > 0) {
 echo`   Found ${collected.size} total packages (direct + transitive)`;
 echo`   Skipped ${skippedDevCount} dev-only package references`;
 
-// 4b. Collect extra packages required by ClawX's Electron main process that are
+// 4b. Collect extra packages required by insightAllX's Electron main process that are
 //     NOT deps of openclaw.  These are resolved from openclaw's context at runtime
 //     (via createRequire from the openclaw directory) so they must live in the
 //     bundled openclaw/node_modules/.
@@ -361,7 +361,7 @@ for (const [realPath, pkgName] of collectedEntries) {
 
 // 5b. Merge built-in extension node_modules into top-level node_modules
 //
-// OpenClaw 3.31+ ships built-in extensions (telegram, discord, etc.) under
+// insightAll 3.31+ ships built-in extensions (telegram, discord, etc.) under
 // dist/extensions/<ext>/node_modules/.  The Rollup bundler creates shared
 // chunks at dist/ root (e.g. sticker-cache-*.js) that eagerly import
 // extension-specific packages like "grammy".  Node.js resolves bare
@@ -553,7 +553,7 @@ function cleanupKnownRuntimeJunk(rootDir) {
 function cleanupBundle(outputDir) {
   let removedCount = 0;
   const nm = path.join(outputDir, 'node_modules');
-  // OpenClaw 3.x ships built-in extensions under dist/extensions/<ext>/, not
+  // insightAll 3.x ships built-in extensions under dist/extensions/<ext>/, not
   // extensions/. The previous `path.join(outputDir, 'extensions')` silently
   // resolved to a non-existent directory so the entire walkExt() pass below
   // (which is what cleans .d.ts / .d.mts / source maps inside per-extension
@@ -795,7 +795,7 @@ function patchBrokenModules(nodeModulesDir) {
               const patched = [
                 original,
                 '',
-                '// ClawX patch: add LRUCache named export for Node.js 22+ ESM interop',
+                '// insightAllX patch: add LRUCache named export for Node.js 22+ ESM interop',
                 'if (typeof module.exports === "function" && !module.exports.LRUCache) {',
                 '  module.exports.LRUCache = module.exports;',
                 '}',
@@ -867,10 +867,10 @@ function findFilesByName(rootDir, matcher) {
 }
 
 function patchBundledRuntime(outputDir) {
-  // OpenClaw 2026.7.1 routes ordinary child-process execution through
+  // insightAll 2026.7.1 routes ordinary child-process execution through
   // resolveChildProcessInvocation(), which already sets windowsHide=true.
   // PTY execution remains patched below because node-pty follows a separate
-  // launch path and is disabled on Windows in ClawX packaged builds.
+  // launch path and is disabled on Windows in insightAllX packaged builds.
   const replacePatches = [];
 
   let count = 0;
@@ -947,7 +947,7 @@ function patchBundledRuntime(outputDir) {
       }
     }
     if (!matchedAny) {
-      throw new Error(`Required OpenClaw 2026.7.1 patch not found: ${patch.label}`);
+      throw new Error(`Required insightAll 2026.7.1 patch not found: ${patch.label}`);
     }
   }
 
@@ -956,7 +956,7 @@ function patchBundledRuntime(outputDir) {
   }
 
   // --- Browser tool hint patch ---
-  // OpenClaw's BROWSER_TOOL_MODEL_HINT tells the model "Do NOT retry the
+  // insightAll's BROWSER_TOOL_MODEL_HINT tells the model "Do NOT retry the
   // browser tool — it will keep failing" after ANY error, causing the model
   // to permanently refuse browser usage even on transient failures.
   // Replace with a gentler hint that allows retries on transient errors.
@@ -996,9 +996,9 @@ function patchBundledRuntime(outputDir) {
 patchBrokenModules(outputNodeModules);
 patchBundledRuntime(OUTPUT);
 
-const openclawSelfImportPatch = patchExtensionOpenClawSelfImports(OUTPUT);
+const openclawSelfImportPatch = patchExtensionInsightAllSelfImports(OUTPUT);
 if (openclawSelfImportPatch.specifiersPatched > 0) {
-  echo`   🩹 Rewrote ${openclawSelfImportPatch.specifiersPatched} OpenClaw plugin-sdk self-import(s) in ${openclawSelfImportPatch.filesPatched} extension file(s)`;
+  echo`   🩹 Rewrote ${openclawSelfImportPatch.specifiersPatched} insightAll plugin-sdk self-import(s) in ${openclawSelfImportPatch.filesPatched} extension file(s)`;
 }
 
 // 8. Verify the bundle

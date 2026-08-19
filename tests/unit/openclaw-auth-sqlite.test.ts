@@ -6,7 +6,7 @@ import { join } from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { testHome } = vi.hoisted(() => ({
-  testHome: `/tmp/clawx-auth-sqlite-${Math.random().toString(36).slice(2)}`,
+  testHome: `/tmp/insightallx-auth-sqlite-${Math.random().toString(36).slice(2)}`,
 }));
 
 vi.mock('os', async () => {
@@ -67,14 +67,14 @@ describe('openclaw-auth-sqlite', () => {
     expect(sqliteStore?.lastGood?.['custom-customc7']).toBe('custom-customc7:default');
   });
 
-  it('saveProviderKeyToOpenClaw writes credentials readable from sqlite', async () => {
-    const { saveProviderKeyToOpenClaw } = await import('@electron/utils/openclaw-auth');
+  it('saveProviderKeyToinsightAll writes credentials readable from sqlite', async () => {
+    const { saveProviderKeyToinsightAll } = await import('@electron/utils/openclaw-auth');
     const {
       readAuthProfilesFromSqlite,
       getAuthProfilesSqlitePath,
     } = await import('@electron/utils/openclaw-auth-sqlite');
 
-    await saveProviderKeyToOpenClaw('custom-customc7', 'sk-runtime-key', 'main');
+    await saveProviderKeyToinsightAll('custom-customc7', 'sk-runtime-key', 'main');
 
     expect(existsSync(getAuthProfilesSqlitePath('main'))).toBe(true);
     const sqliteStore = readAuthProfilesFromSqlite('main');

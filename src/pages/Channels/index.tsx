@@ -36,7 +36,7 @@ interface GatewayDiagnosticSnapshot {
   platform: string;
   gateway: GatewayHealthSummary & Record<string, unknown>;
   channels: ChannelGroupItem[];
-  clawxLogTail: string;
+  insightallxLogTail: string;
   gatewayLogTail: string;
   gatewayErrLogTail: string;
 }
@@ -53,7 +53,7 @@ function isGatewayDiagnosticSnapshot(value: unknown): value is GatewayDiagnostic
     typeof snapshot.gateway === 'object' &&
     snapshot.gateway !== null &&
     Array.isArray(snapshot.channels) &&
-    typeof snapshot.clawxLogTail === 'string' &&
+    typeof snapshot.insightallxLogTail === 'string' &&
     typeof snapshot.gatewayLogTail === 'string' &&
     typeof snapshot.gatewayErrLogTail === 'string'
   );
@@ -451,7 +451,7 @@ export function Channels() {
     if (!deleteTarget) return;
     const target = deleteTarget;
 
-    // Close the dialog and update the list before waiting for OpenClaw's
+    // Close the dialog and update the list before waiting for insightAll's
     // coordinated config delivery. Main still owns the durable mutation; on
     // failure, reload the file-backed view to restore the actual state.
     setDeleteTarget(null);

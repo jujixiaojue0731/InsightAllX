@@ -1,5 +1,5 @@
 import { getProviderConfig } from '../utils/provider-registry';
-import { getOpenClawProviderKeyForType, isOAuthProviderType } from '../utils/provider-keys';
+import { getinsightAllProviderKeyForType, isOAuthProviderType } from '../utils/provider-keys';
 import type { ProviderConfig } from '../utils/secure-storage';
 import {
   piAiModelsJsonModelEntry,
@@ -33,7 +33,7 @@ export function buildNonOAuthAgentProviderUpdate(
     return null;
   }
 
-  const providerKey = getOpenClawProviderKeyForType(provider.type, providerId);
+  const providerKey = getinsightAllProviderKeyForType(provider.type, providerId);
   const meta = getProviderConfig(provider.type);
   const baseUrl = provider.baseUrl || meta?.baseUrl;
   const api = meta?.api;

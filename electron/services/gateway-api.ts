@@ -3,7 +3,7 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { PORTS } from '../utils/config';
 import { approvePendingLocalDeviceRequests } from '../utils/control-ui-device-pairing';
 import { logger } from '../utils/logger';
-import { buildOpenClawControlUiUrl } from '../utils/openclaw-control-ui';
+import { buildinsightAllControlUiUrl } from '../utils/openclaw-control-ui';
 import { getSetting } from '../utils/store';
 import { isRecord } from './payload-utils';
 
@@ -48,7 +48,7 @@ export function createGatewayApi(gatewayManager: GatewayManager): CompleteHostSe
       const status = gatewayManager.getStatus();
       const token = await getSetting('gatewayToken');
       const port = status.port || PORTS.OPENCLAW_GATEWAY;
-      const url = buildOpenClawControlUiUrl(port, token);
+      const url = buildinsightAllControlUiUrl(port, token);
       void approvePendingLocalDeviceRequests(gatewayManager).catch((error) => {
         logger.debug(`[gateway] Control UI device auto-approve skipped: ${String(error)}`);
       });

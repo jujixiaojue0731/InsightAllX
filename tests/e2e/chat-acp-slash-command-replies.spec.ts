@@ -34,7 +34,7 @@ async function installSlashCommandReplyMock(app: ElectronApplication) {
       if (request?.module === 'chat' && request.action === 'sendAcpPrompt') {
         const command = request.payload?.message?.trim();
         const text = command === '/status'
-          ? 'OpenClaw status: connected'
+          ? 'insightAll status: connected'
           : command === '/compact'
             ? 'Compaction complete'
             : `Unexpected command: ${command ?? ''}`;
@@ -60,7 +60,7 @@ async function installSlashCommandReplyMock(app: ElectronApplication) {
   }, SESSION_KEY);
 }
 
-test.describe('ClawX ACP slash-command replies', () => {
+test.describe('insightAllX ACP slash-command replies', () => {
   test('shows replies for /status and /compact in the chat timeline', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -127,7 +127,7 @@ test.describe('ClawX ACP slash-command replies', () => {
 
       await input.fill('/status');
       await page.getByTestId('chat-composer-send').click();
-      await expect(page.getByTestId('acp-assistant-message').filter({ hasText: 'OpenClaw status: connected' }))
+      await expect(page.getByTestId('acp-assistant-message').filter({ hasText: 'insightAll status: connected' }))
         .toBeVisible({ timeout: 30_000 });
 
       await input.fill('/compact');

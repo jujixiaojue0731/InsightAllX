@@ -12,7 +12,7 @@ const SECRET_KEYS = new Set([
 const CONFIG_WRITE_METHODS = new Set(['config.set', 'config.patch', 'config.apply']);
 
 export function isGatewayWsTraceEnabled(): boolean {
-  return process.env.CLAWX_GATEWAY_WS_TRACE === '1';
+  return process.env.INSIGHTALLX_GATEWAY_WS_TRACE === '1';
 }
 
 export function redactGatewayFrameForTrace(value: unknown): unknown {

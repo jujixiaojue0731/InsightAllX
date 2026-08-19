@@ -1,9 +1,9 @@
 ---
 id: restore-acp-file-activity
-title: Restore OpenClaw file activity in ACP Chat
+title: Restore insightAll file activity in ACP Chat
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Restore per-turn and session-level OpenClaw file activity in ACP Chat while keeping tool-derived file access inside the bound workspace.
+intent: Restore per-turn and session-level insightAll file activity in ACP Chat while keeping tool-derived file access inside the bound workspace.
 touchedAreas:
   - harness/reference/openclaw-file-activity.md
   - harness/specs/scenarios/acp-file-activity.md
@@ -61,7 +61,7 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
 expectedUserBehavior:
-  - Successful OpenClaw write, edit, and apply_patch calls render per-turn file buttons and change summaries.
+  - Successful insightAll write, edit, and apply_patch calls render per-turn file buttons and change summaries.
   - The Changes tab shows a session-level record grouped by file, with at most one diff editor per turn and file.
   - File headers in Changes use the same extension-aware icons as the Workspace file tree.
   - A New Session with no qualifying activity says that this session has no file changes yet.
@@ -89,7 +89,7 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
-  - Only completed OpenClaw write, edit, and apply_patch canonical raw inputs produce file activity.
+  - Only completed insightAll write, edit, and apply_patch canonical raw inputs produce file activity.
   - Failed and unsupported tools remain visible as ordinary tool cards but produce no file activity UI.
   - Tool-derived Preview uses workspace-scoped read/stat host APIs without unscoped fallback; later workspace-scoped native actions independently revalidate `WorkspaceFileRef` and never accept a naked canonical path from Renderer.
   - The feature does not scan the workspace, use Git, create source snapshots, or infer shell side effects.

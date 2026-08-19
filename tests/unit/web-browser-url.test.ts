@@ -8,7 +8,7 @@ import {
 
 describe('local HTML preview URL policy', () => {
   it('exports the fixed isolated guest identity', () => {
-    expect(WEB_BROWSER_PARTITION).toBe('persist:clawx-web-browser');
+    expect(WEB_BROWSER_PARTITION).toBe('persist:insightallx-web-browser');
     expect(WEB_BROWSER_INITIAL_URL).toBe('about:blank');
     expect(WEB_BROWSER_USER_AGENT).toContain('Electron/40.8.4');
   });

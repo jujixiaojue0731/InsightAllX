@@ -592,8 +592,8 @@ describe('ACP Chat page', () => {
     });
   });
 
-  it('uses OpenClaw session workspacePath for ACP load and read-only footer', async () => {
-    chatState.sessions = [{ key: 'agent:main:session-a', workspacePath: '/Users/alex/workspace/ClawX' }];
+  it('uses insightAll session workspacePath for ACP load and read-only footer', async () => {
+    chatState.sessions = [{ key: 'agent:main:session-a', workspacePath: '/Users/alex/workspace/insightAllX' }];
     chatState.currentSessionKey = 'agent:main:session-a';
     acpState.activeSessionKey = null;
     acpState.loadSession.mockResolvedValue(true);
@@ -603,11 +603,11 @@ describe('ACP Chat page', () => {
     await waitFor(() => {
       expect(acpState.loadSession).toHaveBeenCalledWith({
         sessionKey: 'agent:main:session-a',
-        workspaceRoot: '/Users/alex/workspace/ClawX',
-        cwd: '/Users/alex/workspace/ClawX',
+        workspaceRoot: '/Users/alex/workspace/insightAllX',
+        cwd: '/Users/alex/workspace/insightAllX',
       });
     });
-    expect(screen.getByTestId('mock-workspace-path')).toHaveTextContent('/Users/alex/workspace/ClawX');
+    expect(screen.getByTestId('mock-workspace-path')).toHaveTextContent('/Users/alex/workspace/insightAllX');
     expect(screen.getByTestId('mock-workspace-readonly')).toHaveTextContent('readonly');
   });
 
@@ -634,14 +634,14 @@ describe('ACP Chat page', () => {
       });
     });
 
-    chatState.sessions = [{ key: sessionKey, updatedAt: 1000, workspacePath: '/Users/alex/workspace/ClawX' }];
+    chatState.sessions = [{ key: sessionKey, updatedAt: 1000, workspacePath: '/Users/alex/workspace/insightAllX' }];
     rerender(<Chat />);
 
     await waitFor(() => {
       expect(acpState.loadSession).toHaveBeenCalledWith({
         sessionKey,
-        workspaceRoot: '/Users/alex/workspace/ClawX',
-        cwd: '/Users/alex/workspace/ClawX',
+        workspaceRoot: '/Users/alex/workspace/insightAllX',
+        cwd: '/Users/alex/workspace/insightAllX',
       });
     });
     resolveInitialLoad(true);

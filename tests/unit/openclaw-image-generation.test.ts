@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/clawx-openclaw-image-gen-${suffix}`,
-    testUserData: `/tmp/clawx-openclaw-image-gen-user-data-${suffix}`,
+    testHome: `/tmp/insightallx-openclaw-image-gen-${suffix}`,
+    testUserData: `/tmp/insightallx-openclaw-image-gen-user-data-${suffix}`,
   };
 });
 
@@ -39,22 +39,22 @@ vi.mock('@electron/utils/paths', async () => {
   const resolvedDir = join(testHome, '.openclaw-test-openclaw');
   return {
     ...actual,
-    getOpenClawResolvedDir: () => resolvedDir,
-    getOpenClawDir: () => resolvedDir,
+    getinsightAllResolvedDir: () => resolvedDir,
+    getinsightAllDir: () => resolvedDir,
   };
 });
 
 vi.mock('@electron/utils/plugin-install', () => ({
-  ensureClawXOpenAiImagePluginInstalled: ensureImagePluginInstalledMock,
+  ensureinsightAllXOpenAiImagePluginInstalled: ensureImagePluginInstalledMock,
 }));
 
-async function writeOpenClawJson(config: unknown): Promise<void> {
+async function writeinsightAllJson(config: unknown): Promise<void> {
   const openclawDir = join(testHome, '.openclaw');
   await mkdir(openclawDir, { recursive: true });
   await writeFile(join(openclawDir, 'openclaw.json'), JSON.stringify(config, null, 2), 'utf8');
 }
 
-async function readOpenClawJson(): Promise<Record<string, unknown>> {
+async function readinsightAllJson(): Promise<Record<string, unknown>> {
   const content = await readFile(join(testHome, '.openclaw', 'openclaw.json'), 'utf8');
   return JSON.parse(content) as Record<string, unknown>;
 }
@@ -81,7 +81,7 @@ describe('openclaw-image-generation helpers', () => {
   });
 
   it('reads and writes agents.defaults.imageGenerationModel', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         defaults: {
           model: { primary: 'openai/gpt-4o' },
@@ -106,7 +106,7 @@ describe('openclaw-image-generation helpers', () => {
       timeoutMs: 120_000,
     });
 
-    const saved = await readOpenClawJson();
+    const saved = await readinsightAllJson();
     const defaults = (saved.agents as Record<string, unknown>).defaults as Record<string, unknown>;
     expect(defaults.imageGenerationModel).toEqual({
       primary: 'openai/gpt-image-2',
@@ -123,7 +123,7 @@ describe('openclaw-image-generation helpers', () => {
   });
 
   it('preserves non-UI image model fields when updating image generation settings', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         defaults: {
           imageGenerationModel: {
@@ -142,7 +142,7 @@ describe('openclaw-image-generation helpers', () => {
       timeoutMs: null,
     });
 
-    const saved = await readOpenClawJson();
+    const saved = await readinsightAllJson();
     const defaults = (saved.agents as Record<string, unknown>).defaults as Record<string, unknown>;
     expect(defaults.imageGenerationModel).toEqual({
       primary: 'openai/gpt-image-2',
@@ -151,7 +151,7 @@ describe('openclaw-image-generation helpers', () => {
   });
 
   it('updates image generation settings on the running coordinator snapshot', async () => {
-    await writeOpenClawJson({ localOnly: true });
+    await writeinsightAllJson({ localOnly: true });
     let runningConfig: Record<string, unknown> = {
       gatewayOnly: true,
       agents: { defaults: { model: { primary: 'openai/gpt-4o' } } },
@@ -167,8 +167,8 @@ describe('openclaw-image-generation helpers', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
     const { setImageGenerationConfig } = await import('@electron/utils/openclaw-image-generation');
 
     const result = await setImageGenerationConfig({
@@ -192,7 +192,7 @@ describe('openclaw-image-generation helpers', () => {
         },
       },
     });
-    expect(await readOpenClawJson()).toEqual({ localOnly: true });
+    expect(await readinsightAllJson()).toEqual({ localOnly: true });
   });
 
   it('builds the image settings view from one authoritative config snapshot', async () => {
@@ -211,8 +211,8 @@ describe('openclaw-image-generation helpers', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
     const { getImageGenerationSettingsSnapshot } = await import('@electron/utils/openclaw-image-generation');
 
     const snapshot = await getImageGenerationSettingsSnapshot();
@@ -224,7 +224,7 @@ describe('openclaw-image-generation helpers', () => {
   });
 
   it('does not enable the relay when its plugin cannot be installed', async () => {
-    await writeOpenClawJson({ existing: true });
+    await writeinsightAllJson({ existing: true });
     ensureImagePluginInstalledMock.mockResolvedValue({
       installed: false,
       warning: 'plugin mirror missing',
@@ -237,6 +237,6 @@ describe('openclaw-image-generation helpers', () => {
       apiKey: 'sk-test',
     })).rejects.toThrow('plugin mirror missing');
 
-    await expect(readOpenClawJson()).resolves.toEqual({ existing: true });
+    await expect(readinsightAllJson()).resolves.toEqual({ existing: true });
   });
 });

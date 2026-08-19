@@ -1489,7 +1489,7 @@ describe('ACP Chat store', () => {
               uri: '/repo/notes.txt',
               name: 'notes.txt',
               mimeType: 'text/plain',
-              _meta: { clawx: { stagingId: 'stage-notes' } },
+              _meta: { insightallx: { stagingId: 'stage-notes' } },
             },
           ],
         },
@@ -2025,7 +2025,7 @@ describe('ACP Chat store', () => {
     });
   });
 
-  it('restores a text-only image failure after an OpenClaw inter-session completion trigger', async () => {
+  it('restores a text-only image failure after an insightAll inter-session completion trigger', async () => {
     const taskId = '0d2ee919-2dfd-4b72-9da3-d87e6ee56747';
     hostApiMock.sessionsHistory.mockResolvedValueOnce({
       success: true,
@@ -2759,7 +2759,7 @@ describe('ACP Chat store', () => {
 
   it('reprojects image-generation previews from historical ACP assistant MEDIA text', async () => {
     const taskId = '32aa3a12-a05b-4074-af4e-246cc4a9a303';
-    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png';
+    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png';
     const { ensureAcpChatSubscriptions, useAcpChatSessionStore } = await importStore();
     ensureAcpChatSubscriptions();
     await useAcpChatSessionStore.getState().loadSession({ sessionKey: 'agent:pi:s1', workspaceRoot: '/repo', cwd: '/repo' });
@@ -3371,7 +3371,7 @@ describe('ACP Chat store', () => {
     expect(JSON.stringify(transcriptTraces)).not.toContain('MEDIA:');
   });
 
-  it('projects canonical persisted OpenClaw media metadata through Main attachment resolution', async () => {
+  it('projects canonical persisted insightAll media metadata through Main attachment resolution', async () => {
     const history = createDeferred<{ success: true; messages: Array<Record<string, unknown>> }>();
     hostApiMock.sessionsHistory.mockReturnValueOnce(history.promise);
     const { ensureAcpChatSubscriptions, useAcpChatSessionStore } = await importStore();

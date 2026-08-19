@@ -19,25 +19,25 @@ import { getAllSettings } from '../utils/store';
 import { getApiKey, getDefaultProvider, getProvider } from '../utils/secure-storage';
 import { getProviderEnvVar, getKeyableProviderTypes } from '../utils/provider-registry';
 import {
-  getOpenClawConfigDir,
-  getOpenClawDir,
-  getOpenClawEntryPath,
-  getOpenClawResolvedDir,
-  getOpenClawSkillsDir,
-  isOpenClawPresent,
+  getinsightAllConfigDir,
+  getinsightAllDir,
+  getinsightAllEntryPath,
+  getinsightAllResolvedDir,
+  getinsightAllSkillsDir,
+  isinsightAllPresent,
 } from '../utils/paths';
 import { getUvMirrorEnv } from '../utils/uv-env';
-import { cleanupDanglingWeChatPluginState, listConfiguredChannelsFromConfig, readOpenClawConfig } from '../utils/channel-config';
-import { sanitizeOpenClawConfig, batchSyncConfigFields } from '../utils/openclaw-auth';
+import { cleanupDanglingWeChatPluginState, listConfiguredChannelsFromConfig, readinsightAllConfig } from '../utils/channel-config';
+import { sanitizeinsightAllConfig, batchSyncConfigFields } from '../utils/openclaw-auth';
 import { buildProxyEnv, resolveProxySettings } from '../utils/proxy';
-import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
+import { syncProxyConfigToinsightAll } from '../utils/openclaw-proxy';
 import { logger } from '../utils/logger';
 import { prependPathEntry } from '../utils/env-path';
 import { copyPluginFromNodeModules, fixupPluginManifest, cpSyncSafe, buildCandidateSources, repairTrustedOfficialPluginInstallRecords, removeTrustedOfficialPluginInstallRecord, resolvePluginNpmPackagePath } from '../utils/plugin-install';
 import { safeRmSync } from '../utils/safe-fs';
-import { CLAWX_OPENAI_IMAGE_PROVIDER_KEY } from '../utils/openclaw-image-relay-constants';
+import { INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY } from '../utils/openclaw-image-relay-constants';
 import {
-  ensureOpenClaw2026_7_1UpgradeSnapshot,
+  ensureinsightAll2026_7_1UpgradeSnapshot,
   quarantineLegacyUpdateCheckState,
 } from '../utils/openclaw-upgrade-snapshot';
 import { stripSystemdSupervisorEnv } from './config-sync-env';
@@ -82,18 +82,18 @@ const CHANNEL_PLUGIN_MAP: Record<string, { dirName: string; npmName: string }> =
   whatsapp: { dirName: 'whatsapp', npmName: '@openclaw/whatsapp' },
 
   'openclaw-weixin': { dirName: 'openclaw-weixin', npmName: '@tencent-weixin/openclaw-weixin' },
-  [CLAWX_OPENAI_IMAGE_PROVIDER_KEY]: { dirName: CLAWX_OPENAI_IMAGE_PROVIDER_KEY, npmName: 'clawx-openai-image-plugin' },
+  [INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]: { dirName: INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY, npmName: 'insightallx-openai-image-plugin' },
 };
 
 /**
- * OpenClaw ships some channel plugins as bundled extensions under
- * dist/extensions/. If ClawX previously mirrored one of those ids into
+ * insightAll ships some channel plugins as bundled extensions under
+ * dist/extensions/. If insightAllX previously mirrored one of those ids into
  * ~/.openclaw/extensions/, the stale copy overrides the bundled plugin.
  * Only remove extension copies whose id is actually bundled in the
- * currently resolved OpenClaw runtime (e.g. telegram in 2026.6.10).
+ * currently resolved insightAll runtime (e.g. telegram in 2026.6.10).
  */
-function listBundledOpenClawExtensionPluginIds(): string[] {
-  const extensionsDir = join(getOpenClawResolvedDir(), 'dist', 'extensions');
+function listBundledinsightAllExtensionPluginIds(): string[] {
+  const extensionsDir = join(getinsightAllResolvedDir(), 'dist', 'extensions');
   if (!existsSync(fsPath(extensionsDir))) {
     return [];
   }
@@ -119,7 +119,7 @@ function listBundledOpenClawExtensionPluginIds(): string[] {
 }
 
 function cleanupStaleBuiltInExtensions(): void {
-  for (const ext of listBundledOpenClawExtensionPluginIds()) {
+  for (const ext of listBundledinsightAllExtensionPluginIds()) {
     const extDir = join(homedir(), '.openclaw', 'extensions', ext);
     if (existsSync(fsPath(extDir))) {
       logger.info(`[plugin] Removing stale built-in extension copy: ${ext}`);
@@ -272,7 +272,7 @@ async function cleanupUnconfiguredChannelPluginInstallRecords(configuredChannels
   for (const [channelType, { dirName }] of Object.entries(CHANNEL_PLUGIN_MAP)) {
     if (configuredSet.has(channelType)) continue;
     // Metadata can outlive the directory (for example after an interrupted
-    // 2026.6.10 → 2026.7.1 migration). OpenClaw validates tracked records even
+    // 2026.6.10 → 2026.7.1 migration). insightAll validates tracked records even
     // when the channel is no longer configured, so reconcile this on every
     // launch rather than hiding it behind the directory-maintenance cache.
     await removeTrustedOfficialPluginInstallRecord(dirName);
@@ -298,8 +298,8 @@ function withConfiguredImageGenerationPlugins(configuredChannels: string[], rawC
   const next = [...configuredChannels];
   const primary = resolveImageGenerationPrimary(rawConfig);
   const provider = primary?.includes('/') ? primary.slice(0, primary.indexOf('/')).trim() : primary;
-  if (provider === CLAWX_OPENAI_IMAGE_PROVIDER_KEY && !next.includes(CLAWX_OPENAI_IMAGE_PROVIDER_KEY)) {
-    next.push(CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+  if (provider === INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY && !next.includes(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY)) {
+    next.push(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
   }
   return next;
 }
@@ -337,25 +337,25 @@ function buildPluginMaintenanceCacheKey(openclawDir: string, configuredChannels:
 }
 
 function buildSkillsSymlinkCleanupCacheKey(openclawDir: string): string {
-  const workspaceSkillsDir = join(getOpenClawConfigDir(), 'workspace', 'skills');
+  const workspaceSkillsDir = join(getinsightAllConfigDir(), 'workspace', 'skills');
   return buildPrelaunchMaintenanceCacheKey({
     task: 'skills-symlink-cleanup',
     appVersion: appVersionForCache(),
     openclawDir,
-    skillsDir: getOpenClawSkillsDir(),
-    skillsDirSignature: directoryChildrenSignature(getOpenClawSkillsDir()),
+    skillsDir: getinsightAllSkillsDir(),
+    skillsDirSignature: directoryChildrenSignature(getinsightAllSkillsDir()),
     workspaceSkillsDir,
     workspaceSkillsDirSignature: directoryChildrenSignature(workspaceSkillsDir),
   });
 }
 
 function buildRuntimeDepsCleanupCacheKey(openclawDir: string): string {
-  const runtimeDepsDir = join(getOpenClawConfigDir(), 'plugin-runtime-deps');
+  const runtimeDepsDir = join(getinsightAllConfigDir(), 'plugin-runtime-deps');
   return buildPrelaunchMaintenanceCacheKey({
     task: 'runtime-deps-cleanup',
     appVersion: appVersionForCache(),
     openclawDir,
-    currentOpenClawDir: getOpenClawResolvedDir(),
+    currentinsightAllDir: getinsightAllResolvedDir(),
     runtimeDepsDir,
     runtimeDepsDirSignature: directoryChildrenSignature(runtimeDepsDir),
   });
@@ -364,7 +364,7 @@ function buildRuntimeDepsCleanupCacheKey(openclawDir: string): string {
 /**
  * Ensure extension-specific packages are resolvable from shared dist/ chunks.
  *
- * OpenClaw's Rollup bundler creates shared chunks in dist/ (e.g.
+ * insightAll's Rollup bundler creates shared chunks in dist/ (e.g.
  * sticker-cache-*.js) that eagerly `import "grammy"`.  ESM bare specifier
  * resolution walks from the importing file's directory upward:
  *   dist/node_modules/ → openclaw/node_modules/ → …
@@ -459,11 +459,11 @@ export async function syncGatewayConfigBeforeLaunch(
   resetExtensionDepsLinked();
 
   await measureAsync(timingsMs, 'proxySyncMs', async () => {
-    await syncProxyConfigToOpenClaw(appSettings, { preserveExistingWhenDisabled: true });
+    await syncProxyConfigToinsightAll(appSettings, { preserveExistingWhenDisabled: true });
   });
 
   try {
-    await measureAsync(timingsMs, 'sanitizeMs', sanitizeOpenClawConfig);
+    await measureAsync(timingsMs, 'sanitizeMs', sanitizeinsightAllConfig);
   } catch (err) {
     logger.warn('Failed to sanitize openclaw.json:', err);
   }
@@ -475,7 +475,7 @@ export async function syncGatewayConfigBeforeLaunch(
   }
 
   // Remove stale copies of built-in extensions (Discord, Telegram) that
-  // override OpenClaw's working built-in plugins and break channel loading.
+  // override insightAll's working built-in plugins and break channel loading.
   try {
     measureSync(timingsMs, 'staleBuiltinExtensionCleanupMs', cleanupStaleBuiltInExtensions);
   } catch (err) {
@@ -483,7 +483,7 @@ export async function syncGatewayConfigBeforeLaunch(
   }
 
   // Remove stray symlinks under ~/.openclaw/skills whose realpath resolves
-  // inside ~/.agents/skills.  OpenClaw's hardened skill loader rejects these
+  // inside ~/.agents/skills.  insightAll's hardened skill loader rejects these
   // on every launch (reason=symlink-escape) and the underlying skills are
   // still discovered via the agents-skills-personal source, so the symlinks
   // are pure log noise.  Transitional workaround for openclaw/openclaw#59219.
@@ -498,7 +498,7 @@ export async function syncGatewayConfigBeforeLaunch(
     logger.warn('Failed to clean .agents/skills-targeted skill symlinks:', err);
   }
 
-  // Remove stale OpenClaw runtime-deps cache roots that point at an older
+  // Remove stale insightAll runtime-deps cache roots that point at an older
   // worktree/package.  Those symlink trees can make Gateway plugin setup spend
   // a long time in synchronous fs.open/copy calls before the RPC router is
   // responsive.
@@ -510,7 +510,7 @@ export async function syncGatewayConfigBeforeLaunch(
     ));
     maintenance['runtime-deps-cleanup'] = result;
   } catch (err) {
-    logger.warn('Failed to clean stale OpenClaw plugin runtime deps:', err);
+    logger.warn('Failed to clean stale insightAll plugin runtime deps:', err);
   }
 
   // Auto-upgrade installed plugins before Gateway starts so that
@@ -519,7 +519,7 @@ export async function syncGatewayConfigBeforeLaunch(
   // in openclaw.json — do NOT expand the list from plugins.allow.
   try {
     configuredChannels = await measureAsync(timingsMs, 'configuredChannelsMs', async () => {
-      const rawCfg = await readOpenClawConfig();
+      const rawCfg = await readinsightAllConfig();
       return withConfiguredImageGenerationPlugins(
         await listConfiguredChannelsFromConfig(rawCfg),
         rawCfg,
@@ -536,7 +536,7 @@ export async function syncGatewayConfigBeforeLaunch(
       },
     ));
     maintenance['plugin-maintenance'] = result;
-    // Always refresh trusted install metadata through ClawX — this must not
+    // Always refresh trusted install metadata through insightAllX — this must not
     // be skipped when plugin-maintenance is cache-hit, otherwise official
     // external plugins like WhatsApp fail openKeyedStore at runtime.
     await measureAsync(timingsMs, 'trustedPluginInstallSyncMs', async () => {
@@ -609,7 +609,7 @@ async function resolveChannelStartupPolicy(): Promise<{
   channelStartupSummary: string;
 }> {
   try {
-    const rawCfg = await readOpenClawConfig();
+    const rawCfg = await readinsightAllConfig();
     const configuredChannels = await listConfiguredChannelsFromConfig(rawCfg);
     if (configuredChannels.length === 0) {
       return {
@@ -634,23 +634,23 @@ async function resolveChannelStartupPolicy(): Promise<{
 export async function prepareGatewayLaunchContext(port: number): Promise<GatewayLaunchContext> {
   const timingsMs: Record<string, number> = {};
   const totalStartedAt = Date.now();
-  const openclawDir = getOpenClawDir();
-  const entryScript = getOpenClawEntryPath();
+  const openclawDir = getinsightAllDir();
+  const entryScript = getinsightAllEntryPath();
 
-  if (!isOpenClawPresent()) {
-    throw new Error(`OpenClaw package not found at: ${openclawDir}`);
+  if (!isinsightAllPresent()) {
+    throw new Error(`insightAll package not found at: ${openclawDir}`);
   }
 
   await measureAsync(timingsMs, 'upgradeSnapshotMs', async () => {
     try {
-      const snapshot = await ensureOpenClaw2026_7_1UpgradeSnapshot();
+      const snapshot = await ensureinsightAll2026_7_1UpgradeSnapshot();
       if (snapshot.status === 'created') {
-        logger.info(`[upgrade] Created OpenClaw 2026.7.1 pre-migration snapshot (${snapshot.files.length} files): ${snapshot.snapshotDir}`);
+        logger.info(`[upgrade] Created insightAll 2026.7.1 pre-migration snapshot (${snapshot.files.length} files): ${snapshot.snapshotDir}`);
       }
     } catch (error) {
-      // OpenClaw also maintains migration-specific backups. Keep startup
-      // available if the additional ClawX safety snapshot cannot be written.
-      logger.warn('[upgrade] Failed to create OpenClaw 2026.7.1 pre-migration snapshot:', error);
+      // insightAll also maintains migration-specific backups. Keep startup
+      // available if the additional insightAllX safety snapshot cannot be written.
+      logger.warn('[upgrade] Failed to create insightAll 2026.7.1 pre-migration snapshot:', error);
     }
   });
 
@@ -673,7 +673,7 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
   ));
 
   if (!existsSync(entryScript)) {
-    throw new Error(`OpenClaw entry script not found at: ${entryScript}`);
+    throw new Error(`insightAll entry script not found at: ${entryScript}`);
   }
 
   const gatewayArgs = ['gateway', '--port', String(port), '--token', appSettings.gatewayToken, '--allow-unconfigured'];
@@ -713,9 +713,9 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
     OPENCLAW_GATEWAY_TOKEN: appSettings.gatewayToken,
     OPENCLAW_SKIP_CHANNELS: skipChannels ? '1' : '',
     OPENCLAW_NO_RESPAWN: '1',
-    // Disable OpenClaw's interactive-shell env snapshot. When the Gateway runs
+    // Disable insightAll's interactive-shell env snapshot. When the Gateway runs
     // as an Electron utilityProcess, `process.execPath` is the Electron binary,
-    // and OpenClaw captures the shell env by spawning `process.execPath -e
+    // and insightAll captures the shell env by spawning `process.execPath -e
     // <script>` inside a sanitized login shell that strips ELECTRON_RUN_AS_NODE.
     // Electron then treats the script as an app path and pops up "Unable to find
     // Electron app at <cwd>/const safe = new Set(...)". Turning the snapshot off

@@ -6,17 +6,17 @@ import { tmpdir } from 'node:os';
 import { DatabaseSync } from 'node:sqlite';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const testOpenClawDir = join(tmpdir(), `clawx-session-workspace-${process.pid}`);
-const testOpenClawConfigDir = join(tmpdir(), `clawx-session-config-${process.pid}`);
+const testinsightAllDir = join(tmpdir(), `insightallx-session-workspace-${process.pid}`);
+const testinsightAllConfigDir = join(tmpdir(), `insightallx-session-config-${process.pid}`);
 
 vi.mock('@electron/utils/paths', () => ({
-  getOpenClawConfigDir: () => testOpenClawDir,
-  resolveOpenClawStateDir: () => testOpenClawDir,
-  resolveOpenClawConfigDir: () => testOpenClawConfigDir,
+  getinsightAllConfigDir: () => testinsightAllDir,
+  resolveinsightAllStateDir: () => testinsightAllDir,
+  resolveinsightAllConfigDir: () => testinsightAllConfigDir,
 }));
 
 function seedAcpCwd(sessionKey: string, cwd: string) {
-  const stateDir = join(testOpenClawDir, 'state');
+  const stateDir = join(testinsightAllDir, 'state');
   mkdirSync(stateDir, { recursive: true });
   const db = new DatabaseSync(join(stateDir, 'openclaw.sqlite'));
   try {
@@ -28,7 +28,7 @@ function seedAcpCwd(sessionKey: string, cwd: string) {
 }
 
 function seedAcpReplayCwd(sessionKey: string, cwd: string, updatedAt = 2000) {
-  const stateDir = join(testOpenClawDir, 'state');
+  const stateDir = join(testinsightAllDir, 'state');
   mkdirSync(stateDir, { recursive: true });
   const db = new DatabaseSync(join(stateDir, 'openclaw.sqlite'));
   try {
@@ -41,7 +41,7 @@ function seedAcpReplayCwd(sessionKey: string, cwd: string, updatedAt = 2000) {
 }
 
 function seedAcpRuntimeOptionsCwd(sessionKey: string, cwd: string) {
-  const stateDir = join(testOpenClawDir, 'state');
+  const stateDir = join(testinsightAllDir, 'state');
   mkdirSync(stateDir, { recursive: true });
   const db = new DatabaseSync(join(stateDir, 'openclaw.sqlite'));
   try {
@@ -54,7 +54,7 @@ function seedAcpRuntimeOptionsCwd(sessionKey: string, cwd: string) {
 }
 
 function seedTranscript(sessionKey: string, messages: unknown[]) {
-  const sessionsDir = join(testOpenClawDir, 'agents', 'main', 'sessions');
+  const sessionsDir = join(testinsightAllDir, 'agents', 'main', 'sessions');
   mkdirSync(sessionsDir, { recursive: true });
   writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({ [sessionKey]: 'heartbeat.jsonl' }), 'utf8');
   writeFileSync(
@@ -65,7 +65,7 @@ function seedTranscript(sessionKey: string, messages: unknown[]) {
 }
 
 function seedTranscriptRecords(sessionKey: string, records: unknown[]) {
-  const sessionsDir = join(testOpenClawDir, 'agents', 'main', 'sessions');
+  const sessionsDir = join(testinsightAllDir, 'agents', 'main', 'sessions');
   mkdirSync(sessionsDir, { recursive: true });
   writeFileSync(join(sessionsDir, 'sessions.json'), JSON.stringify({ [sessionKey]: 'timings.jsonl' }), 'utf8');
   writeFileSync(
@@ -77,8 +77,8 @@ function seedTranscriptRecords(sessionKey: string, records: unknown[]) {
 
 describe('sessions API workspace summaries', () => {
   beforeEach(() => {
-    rmSync(testOpenClawDir, { recursive: true, force: true });
-    rmSync(testOpenClawConfigDir, { recursive: true, force: true });
+    rmSync(testinsightAllDir, { recursive: true, force: true });
+    rmSync(testinsightAllConfigDir, { recursive: true, force: true });
   });
 
   it('loads transcript history from the state dir when the config path is elsewhere', async () => {
@@ -87,8 +87,8 @@ describe('sessions API workspace summaries', () => {
       content: 'state transcript',
       timestamp: 10_000,
     }]);
-    mkdirSync(testOpenClawConfigDir, { recursive: true });
-    writeFileSync(join(testOpenClawConfigDir, 'openclaw.json'), '{}');
+    mkdirSync(testinsightAllConfigDir, { recursive: true });
+    writeFileSync(join(testinsightAllConfigDir, 'openclaw.json'), '{}');
     const { createSessionsApi } = await import('@electron/services/sessions-api');
 
     await expect(createSessionsApi().history({
@@ -218,8 +218,8 @@ describe('sessions API workspace summaries', () => {
     });
   });
 
-  it('returns OpenClaw ACP cwd as workspacePath when available', async () => {
-    seedAcpCwd('agent:main:session-a', '/Users/alex/workspace/ClawX');
+  it('returns insightAll ACP cwd as workspacePath when available', async () => {
+    seedAcpCwd('agent:main:session-a', '/Users/alex/workspace/insightAllX');
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const api = createSessionsApi();
 
@@ -228,7 +228,7 @@ describe('sessions API workspace summaries', () => {
     expect(result.success).toBe(true);
     expect(result.summaries?.[0]).toMatchObject({
       sessionKey: 'agent:main:session-a',
-      workspacePath: '/Users/alex/workspace/ClawX',
+      workspacePath: '/Users/alex/workspace/insightAllX',
     });
   });
 
@@ -260,7 +260,7 @@ describe('sessions API workspace summaries', () => {
     });
   });
 
-  it('returns null workspacePath when OpenClaw cwd is unavailable', async () => {
+  it('returns null workspacePath when insightAll cwd is unavailable', async () => {
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const api = createSessionsApi();
 
@@ -277,7 +277,7 @@ describe('sessions API workspace summaries', () => {
     seedTranscript('agent:main:session-heartbeat', [
       {
         role: 'user',
-        content: '[OpenClaw heartbeat poll]',
+        content: '[insightAll heartbeat poll]',
         timestamp: 9_000,
       },
     ]);

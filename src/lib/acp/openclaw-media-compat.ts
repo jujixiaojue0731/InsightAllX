@@ -8,7 +8,7 @@ const WINDOWS_ABSOLUTE_RE = /^[A-Za-z]:[\\/]/;
 const FENCE_OPEN_RE = /^ {0,3}(`{3,}|~{3,})(.*)$/;
 const FENCE_CLOSE_RE = /^ {0,3}(`{3,}|~{3,})[ \t]*$/;
 
-export type OpenClawMediaCandidate = {
+export type insightAllMediaCandidate = {
   evidenceId: string;
   transcriptMessageId?: string;
   uri: string;
@@ -18,19 +18,19 @@ export type OpenClawMediaCandidate = {
   order: number;
 };
 
-export type OpenClawMediaTurnSupplement = {
+export type insightAllMediaTurnSupplement = {
   acpTurnId: string;
-  candidates: OpenClawMediaCandidate[];
+  candidates: insightAllMediaCandidate[];
 };
 
 export type TranscriptMediaTurn = {
   normalizedUserText: string;
   userOccurrenceFromTail: number;
-  candidates: OpenClawMediaCandidate[];
+  candidates: insightAllMediaCandidate[];
 };
 
 type MutableTranscriptTurn = Omit<TranscriptMediaTurn, 'userOccurrenceFromTail'>;
-type PendingMediaCandidate = Omit<OpenClawMediaCandidate, 'evidenceId'> & { evidenceSeed: string };
+type PendingMediaCandidate = Omit<insightAllMediaCandidate, 'evidenceId'> & { evidenceSeed: string };
 type PendingTranscriptTurn = Omit<MutableTranscriptTurn, 'candidates'> & { candidates: PendingMediaCandidate[] };
 
 export type AcpUserTurn = {
@@ -212,7 +212,7 @@ function assignOccurrencesFromTail<T extends { normalizedUserText: string }>(tur
   return result;
 }
 
-export function extractOpenClawMediaTurns(
+export function extractinsightAllMediaTurns(
   messages: RawMessage[],
   input: { executionCwd: string; suppressedUris: ReadonlySet<string> },
 ): TranscriptMediaTurn[] {
@@ -281,8 +281,8 @@ export function extractOpenClawMediaTurns(
 }
 
 function userPromptText(item: MessageSegmentItem): string {
-  // OpenClaw ACP does not project assistant MEDIA attachments, so ClawX reads a
-  // bounded transcript supplement. Use the prompt text OpenClaw flattened from
+  // insightAll ACP does not project assistant MEDIA attachments, so insightAllX reads a
+  // bounded transcript supplement. Use the prompt text insightAll flattened from
   // structured ACP blocks to align that evidence without parsing user prose.
   if (item.userPromptTextBlocks) return item.userPromptTextBlocks.join('\n');
   return item.parts
@@ -318,7 +318,7 @@ export function turnMatchKey(turn: { normalizedUserText: string; userOccurrenceF
   return JSON.stringify([turn.normalizedUserText, turn.userOccurrenceFromTail]);
 }
 
-export function selectOpenClawTranscriptTurn(
+export function selectinsightAllTranscriptTurn(
   messages: RawMessage[],
   snapshot: AcpTimelineSnapshot,
   liveUserMessageId: string,
@@ -345,11 +345,11 @@ export function selectOpenClawTranscriptTurn(
   return matches.length === 1 ? matches[0]!.messages : [];
 }
 
-export function alignOpenClawMediaTurns(
+export function aligninsightAllMediaTurns(
   snapshot: AcpTimelineSnapshot,
   transcriptTurns: TranscriptMediaTurn[],
   input: { liveUserMessageId?: string },
-): OpenClawMediaTurnSupplement[] {
+): insightAllMediaTurnSupplement[] {
   const acpTurns = acpUserTurns(snapshot);
   const eligibleAcpTurns = input.liveUserMessageId
     ? acpTurns.filter((turn) => turn.messageIds.has(input.liveUserMessageId!))
@@ -364,7 +364,7 @@ export function alignOpenClawMediaTurns(
     else acpByKey.set(key, turn);
   }
 
-  const supplements: OpenClawMediaTurnSupplement[] = [];
+  const supplements: insightAllMediaTurnSupplement[] = [];
   for (const transcriptTurn of transcriptTurns) {
     if (transcriptTurn.candidates.length === 0) continue;
     const key = turnMatchKey(transcriptTurn);
@@ -376,6 +376,6 @@ export function alignOpenClawMediaTurns(
   return supplements;
 }
 
-export function hashOpenClawMediaDiagnostic(value: string): string {
+export function hashinsightAllMediaDiagnostic(value: string): string {
   return stableHash(value);
 }

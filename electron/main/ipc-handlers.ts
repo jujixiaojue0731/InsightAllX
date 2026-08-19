@@ -12,14 +12,14 @@ import { ClawHubService } from '../gateway/clawhub';
 import {
   type ProviderConfig,
 } from '../utils/secure-storage';
-import { getOpenClawStatus, getOpenClawSkillsDir, ensureDir, expandPath } from '../utils/paths';
-import { getOpenClawCliCommand } from '../utils/openclaw-cli';
+import { getinsightAllStatus, getinsightAllSkillsDir, ensureDir, expandPath } from '../utils/paths';
+import { getinsightAllCliCommand } from '../utils/openclaw-cli';
 import { getAllSettings, getSetting, resetSettings, setSetting, type AppSettings } from '../utils/store';
 import {
-  saveProviderKeyToOpenClaw,
-  removeProviderFromOpenClaw,
+  saveProviderKeyToinsightAll,
+  removeProviderFrominsightAll,
 } from '../utils/openclaw-auth';
-import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
+import { syncProxyConfigToinsightAll } from '../utils/openclaw-proxy';
 import { logger } from '../utils/logger';
 import { resolveAgentIdFromChannel } from '../utils/agent-config';
 import { resolveAccountIdFromSessionHistory } from '../utils/session-util';
@@ -30,7 +30,7 @@ import { syncLaunchAtStartupSettingFromStore } from './launch-at-startup';
 import { getRecentTokenUsageHistory } from '../utils/token-usage';
 import { getProviderService } from '../services/providers/provider-service';
 import {
-  getOpenClawProviderKey,
+  getinsightAllProviderKey,
   syncDefaultProviderToRuntime,
   syncDeletedProviderApiKeyToRuntime,
   syncDeletedProviderToRuntime,
@@ -42,7 +42,7 @@ import { validateApiKeyWithProvider } from '../services/providers/provider-valid
 import { appUpdater } from './updater';
 import { HostApiRegistry, registerHostInvokeHandler } from './ipc/host-invoke';
 import { createAppApi } from '../services/app-api';
-import { createOpenClawApi } from '../services/openclaw-api';
+import { createinsightAllApi } from '../services/openclaw-api';
 import { createShellApi } from '../services/shell-api';
 import { createDialogApi } from '../services/dialog-api';
 import { createWindowApi } from '../services/window-api';
@@ -102,8 +102,8 @@ export function registerIpcHandlers(
   // Gateway handlers
   registerGatewayHandlers(gatewayManager);
 
-  // OpenClaw handlers
-  registerOpenClawHandlers();
+  // insightAll handlers
+  registerinsightAllHandlers();
 
   // Provider handlers
   registerProviderHandlers(gatewayManager);
@@ -154,7 +154,7 @@ function registerTypedHostHandlers(
   });
   hostApiRegistry.registerCoreServices({
     app: createAppApi(),
-    openclaw: createOpenClawApi(),
+    openclaw: createinsightAllApi(),
     shell: createShellApi(),
     webBrowser: createWebBrowserApi({ browserSession, registry }),
     dialog: createDialogApi(),
@@ -186,7 +186,7 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
   const providerService = getProviderService();
   const handleProxySettingsChange = async () => {
     const settings = await getAllSettings();
-    await syncProxyConfigToOpenClaw(settings, { preserveExistingWhenDisabled: false });
+    await syncProxyConfigToinsightAll(settings, { preserveExistingWhenDisabled: false });
     await applyProxySettings(settings);
     if (gatewayManager.getStatus().state === 'running') {
       await gatewayManager.restart();
@@ -331,8 +331,8 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
               await providerService.setLegacyProviderApiKey(providerId, apiKey);
               const provider = await providerService.getLegacyProvider(providerId);
               const providerType = provider?.type || providerId;
-              const ock = getOpenClawProviderKey(providerType, providerId);
-              await saveProviderKeyToOpenClaw(ock, apiKey);
+              const ock = getinsightAllProviderKey(providerType, providerId);
+              await saveProviderKeyToinsightAll(ock, apiKey);
               data = { success: true };
             } catch (error) {
               data = { success: false, error: String(error) };
@@ -356,7 +356,7 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
             }
 
             const previousKey = await providerService.getLegacyProviderApiKey(providerId);
-            const previousOck = getOpenClawProviderKey(existing.type, providerId);
+            const previousOck = getinsightAllProviderKey(existing.type, providerId);
 
             try {
               const nextConfig: ProviderConfig = {
@@ -364,17 +364,17 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
                 ...updates,
                 updatedAt: new Date().toISOString(),
               };
-              const ock = getOpenClawProviderKey(nextConfig.type, providerId);
+              const ock = getinsightAllProviderKey(nextConfig.type, providerId);
               await providerService.saveLegacyProvider(nextConfig);
 
               if (apiKey !== undefined) {
                 const trimmedKey = apiKey.trim();
                 if (trimmedKey) {
                   await providerService.setLegacyProviderApiKey(providerId, trimmedKey);
-                  await saveProviderKeyToOpenClaw(ock, trimmedKey);
+                  await saveProviderKeyToinsightAll(ock, trimmedKey);
                 } else {
                   await providerService.deleteLegacyProviderApiKey(providerId);
-                  await removeProviderFromOpenClaw(ock);
+                  await removeProviderFrominsightAll(ock);
                 }
               }
 
@@ -386,10 +386,10 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
                 await providerService.saveLegacyProvider(existing);
                 if (previousKey) {
                   await providerService.setLegacyProviderApiKey(providerId, previousKey);
-                  await saveProviderKeyToOpenClaw(previousOck, previousKey);
+                  await saveProviderKeyToinsightAll(previousOck, previousKey);
                 } else {
                   await providerService.deleteLegacyProviderApiKey(providerId);
-                  await removeProviderFromOpenClaw(previousOck);
+                  await removeProviderFrominsightAll(previousOck);
                 }
               } catch (rollbackError) {
                 console.warn('Failed to rollback provider updateWithKey:', rollbackError);
@@ -407,9 +407,9 @@ function registerUnifiedRequestHandlers(gatewayManager: GatewayManager): void {
               await providerService.deleteLegacyProviderApiKey(providerId);
               const provider = await providerService.getLegacyProvider(providerId);
               const providerType = provider?.type || providerId;
-              const ock = getOpenClawProviderKey(providerType, providerId);
+              const ock = getinsightAllProviderKey(providerType, providerId);
               if (ock) {
-                await removeProviderFromOpenClaw(ock);
+                await removeProviderFrominsightAll(ock);
               }
               data = { success: true };
             } catch (error) {
@@ -709,35 +709,35 @@ function registerGatewayHandlers(gatewayManager: GatewayManager): void {
 }
 
 /**
- * OpenClaw-related IPC handlers
+ * insightAll-related IPC handlers
  * For checking package status and channel configuration
  */
-function registerOpenClawHandlers(): void {
-  // Get OpenClaw package status
+function registerinsightAllHandlers(): void {
+  // Get insightAll package status
   ipcMain.handle('openclaw:status', () => {
-    const status = getOpenClawStatus();
+    const status = getinsightAllStatus();
     logger.info('openclaw:status IPC called', status);
     return status;
   });
 
-  // Get the OpenClaw skills directory (~/.openclaw/skills)
+  // Get the insightAll skills directory (~/.openclaw/skills)
   ipcMain.handle('openclaw:getSkillsDir', () => {
-    const dir = getOpenClawSkillsDir();
+    const dir = getinsightAllSkillsDir();
     ensureDir(dir);
     return dir;
   });
 
-  // Get a shell command to run OpenClaw CLI without modifying PATH
+  // Get a shell command to run insightAll CLI without modifying PATH
   ipcMain.handle('openclaw:getCliCommand', () => {
     try {
-      const status = getOpenClawStatus();
+      const status = getinsightAllStatus();
       if (!status.packageExists) {
-        return { success: false, error: `OpenClaw package not found at: ${status.dir}` };
+        return { success: false, error: `insightAll package not found at: ${status.dir}` };
       }
       if (!existsSync(status.entryPath)) {
-        return { success: false, error: `OpenClaw entry script not found at: ${status.entryPath}` };
+        return { success: false, error: `insightAll entry script not found at: ${status.entryPath}` };
       }
-      return { success: true, command: getOpenClawCliCommand() };
+      return { success: true, command: getinsightAllCliCommand() };
     } catch (error) {
       return { success: false, error: String(error) };
     }
@@ -809,7 +809,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
         if (trimmedKey) {
           await providerService.setLegacyProviderApiKey(config.id, trimmedKey);
 
-          // Also write to OpenClaw auth-profiles.json so the gateway can use it
+          // Also write to insightAll auth-profiles.json so the gateway can use it
           await syncProviderApiKeyToRuntime(config.type, config.id, trimmedKey);
         }
       }
@@ -845,7 +845,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
     try {
       await providerService.setLegacyProviderApiKey(providerId, apiKey);
 
-      // Also write to OpenClaw auth-profiles.json
+      // Also write to insightAll auth-profiles.json
       const provider = await providerService.getLegacyProvider(providerId);
       const providerType = provider?.type || providerId;
       await syncProviderApiKeyToRuntime(providerType, providerId, apiKey);
@@ -872,7 +872,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
       }
 
       const previousKey = await providerService.getLegacyProviderApiKey(providerId);
-      const previousOck = getOpenClawProviderKey(existing.type, providerId);
+      const previousOck = getinsightAllProviderKey(existing.type, providerId);
 
       try {
         const nextConfig: ProviderConfig = {
@@ -881,7 +881,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
           updatedAt: new Date().toISOString(),
         };
 
-        const ock = getOpenClawProviderKey(nextConfig.type, providerId);
+        const ock = getinsightAllProviderKey(nextConfig.type, providerId);
 
         await providerService.saveLegacyProvider(nextConfig);
 
@@ -892,7 +892,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
             await syncProviderApiKeyToRuntime(nextConfig.type, providerId, trimmedKey);
           } else {
             await providerService.deleteLegacyProviderApiKey(providerId);
-            await removeProviderFromOpenClaw(ock);
+            await removeProviderFrominsightAll(ock);
           }
         }
 
@@ -906,10 +906,10 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
           await providerService.saveLegacyProvider(existing);
           if (previousKey) {
             await providerService.setLegacyProviderApiKey(providerId, previousKey);
-            await saveProviderKeyToOpenClaw(previousOck, previousKey);
+            await saveProviderKeyToinsightAll(previousOck, previousKey);
           } else {
             await providerService.deleteLegacyProviderApiKey(providerId);
-            await removeProviderFromOpenClaw(previousOck);
+            await removeProviderFrominsightAll(previousOck);
           }
         } catch (rollbackError) {
           console.warn('Failed to rollback provider updateWithKey:', rollbackError);
@@ -926,7 +926,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
     try {
       await providerService.deleteLegacyProviderApiKey(providerId);
 
-      // Keep OpenClaw auth-profiles.json in sync with local key storage
+      // Keep insightAll auth-profiles.json in sync with local key storage
       const provider = await providerService.getLegacyProvider(providerId);
       await syncDeletedProviderApiKeyToRuntime(provider, providerId);
 
@@ -948,13 +948,13 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
     return await providerService.getLegacyProviderApiKey(providerId);
   });
 
-  // Set default provider and update OpenClaw default model
+  // Set default provider and update insightAll default model
   ipcMain.handle('provider:setDefault', async (_, providerId: string) => {
     logLegacyProviderChannel('provider:setDefault');
     try {
       await providerService.setDefaultLegacyProvider(providerId);
 
-      // Update OpenClaw config to use this provider's default model
+      // Update insightAll config to use this provider's default model
       await syncDefaultProviderToRuntime(providerId, gatewayManager);
 
       return { success: true };
@@ -995,7 +995,7 @@ function registerProviderHandlers(gatewayManager: GatewayManager): void {
         const resolvedBaseUrl = options?.baseUrl || provider?.baseUrl || registryBaseUrl;
         const resolvedProtocol = options?.apiProtocol || provider?.apiProtocol;
 
-        console.log(`[clawx-validate] validating provider type: ${providerType}`);
+        console.log(`[insightallx-validate] validating provider type: ${providerType}`);
         return await validateApiKeyWithProvider(providerType, apiKey, {
           baseUrl: resolvedBaseUrl,
           apiProtocol: resolvedProtocol,
@@ -1077,7 +1077,7 @@ function registerAppHandlers(): void {
 function registerSettingsHandlers(gatewayManager: GatewayManager): void {
   const handleProxySettingsChange = async () => {
     const settings = await getAllSettings();
-    await syncProxyConfigToOpenClaw(settings, { preserveExistingWhenDisabled: false });
+    await syncProxyConfigToinsightAll(settings, { preserveExistingWhenDisabled: false });
     await applyProxySettings(settings);
     if (gatewayManager.getStatus().state === 'running') {
       await gatewayManager.restart();
@@ -1332,7 +1332,7 @@ async function resolveSandboxedPath(
   if (typeof input !== 'string' || !input.trim()) {
     throw new Error('outsideSandbox');
   }
-  // OpenClaw stores agent.workspace / agentDir paths as `~/.openclaw/...`
+  // insightAll stores agent.workspace / agentDir paths as `~/.openclaw/...`
   // literals; expand the tilde before realpath so sandbox resolution
   // matches what the user actually sees on disk.
   const expanded = expandPath(input);

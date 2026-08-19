@@ -5,20 +5,20 @@ import { join } from 'path';
 import { PORTS } from './config';
 import { prependPathEntry } from './env-path';
 import { logger } from './logger';
-import { getOpenClawConfigDir, getOpenClawDir, getOpenClawEntryPath } from './paths';
+import { getinsightAllConfigDir, getinsightAllDir, getinsightAllEntryPath } from './paths';
 import { getSetting } from './store';
 import { getUvMirrorEnv } from './uv-env';
 
-/** Browser Control UI client id used in OpenClaw 2026.5.x connect frames. */
+/** Browser Control UI client id used in insightAll 2026.5.x connect frames. */
 export const CONTROL_UI_BROWSER_CLIENT_ID = 'openclaw-control-ui';
 
-/** ClawX Gateway WebSocket client id used in connect frames. */
+/** insightAllX Gateway WebSocket client id used in connect frames. */
 export const GATEWAY_UI_CLIENT_ID = 'gateway-client';
 
-/** OpenClaw embedded CLI client id (ACP bridge, doctor, etc.). */
+/** insightAll embedded CLI client id (ACP bridge, doctor, etc.). */
 export const OPENCLAW_CLI_CLIENT_ID = 'cli';
 
-/** Loopback-only clients that ClawX auto-approves without user interaction. */
+/** Loopback-only clients that insightAllX auto-approves without user interaction. */
 export const LOCAL_AUTO_APPROVE_CLIENT_IDS = new Set([
   CONTROL_UI_BROWSER_CLIENT_ID,
   GATEWAY_UI_CLIENT_ID,
@@ -84,7 +84,7 @@ function resolveWatchTimeoutMs(explicit?: number): number {
 
 /** Read ~/.openclaw/devices/pending.json (same store the Gateway uses on loopback). */
 export async function readLocalPendingPairingRequests(): Promise<PendingDevicePairingRequest[]> {
-  const pendingPath = join(getOpenClawConfigDir(), 'devices', 'pending.json');
+  const pendingPath = join(getinsightAllConfigDir(), 'devices', 'pending.json');
   try {
     const raw = await readFile(pendingPath, 'utf8');
     const parsed = JSON.parse(raw) as Record<string, PendingDevicePairingRequest>;
@@ -129,13 +129,13 @@ function getBundledBinPath(): string {
 
 /**
  * Run `openclaw devices approve` in-process (not shown to the user).
- * OpenClaw falls back to local pending.json on loopback when RPC is unavailable.
+ * insightAll falls back to local pending.json on loopback when RPC is unavailable.
  */
-async function approveViaOpenClawCli(requestId: string, _port: number): Promise<boolean> {
-  const entryScript = getOpenClawEntryPath();
-  const openclawDir = getOpenClawDir();
+async function approveViainsightAllCli(requestId: string, _port: number): Promise<boolean> {
+  const entryScript = getinsightAllEntryPath();
+  const openclawDir = getinsightAllDir();
   if (!existsSync(entryScript)) {
-    logger.warn('[control-ui] Cannot run devices approve: OpenClaw entry missing');
+    logger.warn('[control-ui] Cannot run devices approve: insightAll entry missing');
     return false;
   }
 
@@ -157,7 +157,7 @@ async function approveViaOpenClawCli(requestId: string, _port: number): Promise<
         ...baseEnv,
         ...uvEnv,
         OPENCLAW_NO_RESPAWN: '1',
-        OPENCLAW_EMBEDDED_IN: 'ClawX',
+        OPENCLAW_EMBEDDED_IN: 'insightAllX',
       } as NodeJS.ProcessEnv,
     });
 
@@ -207,7 +207,7 @@ async function approvePairingRequest(
     }
   }
 
-  return approveViaOpenClawCli(requestId, port);
+  return approveViainsightAllCli(requestId, port);
 }
 
 function sleep(ms: number, signal: { cancelled: boolean }): Promise<void> {

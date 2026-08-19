@@ -22,7 +22,7 @@ describe('plugin install index sqlite persistence', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    stateDir = mkdtempSync(join(tmpdir(), 'clawx-openclaw-state-'));
+    stateDir = mkdtempSync(join(tmpdir(), 'insightallx-openclaw-state-'));
     previousStateDir = process.env.OPENCLAW_STATE_DIR;
     process.env.OPENCLAW_STATE_DIR = stateDir;
   });

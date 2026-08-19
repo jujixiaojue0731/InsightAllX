@@ -9,7 +9,7 @@ export const OPENCLAW_WECHAT_CHANNEL_TYPE = 'openclaw-weixin';
 
 export type QrChannelEvent = 'qr' | 'success' | 'error';
 
-export function toOpenClawChannelType(channelType: string): string {
+export function toinsightAllChannelType(channelType: string): string {
   return channelType === UI_WECHAT_CHANNEL_TYPE ? OPENCLAW_WECHAT_CHANNEL_TYPE : channelType;
 }
 
@@ -39,7 +39,7 @@ function canonicalizeAccountId(value: string): string {
     .slice(0, 64);
 }
 
-export function normalizeOpenClawAccountId(value: string | null | undefined, fallback = 'default'): string {
+export function normalizeinsightAllAccountId(value: string | null | undefined, fallback = 'default'): string {
   const trimmed = (value ?? '').trim();
   if (!trimmed) return fallback;
   const normalized = canonicalizeAccountId(trimmed);
@@ -49,8 +49,8 @@ export function normalizeOpenClawAccountId(value: string | null | undefined, fal
   return normalized;
 }
 
-export function isCanonicalOpenClawAccountId(value: string | null | undefined): boolean {
+export function isCanonicalinsightAllAccountId(value: string | null | undefined): boolean {
   const trimmed = (value ?? '').trim();
   if (!trimmed) return false;
-  return normalizeOpenClawAccountId(trimmed, '') === trimmed;
+  return normalizeinsightAllAccountId(trimmed, '') === trimmed;
 }

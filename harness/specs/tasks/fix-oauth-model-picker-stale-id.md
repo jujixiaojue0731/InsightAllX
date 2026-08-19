@@ -3,7 +3,7 @@ id: fix-oauth-model-picker-stale-id
 title: Hide stale OAuth model IDs after provider edits
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Keep the chat model picker aligned with the currently selected OAuth model while preserving historical OpenClaw model metadata and normalizing provider-prefixed model input before runtime sync.
+intent: Keep the chat model picker aligned with the currently selected OAuth model while preserving historical insightAll model metadata and normalizing provider-prefixed model input before runtime sync.
 touchedAreas:
   - harness/specs/tasks/fix-oauth-model-picker-stale-id.md
   - harness/specs/rules/provider-model-selection-authority.md
@@ -33,7 +33,7 @@ requiredTests:
   - tests/e2e/chat-model-picker.spec.ts
 acceptance:
   - OAuth browser accounts with an explicit account.model contribute only that normalized model to the chat picker.
-  - Provider-prefixed selected model IDs are stripped exactly once before OpenClaw provider and default-model synchronization.
+  - Provider-prefixed selected model IDs are stripped exactly once before insightAll provider and default-model synchronization.
   - Existing models.providers rows remain merged by exact ID so model capability metadata is not deleted.
   - Custom provider multi-model picker behavior remains unchanged.
   - Focused tests, harness validation, communication replay, and communication compare pass.
@@ -43,7 +43,7 @@ docs:
 
 ## Background
 
-OpenClaw provider synchronization intentionally retains existing model rows to
+insightAll provider synchronization intentionally retains existing model rows to
 preserve capability metadata. Provider account snapshots copy those rows into
 `metadata.customModels`, but the chat picker previously treated that historical
 list as authoritative even after an OAuth account's selected model changed.
@@ -52,7 +52,7 @@ list as authoritative even after an OAuth account's selected model changed.
 
 - Make the explicit OAuth account model authoritative for chat picker options.
 - Normalize a matching runtime-provider prefix before runtime configuration writes.
-- Preserve custom-provider multi-model options and OpenClaw model-row metadata.
+- Preserve custom-provider multi-model options and insightAll model-row metadata.
 - Cover the visible picker behavior with Electron E2E.
 
 ## Out Of Scope

@@ -6,8 +6,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData, mockLoggerWarn, mockLoggerInfo, mockLoggerError } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/clawx-channel-config-${suffix}`,
-    testUserData: `/tmp/clawx-channel-config-user-data-${suffix}`,
+    testHome: `/tmp/insightallx-channel-config-${suffix}`,
+    testUserData: `/tmp/insightallx-channel-config-user-data-${suffix}`,
     mockLoggerWarn: vi.fn(),
     mockLoggerInfo: vi.fn(),
     mockLoggerError: vi.fn(),
@@ -41,12 +41,12 @@ vi.mock('@electron/utils/logger', () => ({
   error: mockLoggerError,
 }));
 
-async function readOpenClawJson(): Promise<Record<string, unknown>> {
+async function readinsightAllJson(): Promise<Record<string, unknown>> {
   const content = await readFile(join(testHome, '.openclaw', 'openclaw.json'), 'utf8');
   return JSON.parse(content) as Record<string, unknown>;
 }
 
-async function writeOpenClawJson(config: unknown): Promise<void> {
+async function writeinsightAllJson(config: unknown): Promise<void> {
   const openclawDir = join(testHome, '.openclaw');
   await mkdir(openclawDir, { recursive: true });
   await writeFile(join(openclawDir, 'openclaw.json'), JSON.stringify(config, null, 2), 'utf8');
@@ -88,7 +88,7 @@ describe('channel credential normalization and duplicate checks', () => {
 
     await saveChannelConfig('feishu', { appId: '  BoT-XyZ  ', appSecret: 'secret' }, 'agent-a');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const channels = config.channels as Record<string, { accounts: Record<string, { appId?: string }> }>;
     // Should trim whitespace but preserve original case
     expect(channels.feishu.accounts['agent-a'].appId).toBe('BoT-XyZ');
@@ -158,7 +158,7 @@ describe('WeCom plugin configuration', () => {
 
     await saveChannelConfig('wecom', { botId: 'test-bot', secret: 'test-secret' }, 'agent-a');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const plugins = config.plugins as { allow: string[], entries: Record<string, { enabled?: boolean }> };
     
     expect(plugins.allow).toContain('wecom');
@@ -168,7 +168,7 @@ describe('WeCom plugin configuration', () => {
   it('normalizes feishu plugin registration to openclaw-lark and removes built-in feishu on save', async () => {
     const { saveChannelConfig } = await import('@electron/utils/channel-config');
 
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         enabled: true,
         allow: ['custom-plugin', 'feishu', 'feishu-openclaw-plugin'],
@@ -182,7 +182,7 @@ describe('WeCom plugin configuration', () => {
 
     await saveChannelConfig('feishu', { appId: 'test-app', appSecret: 'test-secret' }, 'default');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const plugins = config.plugins as { allow: string[]; entries: Record<string, { enabled?: boolean }> };
 
     expect(plugins.allow).toContain('custom-plugin');
@@ -199,7 +199,7 @@ describe('WeCom plugin configuration', () => {
 
     await saveChannelConfig('whatsapp', { enabled: true }, 'default');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const channels = config.channels as Record<string, { enabled?: boolean; defaultAccount?: string; accounts?: Record<string, { enabled?: boolean }> }>;
     const plugins = config.plugins as { allow: string[]; entries: Record<string, Record<string, unknown>> };
 
@@ -213,7 +213,7 @@ describe('WeCom plugin configuration', () => {
   it('keeps whatsapp plugin registration when saving plugin-backed config', async () => {
     const { saveChannelConfig } = await import('@electron/utils/channel-config');
 
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         enabled: true,
         allow: ['whatsapp'],
@@ -225,7 +225,7 @@ describe('WeCom plugin configuration', () => {
 
     await saveChannelConfig('whatsapp', { enabled: true }, 'default');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const channels = config.channels as Record<string, { enabled?: boolean }>;
     const plugins = config.plugins as { allow?: string[]; entries?: Record<string, { enabled?: boolean }> };
 
@@ -241,7 +241,7 @@ describe('WeCom plugin configuration', () => {
     await saveChannelConfig('whatsapp', { enabled: true }, 'default');
     await saveChannelConfig('qqbot', { appId: 'qq-app', token: 'qq-token', appSecret: 'qq-secret' }, 'default');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const channels = config.channels as Record<string, { accounts?: Record<string, unknown> }>;
     const plugins = config.plugins as { allow?: string[]; entries?: Record<string, Record<string, unknown>> };
 
@@ -263,7 +263,7 @@ describe('WeCom plugin configuration', () => {
       'default',
     );
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const channels = config.channels as Record<string, {
       guilds?: Record<string, { channels?: Record<string, Record<string, unknown>> }>;
       accounts?: Record<string, {
@@ -281,7 +281,7 @@ describe('WeCom plugin configuration', () => {
   it('sanitizes legacy discord guild channel allow flags before writing', async () => {
     const { saveChannelConfig } = await import('@electron/utils/channel-config');
 
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         discord: {
           enabled: true,
@@ -312,7 +312,7 @@ describe('WeCom plugin configuration', () => {
 
     await saveChannelConfig('discord', { token: 'discord-token', guildId: '1438451181474287618' }, 'default');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const channels = config.channels as Record<string, {
       guilds?: Record<string, { channels?: Record<string, Record<string, unknown>> }>;
       accounts?: Record<string, {
@@ -325,7 +325,7 @@ describe('WeCom plugin configuration', () => {
   });
 
   it('deletes a custom default account without recreating it as the literal default account', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         telegram: {
           accounts: {
@@ -341,12 +341,12 @@ describe('WeCom plugin configuration', () => {
 
     await deleteChannelAccountConfig('telegram', 'agent-a');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect((config.channels as Record<string, unknown>).telegram).toBeUndefined();
   });
 
   it('deletes an agent-owned custom default account without recreating it', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         telegram: {
           accounts: {
@@ -362,12 +362,12 @@ describe('WeCom plugin configuration', () => {
 
     await deleteAgentChannelAccounts('agent-a', new Set(['telegram:agent-a']));
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect((config.channels as Record<string, unknown>).telegram).toBeUndefined();
   });
 
   it('removes legacy plugin account mirrors when deleting a channel account', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         discord: {
           accounts: {
@@ -397,7 +397,7 @@ describe('WeCom plugin configuration', () => {
 
     await deleteChannelAccountConfig('discord', 'agent-a');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const channel = (config.channels as Record<string, Record<string, unknown>>).discord;
     const plugin = ((config.plugins as { entries: Record<string, Record<string, unknown>> }).entries).discord;
     expect(channel.defaultAccount).toBe('agent-b');
@@ -410,7 +410,7 @@ describe('WeCom plugin configuration', () => {
   });
 
   it('removes a legacy plugin-only registration without canonical channel config', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['discord'],
         entries: {
@@ -429,7 +429,7 @@ describe('WeCom plugin configuration', () => {
 
     await deleteChannelAccountConfig('discord', 'agent-a');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect(config.plugins).toBeUndefined();
   });
 });
@@ -445,7 +445,7 @@ describe('WeChat dangling plugin cleanup', () => {
   it('removes dangling openclaw-weixin plugin registration and state when no channel config exists', async () => {
     const { cleanupDanglingWeChatPluginState } = await import('@electron/utils/channel-config');
 
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         enabled: true,
         allow: ['openclaw-weixin'],
@@ -463,7 +463,7 @@ describe('WeChat dangling plugin cleanup', () => {
     const result = await cleanupDanglingWeChatPluginState();
     expect(result.cleanedDanglingState).toBe(true);
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect(config.plugins).toBeUndefined();
     expect(existsSync(join(testHome, '.openclaw', 'openclaw-weixin'))).toBe(false);
   });
@@ -478,7 +478,7 @@ describe('coordinated channel config delivery', () => {
   });
 
   it('mutates the running coordinator snapshot without replacing it from the local file', async () => {
-    await writeOpenClawJson({ localOnly: true });
+    await writeinsightAllJson({ localOnly: true });
     let runningConfig: Record<string, unknown> = { gatewayOnly: true };
     let hash = 'hash-1';
     const manager = {
@@ -493,8 +493,8 @@ describe('coordinated channel config delivery', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
     const channelConfig = await import('@electron/utils/channel-config');
 
     await channelConfig.saveChannelConfig('telegram', { botToken: 'gateway-token' }, 'default');
@@ -507,26 +507,26 @@ describe('coordinated channel config delivery', () => {
         },
       },
     });
-    expect(await readOpenClawJson()).toEqual({ localOnly: true });
-    expect(channelConfig).not.toHaveProperty('writeOpenClawConfig');
+    expect(await readinsightAllJson()).toEqual({ localOnly: true });
+    expect(channelConfig).not.toHaveProperty('writeinsightAllConfig');
   });
 
-  it('reads the resolved OpenClaw config path', async () => {
+  it('reads the resolved insightAll config path', async () => {
     const customPath = join(testHome, 'custom', 'runtime.json');
     await mkdir(join(testHome, 'custom'), { recursive: true });
     await writeFile(customPath, JSON.stringify({ customPath: true }), 'utf8');
     process.env.OPENCLAW_CONFIG_PATH = customPath;
 
     try {
-      const { readOpenClawConfig } = await import('@electron/utils/channel-config');
-      await expect(readOpenClawConfig()).resolves.toEqual({ customPath: true });
+      const { readinsightAllConfig } = await import('@electron/utils/channel-config');
+      await expect(readinsightAllConfig()).resolves.toEqual({ customPath: true });
     } finally {
       delete process.env.OPENCLAW_CONFIG_PATH;
     }
   });
 
   it('reads the running coordinator snapshot instead of the local file', async () => {
-    await writeOpenClawJson({ localOnly: true });
+    await writeinsightAllJson({ localOnly: true });
     const manager = {
       getStatus: vi.fn(() => ({ state: 'running' as const })),
       rpc: vi.fn(async (method: string) => {
@@ -536,22 +536,22 @@ describe('coordinated channel config delivery', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
-    const { readOpenClawConfig } = await import('@electron/utils/channel-config');
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
+    const { readinsightAllConfig } = await import('@electron/utils/channel-config');
 
-    await expect(readOpenClawConfig()).resolves.toEqual({ gatewayOnly: true });
+    await expect(readinsightAllConfig()).resolves.toEqual({ gatewayOnly: true });
   });
 
-  it('accepts JSON5 syntax when reading the resolved OpenClaw config path', async () => {
+  it('accepts JSON5 syntax when reading the resolved insightAll config path', async () => {
     const customPath = join(testHome, 'custom', 'runtime.json5');
     await mkdir(join(testHome, 'custom'), { recursive: true });
     await writeFile(customPath, '{\n  // comment\n  customPath: true,\n}\n', 'utf8');
     process.env.OPENCLAW_CONFIG_PATH = customPath;
 
     try {
-      const { readOpenClawConfig } = await import('@electron/utils/channel-config');
-      await expect(readOpenClawConfig()).resolves.toEqual({ customPath: true });
+      const { readinsightAllConfig } = await import('@electron/utils/channel-config');
+      await expect(readinsightAllConfig()).resolves.toEqual({ customPath: true });
     } finally {
       delete process.env.OPENCLAW_CONFIG_PATH;
     }

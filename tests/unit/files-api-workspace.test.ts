@@ -22,7 +22,7 @@ vi.mock('node:os', async (importOriginal) => {
 });
 
 vi.mock('electron', () => ({
-  app: { getPath: vi.fn(() => '/tmp/clawx-user-data') },
+  app: { getPath: vi.fn(() => '/tmp/insightallx-user-data') },
   nativeImage: { createFromPath: vi.fn() },
   shell: {
     openPath: mocks.openPath,
@@ -43,7 +43,7 @@ describe('workspace-scoped files api', () => {
     mocks.beforeOpen = undefined;
     mocks.beforeRealpath = undefined;
     mocks.afterStat = undefined;
-    testDir = await mkdtemp(join(tmpdir(), 'clawx-files-workspace-'));
+    testDir = await mkdtemp(join(tmpdir(), 'insightallx-files-workspace-'));
     mocks.home = testDir;
     workspaceRoot = join(testDir, '.openclaw', 'workspace');
     await mkdir(join(workspaceRoot, 'projects', 'demo'), { recursive: true });
@@ -103,8 +103,8 @@ describe('workspace-scoped files api', () => {
     expect(stagedAttachments.getDisplayPath(result.id)).toBeNull();
     expect(stagedAttachments.getDisplayPath(pathResult.id)).toBe(join(workspaceRoot, 'hello.txt'));
     expect(stagedAttachments.getDisplayPath(directoryResult.id)).toBe(directoryPath);
-    expect(result.stagedPath).toContain(join('media', 'outbound', 'clawx-staging'));
-    expect(pathResult.stagedPath).toContain(join('media', 'outbound', 'clawx-staging'));
+    expect(result.stagedPath).toContain(join('media', 'outbound', 'insightallx-staging'));
+    expect(pathResult.stagedPath).toContain(join('media', 'outbound', 'insightallx-staging'));
     expect(directoryResult).toMatchObject({
       fileName: 'demo',
       mimeType: 'application/x-directory',

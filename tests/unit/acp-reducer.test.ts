@@ -419,7 +419,7 @@ describe('ACP timeline reducer', () => {
     }
   });
 
-  it('keeps an ordered binary-free OpenClaw prompt text projection for user content', () => {
+  it('keeps an ordered binary-free insightAll prompt text projection for user content', () => {
     let state = createEmptyAcpTimeline('agent:pi:s1', 1);
 
     state = applyAcpSessionUpdate(state, {
@@ -636,7 +636,7 @@ describe('ACP timeline reducer', () => {
     });
   });
 
-  it('preserves resource link metadata and accepts ClawX staging ownership only from user content', () => {
+  it('preserves resource link metadata and accepts insightAllX staging ownership only from user content', () => {
     const resource = {
       type: 'resource_link' as const,
       uri: 'file:///tmp/budget.xlsx',
@@ -644,7 +644,7 @@ describe('ACP timeline reducer', () => {
       title: 'Budget workbook',
       mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       size: 2048,
-      _meta: { clawx: { stagingId: 'stage-1' } },
+      _meta: { insightallx: { stagingId: 'stage-1' } },
     };
 
     expect(contentBlockToRenderPart(resource, {
@@ -673,9 +673,9 @@ describe('ACP timeline reducer', () => {
       type: 'image',
       data: 'abc123',
       mimeType: 'image/png',
-      uri: '/tmp/clawx-staging/photo.png',
+      uri: '/tmp/insightallx-staging/photo.png',
       _meta: {
-        clawx: {
+        insightallx: {
           stagingId: 'stage-photo',
           displayPath: '/spoofed/private/path/photo.png',
           fileName: 'photo.png',
@@ -686,7 +686,7 @@ describe('ACP timeline reducer', () => {
     })).toMatchObject({
       kind: 'attachment',
       reference: {
-        uri: '/tmp/clawx-staging/photo.png',
+        uri: '/tmp/insightallx-staging/photo.png',
         name: 'photo.png',
         mimeType: 'image/png',
         stagingId: 'stage-photo',
@@ -694,9 +694,9 @@ describe('ACP timeline reducer', () => {
     });
     expect(contentBlockToRenderPart({
       type: 'resource_link',
-      uri: '/tmp/clawx-staging/notes.txt',
+      uri: '/tmp/insightallx-staging/notes.txt',
       name: 'notes.txt',
-      _meta: { clawx: { stagingId: 'stage-notes', displayPath: '/spoofed/private/notes.txt' } },
+      _meta: { insightallx: { stagingId: 'stage-notes', displayPath: '/spoofed/private/notes.txt' } },
     }, {
       role: 'user', messageId: 'user-notes', segmentIndex: 0, blockIndex: 0,
     })).not.toMatchObject({ reference: { displayPath: expect.anything() } });

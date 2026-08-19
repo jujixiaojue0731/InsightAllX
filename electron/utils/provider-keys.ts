@@ -3,11 +3,11 @@ const MULTI_INSTANCE_PROVIDER_TYPES = new Set(['custom', 'ollama']);
 export const OPENCLAW_PROVIDER_KEY_MINIMAX = 'minimax-portal';
 export const OPENCLAW_PROVIDER_KEY_MOONSHOT = 'moonshot';
 export const OPENCLAW_PROVIDER_KEY_MOONSHOT_GLOBAL = 'moonshot-global';
-/** OpenClaw Z.AI runtime provider id (CN + Global share this key). */
+/** insightAll Z.AI runtime provider id (CN + Global share this key). */
 export const OPENCLAW_PROVIDER_KEY_ZAI = 'zai';
-/** OpenClaw Codex OAuth runtime provider id (canonical `openai`, not legacy `openai-codex`). */
+/** insightAll Codex OAuth runtime provider id (canonical `openai`, not legacy `openai-codex`). */
 export const OPENAI_CODEX_RUNTIME_PROVIDER_KEY = 'openai';
-export const CLAWX_OPENAI_IMAGE_PROVIDER_KEY = 'clawx-openai-image';
+export const INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY = 'insightallx-openai-image';
 export const OAUTH_PROVIDER_TYPES = ['minimax-portal', 'minimax-portal-cn'] as const;
 export const OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEYS = [
   OPENCLAW_PROVIDER_KEY_MINIMAX,
@@ -16,16 +16,16 @@ export const OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEYS = [
 const OAUTH_PROVIDER_TYPE_SET = new Set<string>(OAUTH_PROVIDER_TYPES);
 const OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEY_SET = new Set<string>(OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEYS);
 const HIDDEN_PROVIDER_KEYS_FOR_UI = new Set<string>([
-  CLAWX_OPENAI_IMAGE_PROVIDER_KEY,
+  INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY,
 ]);
 
 const PROVIDER_KEY_ALIASES: Record<string, string> = {
   'minimax-portal-cn': OPENCLAW_PROVIDER_KEY_MINIMAX,
-  // OpenClaw's built-in Z.AI provider is always `zai` (see docs.openclaw.ai/providers/zai).
+  // insightAll's built-in Z.AI provider is always `zai` (see docs.openclaw.ai/providers/zai).
   'zai-global': OPENCLAW_PROVIDER_KEY_ZAI,
 };
 
-export function getOpenClawProviderKeyForType(type: string, providerId: string): string {
+export function getinsightAllProviderKeyForType(type: string, providerId: string): string {
   if (MULTI_INSTANCE_PROVIDER_TYPES.has(type)) {
     // If the providerId is already a runtime key (e.g. re-seeded from openclaw.json
     // as "custom-XXXXXXXX"), return it directly to avoid double-hashing.
@@ -44,10 +44,10 @@ export function getOpenClawProviderKeyForType(type: string, providerId: string):
 }
 
 /**
- * Resolve the OpenClaw runtime provider key for a saved account.
+ * Resolve the insightAll runtime provider key for a saved account.
  * Browser OAuth for OpenAI is stored under vendorId `openai` and runs as `openai`.
  */
-export function resolveOpenClawProviderKey(account: {
+export function resolveinsightAllProviderKey(account: {
   vendorId: string;
   id: string;
   authMode?: string;
@@ -55,7 +55,7 @@ export function resolveOpenClawProviderKey(account: {
   if (account.authMode === 'oauth_browser' && account.vendorId === 'openai') {
     return OPENAI_CODEX_RUNTIME_PROVIDER_KEY;
   }
-  return getOpenClawProviderKeyForType(account.vendorId, account.id);
+  return getinsightAllProviderKeyForType(account.vendorId, account.id);
 }
 
 /**
@@ -69,7 +69,7 @@ export function getAliasSourceTypes(openClawKey: string): string[] {
 }
 
 /**
- * Legacy OpenClaw builds wrote OAuth under runtime key `openai-codex`. Hide that
+ * Legacy insightAll builds wrote OAuth under runtime key `openai-codex`. Hide that
  * stale slot when the canonical `openai` OAuth entry is active.
  */
 export function filterActiveProviderKeysForUi(
@@ -126,6 +126,6 @@ export function getOAuthApiKeyEnv(providerKey: string): string | undefined {
   return undefined;
 }
 
-export function isOpenClawOAuthPluginProviderKey(provider: string): boolean {
+export function isinsightAllOAuthPluginProviderKey(provider: string): boolean {
   return OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEY_SET.has(provider);
 }

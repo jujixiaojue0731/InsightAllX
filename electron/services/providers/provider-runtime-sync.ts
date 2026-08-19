@@ -6,20 +6,20 @@ import { getAllProviders, getApiKey, getDefaultProvider, getProvider } from '../
 import { getProviderConfig, getProviderDefaultModel } from '../../utils/provider-registry';
 import {
   ensureAnthropicMessagesModelMaxTokens,
-  ensureOpenClawProviderAgentRuntimePins,
+  ensureinsightAllProviderAgentRuntimePins,
   migrateAllAgentAuthProfilesToSqlite,
   pruneInvalidApiProviderEntries,
-  removeProviderFromOpenClaw,
-  removeProviderKeyFromOpenClaw,
-  saveOAuthTokenToOpenClaw,
-  saveProviderKeyToOpenClaw,
+  removeProviderFrominsightAll,
+  removeProviderKeyFrominsightAll,
+  saveOAuthTokenToinsightAll,
+  saveProviderKeyToinsightAll,
   OPENAI_CODEX_OAUTH_PROVIDER_CONFIG,
-  setOpenClawDefaultModel,
-  setOpenClawDefaultModelWithOverride,
-  syncProviderConfigToOpenClaw,
+  setinsightAllDefaultModel,
+  setinsightAllDefaultModelWithOverride,
+  syncProviderConfigToinsightAll,
   updateAgentModelProvider,
   updateSingleAgentModelProvider,
-  getProviderApiKeyFromOpenClaw,
+  getProviderApiKeyFrominsightAll,
 } from '../../utils/openclaw-auth';
 import {
   piAiModelsJsonModelEntry,
@@ -28,7 +28,7 @@ import {
 import { logger } from '../../utils/logger';
 import { listAgentsSnapshot } from '../../utils/agent-config';
 
-/** OpenClaw Codex OAuth hooks only apply to the canonical `openai` provider id. */
+/** insightAll Codex OAuth hooks only apply to the canonical `openai` provider id. */
 const OPENAI_OAUTH_RUNTIME_PROVIDER = 'openai';
 const OPENAI_OAUTH_DEFAULT_MODEL_REF = `${OPENAI_OAUTH_RUNTIME_PROVIDER}/gpt-5.6-sol`;
 
@@ -81,7 +81,7 @@ function shouldUseExplicitDefaultOverride(config: ProviderConfig, runtimeProvide
   return Boolean(config.baseUrl || config.apiProtocol || runtimeProviderKey !== config.type);
 }
 
-export function getOpenClawProviderKey(type: string, providerId: string): string {
+export function getinsightAllProviderKey(type: string, providerId: string): string {
   if (isUnregisteredProviderType(type)) {
     // If the providerId is already a runtime key (e.g. re-seeded from openclaw.json
     // as "custom-XXXXXXXX"), return it directly to avoid double-hashing.
@@ -98,7 +98,7 @@ export function getOpenClawProviderKey(type: string, providerId: string): string
   if (type === 'minimax-portal-cn') {
     return 'minimax-portal';
   }
-  // OpenClaw Z.AI provider key is always `zai` (Global UI vendor aliases here).
+  // insightAll Z.AI provider key is always `zai` (Global UI vendor aliases here).
   if (type === 'zai-global') {
     return 'zai';
   }
@@ -110,7 +110,7 @@ async function resolveRuntimeProviderKey(config: ProviderConfig): Promise<string
   if (account?.authMode === 'oauth_browser' && config.type === 'openai') {
     return OPENAI_OAUTH_RUNTIME_PROVIDER;
   }
-  return getOpenClawProviderKey(config.type, config.id);
+  return getinsightAllProviderKey(config.type, config.id);
 }
 
 async function getBrowserOAuthRuntimeProvider(config: ProviderConfig): Promise<string | null> {
@@ -131,7 +131,7 @@ async function getBrowserOAuthRuntimeProvider(config: ProviderConfig): Promise<s
 }
 
 export function getProviderModelRef(config: ProviderConfig): string | undefined {
-  const providerKey = getOpenClawProviderKey(config.type, config.id);
+  const providerKey = getinsightAllProviderKey(config.type, config.id);
 
   if (config.model) {
     return config.model.startsWith(`${providerKey}/`)
@@ -154,7 +154,7 @@ export async function getProviderFallbackModelRefs(config: ProviderConfig): Prom
   const providerMap = new Map(allProviders.map((provider) => [provider.id, provider]));
   const seen = new Set<string>();
   const results: string[] = [];
-  const providerKey = getOpenClawProviderKey(config.type, config.id);
+  const providerKey = getinsightAllProviderKey(config.type, config.id);
 
   for (const fallbackModel of config.fallbackModels ?? []) {
     const normalizedModel = fallbackModel.trim();
@@ -190,8 +190,8 @@ export async function syncProviderApiKeyToRuntime(
   providerId: string,
   apiKey: string,
 ): Promise<void> {
-  const ock = getOpenClawProviderKey(providerType, providerId);
-  await saveProviderKeyToOpenClaw(ock, apiKey);
+  const ock = getinsightAllProviderKey(providerType, providerId);
+  await saveProviderKeyToinsightAll(ock, apiKey);
 }
 
 export async function syncAllProviderAuthToRuntime(): Promise<void> {
@@ -217,17 +217,17 @@ export async function syncAllProviderAuthToRuntime(): Promise<void> {
     }
 
     if (secret.type === 'api_key') {
-      await saveProviderKeyToOpenClaw(runtimeProviderKey, secret.apiKey);
+      await saveProviderKeyToinsightAll(runtimeProviderKey, secret.apiKey);
       continue;
     }
 
     if (secret.type === 'local' && secret.apiKey) {
-      await saveProviderKeyToOpenClaw(runtimeProviderKey, secret.apiKey);
+      await saveProviderKeyToinsightAll(runtimeProviderKey, secret.apiKey);
       continue;
     }
 
     if (secret.type === 'oauth') {
-      await saveOAuthTokenToOpenClaw(runtimeProviderKey, {
+      await saveOAuthTokenToinsightAll(runtimeProviderKey, {
         access: secret.accessToken,
         refresh: secret.refreshToken,
         expires: secret.expiresAt,
@@ -247,24 +247,24 @@ async function syncProviderSecretToRuntime(
   if (apiKey !== undefined) {
     const trimmedKey = apiKey.trim();
     if (trimmedKey) {
-      await saveProviderKeyToOpenClaw(runtimeProviderKey, trimmedKey);
+      await saveProviderKeyToinsightAll(runtimeProviderKey, trimmedKey);
     } else {
       // An explicit empty string means the caller wants to clear the key.
-      // Mirror that intent into OpenClaw auth-profiles so the gateway no
+      // Mirror that intent into insightAll auth-profiles so the gateway no
       // longer authenticates with the stale value (matches the explicit
       // delete branch in the legacy /api/providers/:id PUT handler).
-      await removeProviderKeyFromOpenClaw(runtimeProviderKey);
+      await removeProviderKeyFrominsightAll(runtimeProviderKey);
     }
     return;
   }
 
   if (secret?.type === 'api_key') {
-    await saveProviderKeyToOpenClaw(runtimeProviderKey, secret.apiKey);
+    await saveProviderKeyToinsightAll(runtimeProviderKey, secret.apiKey);
     return;
   }
 
   if (secret?.type === 'oauth') {
-    await saveOAuthTokenToOpenClaw(runtimeProviderKey, {
+    await saveOAuthTokenToinsightAll(runtimeProviderKey, {
       access: secret.accessToken,
       refresh: secret.refreshToken,
       expires: secret.expiresAt,
@@ -275,7 +275,7 @@ async function syncProviderSecretToRuntime(
   }
 
   if (secret?.type === 'local' && secret.apiKey) {
-    await saveProviderKeyToOpenClaw(runtimeProviderKey, secret.apiKey);
+    await saveProviderKeyToinsightAll(runtimeProviderKey, secret.apiKey);
   }
 }
 
@@ -299,7 +299,7 @@ async function syncRuntimeProviderConfig(
   context: RuntimeProviderSyncContext,
 ): Promise<void> {
   const modelId = normalizeRuntimeModelId(context.runtimeProviderKey, config.model);
-  await syncProviderConfigToOpenClaw(context.runtimeProviderKey, modelId, {
+  await syncProviderConfigToinsightAll(context.runtimeProviderKey, modelId, {
     baseUrl: normalizeProviderBaseUrl(config, config.baseUrl || context.meta?.baseUrl, context.api),
     api: context.api,
     apiKeyEnv: context.meta?.apiKeyEnv,
@@ -345,7 +345,7 @@ async function syncProviderToRuntime(
   return context;
 }
 
-async function removeDeletedProviderFromOpenClaw(
+async function removeDeletedProviderFrominsightAll(
   provider: ProviderConfig,
   providerId: string,
   runtimeProviderKey?: string,
@@ -359,13 +359,13 @@ async function removeDeletedProviderFromOpenClaw(
   keys.add(providerId);
 
   for (const key of keys) {
-    await removeProviderFromOpenClaw(key);
+    await removeProviderFrominsightAll(key);
   }
 
   // Legacy Codex OAuth used runtime key openai-codex; cleanup may leave a bare
   // models.providers.openai entry behind. Drop that slot when no API key credentials remain.
   if (runtimeProviderKey === OPENAI_OAUTH_RUNTIME_PROVIDER || runtimeProviderKey === 'openai-codex') {
-    const openClawKey = await getProviderApiKeyFromOpenClaw('openai');
+    const openClawKey = await getProviderApiKeyFrominsightAll('openai');
     if (openClawKey) {
       return;
     }
@@ -379,7 +379,7 @@ async function removeDeletedProviderFromOpenClaw(
         return;
       }
     }
-    await removeProviderFromOpenClaw('openai');
+    await removeProviderFrominsightAll('openai');
   }
 }
 
@@ -530,17 +530,17 @@ export async function syncUpdatedProviderToRuntime(
     const modelOverride = selectedModelId ? `${ock}/${selectedModelId}` : undefined;
     if (!isUnregisteredProviderType(config.type)) {
       if (shouldUseExplicitDefaultOverride(config, ock)) {
-        await setOpenClawDefaultModelWithOverride(ock, modelOverride, {
+        await setinsightAllDefaultModelWithOverride(ock, modelOverride, {
           baseUrl: normalizeProviderBaseUrl(config, config.baseUrl || context.meta?.baseUrl, context.api),
           api: context.api,
           apiKeyEnv: context.meta?.apiKeyEnv,
           headers: config.headers ?? context.meta?.headers,
         }, fallbackModels);
       } else {
-        await setOpenClawDefaultModel(ock, modelOverride, fallbackModels);
+        await setinsightAllDefaultModel(ock, modelOverride, fallbackModels);
       }
     } else {
-      await setOpenClawDefaultModelWithOverride(ock, modelOverride, {
+      await setinsightAllDefaultModelWithOverride(ock, modelOverride, {
         baseUrl: normalizeProviderBaseUrl(config, config.baseUrl, config.apiProtocol || 'openai-completions'),
         api: config.apiProtocol || 'openai-completions',
         headers: config.headers,
@@ -563,7 +563,7 @@ export async function syncDeletedProviderToRuntime(
   }
 
   const ock = runtimeProviderKey ?? await resolveRuntimeProviderKey({ ...provider, id: providerId });
-  await removeDeletedProviderFromOpenClaw(provider, providerId, ock);
+  await removeDeletedProviderFrominsightAll(provider, providerId, ock);
 
 }
 
@@ -577,7 +577,7 @@ export async function syncDeletedProviderApiKeyToRuntime(
   }
 
   const ock = runtimeProviderKey ?? await resolveRuntimeProviderKey({ ...provider, id: providerId });
-  await removeProviderKeyFromOpenClaw(ock);
+  await removeProviderKeyFrominsightAll(ock);
 }
 
 export async function syncDefaultProviderToRuntime(
@@ -608,9 +608,9 @@ export async function syncDefaultProviderToRuntime(
   // Self-heal: pin the embedded agent runtime for legacy OpenAI provider entries
   // (`openai`, `openai-codex`) that would otherwise be auto-routed to the
   // unbundled `codex` harness. Running this before every default-provider switch
-  // repairs on-disk config written by earlier ClawX builds.
+  // repairs on-disk config written by earlier insightAllX builds.
   try {
-    const pinned = await ensureOpenClawProviderAgentRuntimePins();
+    const pinned = await ensureinsightAllProviderAgentRuntimePins();
     if (pinned.length > 0) {
       logger.warn(
         `[provider-runtime] Pinned embedded agent runtime for models.providers entries before switch: ${pinned.join(', ')}`,
@@ -644,13 +644,13 @@ export async function syncDefaultProviderToRuntime(
       : undefined;
 
     if (isUnregisteredProviderType(provider.type)) {
-      await setOpenClawDefaultModelWithOverride(ock, modelOverride, {
+      await setinsightAllDefaultModelWithOverride(ock, modelOverride, {
         baseUrl: normalizeProviderBaseUrl(provider, provider.baseUrl, provider.apiProtocol || 'openai-completions'),
         api: provider.apiProtocol || 'openai-completions',
         headers: provider.headers,
       }, fallbackModels);
     } else if (shouldUseExplicitDefaultOverride(provider, ock)) {
-      await setOpenClawDefaultModelWithOverride(ock, modelOverride, {
+      await setinsightAllDefaultModelWithOverride(ock, modelOverride, {
         baseUrl: normalizeProviderBaseUrl(
           provider,
           provider.baseUrl || getProviderConfig(provider.type)?.baseUrl,
@@ -661,17 +661,17 @@ export async function syncDefaultProviderToRuntime(
         headers: provider.headers ?? getProviderConfig(provider.type)?.headers,
       }, fallbackModels);
     } else {
-      await setOpenClawDefaultModel(ock, modelOverride, fallbackModels);
+      await setinsightAllDefaultModel(ock, modelOverride, fallbackModels);
     }
 
     if (providerKey) {
-      await saveProviderKeyToOpenClaw(ock, providerKey);
+      await saveProviderKeyToinsightAll(ock, providerKey);
     }
   } else {
     if (browserOAuthRuntimeProvider) {
       const secret = await getProviderSecret(provider.id);
       if (secret?.type === 'oauth') {
-        await saveOAuthTokenToOpenClaw(browserOAuthRuntimeProvider, {
+        await saveOAuthTokenToinsightAll(browserOAuthRuntimeProvider, {
           access: secret.accessToken,
           refresh: secret.refreshToken,
           expires: secret.expiresAt,
@@ -688,7 +688,7 @@ export async function syncDefaultProviderToRuntime(
           : `${browserOAuthRuntimeProvider}/${provider.model}`)
         : defaultModelRef;
 
-      await setOpenClawDefaultModelWithOverride(
+      await setinsightAllDefaultModelWithOverride(
         browserOAuthRuntimeProvider,
         modelOverride,
         {
@@ -714,7 +714,7 @@ export async function syncDefaultProviderToRuntime(
 
     const targetProviderKey = 'minimax-portal';
 
-    await setOpenClawDefaultModelWithOverride(targetProviderKey, getProviderModelRef(provider), {
+    await setinsightAllDefaultModelWithOverride(targetProviderKey, getProviderModelRef(provider), {
       baseUrl,
       api,
       authHeader: targetProviderKey === 'minimax-portal' ? true : undefined,

@@ -13,7 +13,7 @@
  * - Works identically on macOS, Windows, and Linux
  *
  * We provide our own callbacks (openUrl/note/progress) that hook into
- * the Electron IPC system to display UI in the ClawX frontend.
+ * the Electron IPC system to display UI in the insightAllX frontend.
  */
 import { EventEmitter } from 'events';
 import { BrowserWindow, shell } from 'electron';
@@ -21,7 +21,7 @@ import { logger } from './logger';
 import { saveProvider, getProvider, ProviderConfig } from './secure-storage';
 import { getProviderDefaultModel } from './provider-registry';
 import { proxyAwareFetch } from './proxy-fetch';
-import { saveOAuthTokenToOpenClaw, setOpenClawDefaultModelWithOverride } from './openclaw-auth';
+import { saveOAuthTokenToinsightAll, setinsightAllDefaultModelWithOverride } from './openclaw-auth';
 import { loginMiniMaxPortalOAuth, type MiniMaxOAuthToken, type MiniMaxRegion } from './minimax-oauth';
 
 export type OAuthProviderType = 'minimax-portal' | 'minimax-portal-cn';
@@ -170,23 +170,23 @@ class DeviceOAuthManager extends EventEmitter {
         this.activeLabel = null;
         logger.info(`[DeviceOAuth] Successfully completed OAuth for ${providerType}`);
 
-        // 1. Write OAuth token to OpenClaw's auth-profiles.json in native OAuth format.
+        // 1. Write OAuth token to insightAll's auth-profiles.json in native OAuth format.
         //    (matches what `openclaw models auth login` → upsertAuthProfile writes).
         //    We save both MiniMax providers to the generic "minimax-portal" profile
-        //    so OpenClaw's gateway auto-refresher knows how to find it.
+        //    so insightAll's gateway auto-refresher knows how to find it.
         try {
             const tokenProviderId = providerType.startsWith('minimax-portal') ? 'minimax-portal' : providerType;
-            await saveOAuthTokenToOpenClaw(tokenProviderId, {
+            await saveOAuthTokenToinsightAll(tokenProviderId, {
                 access: token.access,
                 refresh: token.refresh,
                 expires: token.expires,
             });
         } catch (err) {
-            logger.warn(`[DeviceOAuth] Failed to save OAuth token to OpenClaw:`, err);
+            logger.warn(`[DeviceOAuth] Failed to save OAuth token to insightAll:`, err);
         }
 
         // 2. Write openclaw.json: set default model + provider config (baseUrl/api/models)
-        //    This mirrors what the OpenClaw plugin's configPatch does after CLI login.
+        //    This mirrors what the insightAll plugin's configPatch does after CLI login.
         //    The baseUrl comes from token.resourceUrl (per-account URL from the OAuth server)
         //    or falls back to the provider's default public endpoint.
         const defaultBaseUrl = providerType === 'minimax-portal'
@@ -207,10 +207,10 @@ class DeviceOAuthManager extends EventEmitter {
 
         try {
             const tokenProviderId = providerType.startsWith('minimax-portal') ? 'minimax-portal' : providerType;
-            await setOpenClawDefaultModelWithOverride(tokenProviderId, undefined, {
+            await setinsightAllDefaultModelWithOverride(tokenProviderId, undefined, {
                 baseUrl,
                 api: token.api,
-                // Tells OpenClaw's anthropic adapter to use `Authorization: Bearer` instead of `x-api-key`
+                // Tells insightAll's anthropic adapter to use `Authorization: Bearer` instead of `x-api-key`
                 authHeader: providerType.startsWith('minimax-portal') ? true : undefined,
                 // OAuth placeholder — tells Gateway to resolve credentials
                 // from auth-profiles.json (type: 'oauth') instead of a static API key.
@@ -220,7 +220,7 @@ class DeviceOAuthManager extends EventEmitter {
             logger.warn(`[DeviceOAuth] Failed to configure openclaw models:`, err);
         }
 
-        // 3. Save provider record in ClawX's own store so UI shows it as configured
+        // 3. Save provider record in insightAllX's own store so UI shows it as configured
         const existing = await getProvider(accountId);
         const nameMap: Record<OAuthProviderType, string> = {
             'minimax-portal': 'MiniMax (Global)',
@@ -255,7 +255,7 @@ class DeviceOAuthManager extends EventEmitter {
 
     /**
      * Parse user_code and verification_uri from the note message sent by
-     * the OpenClaw extension's loginXxxPortalOAuth function.
+     * the insightAll extension's loginXxxPortalOAuth function.
      *
      * Note format (minimax-portal-auth/oauth.ts):
      *   "Open https://platform.minimax.io/oauth-authorize?user_code=dyMj_wOhpK&client=... to approve access.\n"

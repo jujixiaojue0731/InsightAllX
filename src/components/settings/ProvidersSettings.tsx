@@ -1203,7 +1203,7 @@ function AddProviderDialog({
     const hasMinimax = existingVendorIds.has('minimax-portal') || existingVendorIds.has('minimax-portal-cn');
     if ((type.id === 'minimax-portal' || type.id === 'minimax-portal-cn') && hasMinimax) return false;
 
-    // Z.AI CN/Global both map to OpenClaw key `zai` — mutually exclusive in the UI.
+    // Z.AI CN/Global both map to insightAll key `zai` — mutually exclusive in the UI.
     const hasZai = existingVendorIds.has('zai') || existingVendorIds.has('zai-global');
     if (isZaiProviderType(type.id) && hasZai) return false;
 

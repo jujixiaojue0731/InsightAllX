@@ -5,13 +5,13 @@ import type { GatewayManager } from '../gateway/manager';
 import type { ProviderConfig } from '../utils/secure-storage';
 import { browserOAuthManager, type BrowserOAuthProviderType } from '../utils/browser-oauth';
 import { deviceOAuthManager, type OAuthProviderType } from '../utils/device-oauth';
-import { removeProviderFromOpenClaw, saveProviderKeyToOpenClaw } from '../utils/openclaw-auth';
+import { removeProviderFrominsightAll, saveProviderKeyToinsightAll } from '../utils/openclaw-auth';
 import { getProviderConfig } from '../utils/provider-registry';
 import { logger } from '../utils/logger';
 import { getProviderService } from './providers/provider-service';
 import { providerAccountToConfig } from './providers/provider-store';
 import {
-  getOpenClawProviderKey,
+  getinsightAllProviderKey,
   syncDefaultProviderToRuntime,
   syncDeletedProviderApiKeyToRuntime,
   syncDeletedProviderToRuntime,
@@ -247,7 +247,7 @@ async function updateProviderWithKey(payload: ProviderPayload<'updateWithKey'>, 
   }
 
   const previousKey = await providerService._getProviderApiKeyInternal(providerId);
-  const previousOck = getOpenClawProviderKey(existing.type, providerId);
+  const previousOck = getinsightAllProviderKey(existing.type, providerId);
 
   try {
     const nextConfig: ProviderConfig = {
@@ -255,7 +255,7 @@ async function updateProviderWithKey(payload: ProviderPayload<'updateWithKey'>, 
       ...updates,
       updatedAt: new Date().toISOString(),
     };
-    const ock = getOpenClawProviderKey(nextConfig.type, providerId);
+    const ock = getinsightAllProviderKey(nextConfig.type, providerId);
     await providerService._saveProviderInternal(nextConfig);
 
     if (apiKey !== undefined) {
@@ -265,7 +265,7 @@ async function updateProviderWithKey(payload: ProviderPayload<'updateWithKey'>, 
         await syncProviderApiKeyToRuntime(nextConfig.type, providerId, trimmedKey);
       } else {
         await providerService._deleteProviderApiKeyInternal(providerId);
-        await removeProviderFromOpenClaw(ock);
+        await removeProviderFrominsightAll(ock);
       }
     }
 
@@ -276,10 +276,10 @@ async function updateProviderWithKey(payload: ProviderPayload<'updateWithKey'>, 
       await providerService._saveProviderInternal(existing);
       if (previousKey) {
         await providerService._setProviderApiKeyInternal(providerId, previousKey);
-        await saveProviderKeyToOpenClaw(previousOck, previousKey);
+        await saveProviderKeyToinsightAll(previousOck, previousKey);
       } else {
         await providerService._deleteProviderApiKeyInternal(providerId);
-        await removeProviderFromOpenClaw(previousOck);
+        await removeProviderFrominsightAll(previousOck);
       }
     } catch (rollbackError) {
       logger.warn('Failed to rollback provider updateWithKey:', rollbackError);

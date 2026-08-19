@@ -43,7 +43,7 @@ export function getProviderDefaultModel(type: string): string | undefined {
   return getSharedProviderDefaultModel(type);
 }
 
-/** Get the OpenClaw provider config (baseUrl, api, apiKeyEnv, models, headers) */
+/** Get the insightAll provider config (baseUrl, api, apiKeyEnv, models, headers) */
 export function getProviderConfig(
   type: string
 ): { baseUrl: string; api: string; apiKeyEnv: string; models?: ProviderModelEntry[]; headers?: Record<string, string> } | undefined {

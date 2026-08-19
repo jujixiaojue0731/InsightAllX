@@ -129,7 +129,7 @@ async function emitAcpSessionDisplayName(app: ElectronApplication, sessionKey: s
   }, sessionKey);
 }
 
-test.describe('ClawX chat workspace session list', () => {
+test.describe('insightAllX chat workspace session list', () => {
   test('shows the first five default workspace sessions, loads more, and collapses all groups', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const nowMs = Date.now();
@@ -328,8 +328,8 @@ test.describe('ClawX chat workspace session list', () => {
               sessions: [
                 {
                   key: MAIN_SESSION_KEY,
-                  displayName: 'ClawX',
-                  lastMessagePreview: '[OpenClaw heartbeat poll]',
+                  displayName: 'insightAllX',
+                  lastMessagePreview: '[insightAll heartbeat poll]',
                   updatedAt: nowMs,
                 },
                 {

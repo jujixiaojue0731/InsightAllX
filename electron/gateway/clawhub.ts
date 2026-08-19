@@ -5,7 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 import { shell } from 'electron';
-import { getOpenClawConfigDir, ensureDir } from '../utils/paths';
+import { getinsightAllConfigDir, ensureDir } from '../utils/paths';
 import { removeSkillConfig } from '../utils/skill-config';
 
 export interface MarketplaceSearchParams {
@@ -56,7 +56,7 @@ export class ClawHubService {
     private marketplaceProvider: MarketplaceProvider | null = null;
 
     constructor() {
-        this.workDir = getOpenClawConfigDir();
+        this.workDir = getinsightAllConfigDir();
         ensureDir(this.workDir);
     }
 

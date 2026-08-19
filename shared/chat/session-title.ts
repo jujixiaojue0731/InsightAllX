@@ -18,7 +18,7 @@ export function isAcpWorkingDirectoryTruncatedTitle(text: string): boolean {
   return ACP_WORKING_DIRECTORY_TRUNCATED_TITLE.test(text.trim())
 }
 
-export function isOpenClawSessionIdFallbackTitle(
+export function isinsightAllSessionIdFallbackTitle(
   text: string,
   sessionId: string | null | undefined,
 ): boolean {
@@ -41,6 +41,6 @@ export function getSessionDisplayTitle(
   ]
   return candidates.find((candidate) => (
     candidate?.trim()
-    && !isOpenClawSessionIdFallbackTitle(candidate, session.sessionId)
+    && !isinsightAllSessionIdFallbackTitle(candidate, session.sessionId)
   ))?.trim() ?? session.key
 }

@@ -3,7 +3,7 @@ id: custom-provider-context-window-defaults
 title: Explicit contextWindow defaults and compaction safeguard for custom providers
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Give custom-provider model rows an explicit contextWindow (inferred by model family) and seed agents.defaults.compaction.mode=safeguard with reserveTokensFloor=50000 so OpenClaw can compact long sessions before they fail with "Context overflow: prompt too large for the model".
+intent: Give custom-provider model rows an explicit contextWindow (inferred by model family) and seed agents.defaults.compaction.mode=safeguard with reserveTokensFloor=50000 so insightAll can compact long sessions before they fail with "Context overflow: prompt too large for the model".
 touchedAreas:
   - harness/specs/tasks/custom-provider-context-window-defaults.md
   - harness/specs/rules/provider-model-metadata-preservation.md
@@ -15,7 +15,7 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
 expectedUserBehavior:
-  - Saving or updating a custom provider writes model rows that include an inferred contextWindow, so OpenClaw's preemptive compaction and context-window guard are active for custom models.
+  - Saving or updating a custom provider writes model rows that include an inferred contextWindow, so insightAll's preemptive compaction and context-window guard are active for custom models.
   - Existing custom provider model rows that already carry contextWindow or contextTokens are never modified.
   - On app start, custom-provider model rows missing both contextWindow and contextTokens are backfilled with an inferred contextWindow, and agents.defaults.compaction is seeded to safeguard mode when the user has no compaction config.
   - Long sessions on custom providers are compacted before overflowing instead of surfacing "Context overflow" errors.
@@ -42,8 +42,8 @@ docs:
 
 ## Background
 
-ClawX wrote custom-provider model rows with only `{ id, name, input }`. Without
-`contextWindow` (or `contextTokens`), OpenClaw's embedded runner cannot budget
+insightAllX wrote custom-provider model rows with only `{ id, name, input }`. Without
+`contextWindow` (or `contextTokens`), insightAll's embedded runner cannot budget
 preemptive compaction or the context-window guard, so long sessions on custom
 providers only fail at the provider with "Context overflow: prompt too large
 for the model. Try /reset (or /new) ...". Users also had no
@@ -52,7 +52,7 @@ for the model. Try /reset (or /new) ...". Users also had no
 ## Scope
 
 - Infer a conservative `contextWindow` per model family for custom-provider
-  model rows (new writes in `upsertOpenClawProviderEntry` and per-agent
+  model rows (new writes in `upsertinsightAllProviderEntry` and per-agent
   `models.json` merges).
 - Backfill missing `contextWindow` on existing `models.providers.custom-*`
   rows during the startup batch config sync.

@@ -11,7 +11,7 @@
         "devConsole": "開発者コンソール",
         "models": "モデル",
         "deleteSessionConfirm": "「{{label}}」を削除しますか？",
-        "openClawPage": "OpenClaw ページ",
+        "openClawPage": "insightAll ページ",
         "renameSession": "名前を変更",
         "deleteSession": "削除",
         "renameSessionPlaceholder": "セッションタイトル",
@@ -62,7 +62,7 @@
     },
     "gateway": {
         "notRunning": "ゲートウェイが停止中",
-        "notRunningDesc": "この機能を使用するには OpenClaw ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
+        "notRunningDesc": "この機能を使用するには insightAll ゲートウェイが実行されている必要があります。自動的に起動するか、設定から起動できます。",
         "restarting": "ゲートウェイを再起動中",
         "warning": "ゲートウェイが停止中です。"
     }

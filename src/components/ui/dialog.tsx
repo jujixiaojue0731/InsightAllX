@@ -20,7 +20,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "clawx-dialog-overlay",
+      "insightallx-dialog-overlay",
       className,
     )}
     {...props}
@@ -37,7 +37,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "clawx-dialog-content",
+        "insightallx-dialog-content",
         className,
       )}
       {...props}

@@ -29,15 +29,15 @@ import {
   storeApiKey,
 } from '../../utils/secure-storage';
 import {
-  getActiveOpenClawProviders,
-  getOpenClawProvidersConfig,
-  getProviderApiKeyFromOpenClaw,
+  getActiveinsightAllProviders,
+  getinsightAllProvidersConfig,
+  getProviderApiKeyFrominsightAll,
 } from '../../utils/openclaw-auth';
 import {
   filterActiveProviderKeysForUi,
   getAliasSourceTypes,
   OPENAI_CODEX_RUNTIME_PROVIDER_KEY,
-  resolveOpenClawProviderKey,
+  resolveinsightAllProviderKey,
 } from '../../utils/provider-keys';
 import type { ProviderWithKeyInfo } from '../../shared/providers/types';
 import { logger } from '../../utils/logger';
@@ -62,7 +62,7 @@ function logLegacyProviderApiUsage(method: string, replacement: string): void {
   );
 }
 
-function inferProviderVendorIdFromOpenClawEntry(
+function inferProviderVendorIdFrominsightAllEntry(
   key: string,
   entry: Record<string, unknown>,
 ): ProviderType | 'custom' {
@@ -73,7 +73,7 @@ function inferProviderVendorIdFromOpenClawEntry(
     }
   }
 
-  // OpenClaw stores a single `zai` key; pick CN vs Global UI vendor from baseUrl.
+  // insightAll stores a single `zai` key; pick CN vs Global UI vendor from baseUrl.
   if (key === 'zai') {
     const baseUrl = typeof entry.baseUrl === 'string' ? entry.baseUrl.toLowerCase() : '';
     if (baseUrl.includes('api.z.ai')) {
@@ -117,8 +117,8 @@ export class ProviderService {
     // The provider list is derived entirely from openclaw.json.
     // The electron-store is only used as a metadata cache (label, authMode, etc.).
 
-    const { providers: openClawProviders, defaultModel } = await getOpenClawProvidersConfig();
-    const activeProviders = await getActiveOpenClawProviders();
+    const { providers: openClawProviders, defaultModel } = await getinsightAllProvidersConfig();
+    const activeProviders = await getActiveinsightAllProviders();
 
     if (activeProviders.size === 0) {
       return [];
@@ -130,7 +130,7 @@ export class ProviderService {
     // Index store accounts by their openclaw runtime key for fast lookup.
     const storeByKey = new Map<string, ProviderAccount[]>();
     for (const account of allStoreAccounts) {
-      const ock = resolveOpenClawProviderKey(account);
+      const ock = resolveinsightAllProviderKey(account);
       const group = storeByKey.get(ock) ?? [];
       group.push(account);
       storeByKey.set(ock, group);
@@ -141,7 +141,7 @@ export class ProviderService {
 
     let hasConfiguredOpenAiApiKey = false;
     if (activeProviders.has('openai')) {
-      const openClawKey = await getProviderApiKeyFromOpenClaw('openai');
+      const openClawKey = await getProviderApiKeyFrominsightAll('openai');
       if (openClawKey) {
         hasConfiguredOpenAiApiKey = true;
       } else {
@@ -190,7 +190,7 @@ export class ProviderService {
 
         const entry = openClawProviders[key];
         if (entry) {
-          const [syncedAccount] = ProviderService.buildAccountsFromOpenClawEntries(
+          const [syncedAccount] = ProviderService.buildAccountsFrominsightAllEntries(
             { [key]: entry },
             new Set(),
             new Set(),
@@ -219,7 +219,7 @@ export class ProviderService {
         // No store account for this key — create a seed from openclaw.json.
         const entry = openClawProviders[key];
         if (entry) {
-          const seeded = ProviderService.buildAccountsFromOpenClawEntries(
+          const seeded = ProviderService.buildAccountsFrominsightAllEntries(
             { [key]: entry },
             new Set(),
             new Set(),
@@ -241,7 +241,7 @@ export class ProviderService {
           continue;
         }
         const apiKey = await getApiKey(account.id);
-        const openClawKey = await getProviderApiKeyFromOpenClaw('openai');
+        const openClawKey = await getProviderApiKeyFrominsightAll('openai');
         if (!apiKey && !openClawKey) {
           logger.info(
             `[provider-sync] Removing unconfigured OpenAI API key account "${account.id}"`
@@ -264,10 +264,10 @@ export class ProviderService {
 
 
   /**
-   * Build ProviderAccount objects from OpenClaw config entries, skipping any
+   * Build ProviderAccount objects from insightAll config entries, skipping any
    * whose id or vendorId is already represented by an existing account.
    */
-  static buildAccountsFromOpenClawEntries(
+  static buildAccountsFrominsightAllEntries(
     providers: Record<string, Record<string, unknown>>,
     existingIds: Set<string>,
     existingVendorIds: Set<string>,
@@ -283,7 +283,7 @@ export class ProviderService {
     for (const [key, entry] of Object.entries(providers)) {
       if (existingIds.has(key)) continue;
 
-      const vendorId = inferProviderVendorIdFromOpenClawEntry(key, entry);
+      const vendorId = inferProviderVendorIdFrominsightAllEntry(key, entry);
       const definition = getProviderDefinition(vendorId === 'custom' ? key : vendorId);
 
       // Skip if an account with this vendorId already exists (e.g. user already
@@ -494,8 +494,8 @@ export class ProviderService {
     const accounts = await this.listAccounts();
     const results: Array<{ accountId: string; hasKey: boolean; keyMasked: string | null }> = [];
     for (const account of accounts) {
-      const runtimeProviderKey = resolveOpenClawProviderKey(account);
-      const apiKey = (await getProviderApiKeyFromOpenClaw(runtimeProviderKey))
+      const runtimeProviderKey = resolveinsightAllProviderKey(account);
+      const apiKey = (await getProviderApiKeyFrominsightAll(runtimeProviderKey))
         ?? (await getApiKey(account.id))
         ?? (runtimeProviderKey !== account.id ? await getApiKey(runtimeProviderKey) : null);
       results.push({
@@ -516,9 +516,9 @@ export class ProviderService {
   async hasAccountApiKey(accountId: string): Promise<boolean> {
     const account = await this.getAccount(accountId);
     const runtimeProviderKey = account
-      ? resolveOpenClawProviderKey(account)
+      ? resolveinsightAllProviderKey(account)
       : accountId;
-    if (await getProviderApiKeyFromOpenClaw(runtimeProviderKey)) {
+    if (await getProviderApiKeyFrominsightAll(runtimeProviderKey)) {
       return true;
     }
     if (runtimeProviderKey !== accountId && (await hasApiKey(runtimeProviderKey))) {
@@ -530,7 +530,7 @@ export class ProviderService {
   // ── Legacy public API (logs deprecation warning once per method) ─
   // These exist solely for backward compatibility with external clients
   // (older Gateway code, third-party tooling, in-flight tests). Internal
-  // ClawX callers should use the internal/clean methods above.
+  // insightAllX callers should use the internal/clean methods above.
 
   /**
    * @deprecated Use listAccounts() and map account data in callers.

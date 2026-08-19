@@ -1,9 +1,9 @@
 ---
 id: fix-acp-media-attached-turn-alignment
-title: Align OpenClaw MEDIA recovery with attached ACP user turns
+title: Align insightAll MEDIA recovery with attached ACP user turns
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Recover explicit assistant OpenClaw MEDIA attachments when the triggering ACP user turn contains structured image or resource content without weakening transcript evidence or attachment authorization.
+intent: Recover explicit assistant insightAll MEDIA attachments when the triggering ACP user turn contains structured image or resource content without weakening transcript evidence or attachment authorization.
 touchedAreas:
   - README.md
   - README.zh-CN.md
@@ -79,24 +79,24 @@ requiredTests:
   - pnpm harness run --spec harness/specs/tasks/fix-acp-media-attached-turn-alignment.md
   - pnpm run harness:ci
 acceptance:
-  - OpenClaw resource-link transcript projection no longer prevents the same turn's assistant MEDIA attachment from rendering.
+  - insightAll resource-link transcript projection no longer prevents the same turn's assistant MEDIA attachment from rendering.
   - ACP text, embedded text, resource-link, and omitted binary block ordering produces the exact bounded turn-alignment key without retaining image base64.
-  - User-authored text resembling an OpenClaw Resource link marker is not globally stripped or treated as attachment evidence.
+  - User-authored text resembling an insightAll Resource link marker is not globally stripped or treated as attachment evidence.
   - Attachment-only turns align by reverse occurrence and, for live prompts, exact optimistic user identity.
   - Existing session, generation, attempt, ambiguity, evidence, deduplication, and Main attachment authorization checks remain intact.
-  - The compatibility rationale explains that OpenClaw ACP does not project assistant MEDIA attachments, requiring a bounded transcript read.
-  - No OpenClaw source, distributed package, legacy Chat renderer, direct Renderer IPC, or direct Gateway HTTP request is introduced.
+  - The compatibility rationale explains that insightAll ACP does not project assistant MEDIA attachments, requiring a bounded transcript read.
+  - No insightAll source, distributed package, legacy Chat renderer, direct Renderer IPC, or direct Gateway HTTP request is introduced.
 docs:
   required: true
 ---
 
 ## Scope
 
-Preserve a lightweight projection of structured ACP user prompt blocks and use it to reconstruct the OpenClaw transcript text needed by the existing bounded assistant `MEDIA:` compatibility supplement.
+Preserve a lightweight projection of structured ACP user prompt blocks and use it to reconstruct the insightAll transcript text needed by the existing bounded assistant `MEDIA:` compatibility supplement.
 
 ## Out Of Scope
 
-- Modifying OpenClaw or its distributed package.
+- Modifying insightAll or its distributed package.
 - Replacing ACP replay with Gateway Chat history.
 - Parsing arbitrary user-authored resource marker text.
 - Expanding assistant evidence beyond explicit whole-line `MEDIA:` directives.

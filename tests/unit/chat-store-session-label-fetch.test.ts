@@ -122,7 +122,7 @@ describe('chat store session label summary hydration', () => {
     )).toBeNull();
   });
 
-  it('replaces OpenClaw UUID-date fallback labels with the first user prompt', async () => {
+  it('replaces insightAll UUID-date fallback labels with the first user prompt', async () => {
     const sessionKey = 'agent:main:session-fallback';
     const sessionId = '72e4b28b-8477-4e29-b57e-e14448fd42d0';
     const fallbackTitle = '72e4b28b (2026-07-22)';
@@ -238,7 +238,7 @@ describe('chat store session label summary hydration', () => {
 
   it('hydrates a cwd-only truncated derived title from the session summary', async () => {
     const sessionKey = 'agent:main:session-cwd-truncated';
-    const workspacePath = '/Users/zhuoxu/workspace/clawx-playground';
+    const workspacePath = '/Users/zhuoxu/workspace/insightallx-playground';
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'sessions.list') {
         return {
@@ -246,7 +246,7 @@ describe('chat store session label summary hydration', () => {
             {
               key: sessionKey,
               displayName: 'ACP',
-              derivedTitle: '[Working directory: ~/workspace/clawx-playground]…',
+              derivedTitle: '[Working directory: ~/workspace/insightallx-playground]…',
               updatedAt: 1_783_791_638_956,
             },
             { key: 'agent:main:main', displayName: 'Main', updatedAt: 1_783_791_638_957 },
@@ -801,9 +801,9 @@ describe('chat store session label summary hydration', () => {
       if (method === 'sessions.list') {
         return {
           sessions: [
-            { key: 'agent:main:session-a', displayName: 'ClawX', updatedAt: 1000 },
-            { key: 'agent:main:session-b', displayName: 'ClawX', updatedAt: 1001 },
-            { key: 'agent:main:main', displayName: 'ClawX', updatedAt: 1002 },
+            { key: 'agent:main:session-a', displayName: 'insightAllX', updatedAt: 1000 },
+            { key: 'agent:main:session-b', displayName: 'insightAllX', updatedAt: 1001 },
+            { key: 'agent:main:main', displayName: 'insightAllX', updatedAt: 1002 },
           ],
         };
       }
@@ -820,9 +820,9 @@ describe('chat store session label summary hydration', () => {
           success: true,
           result: {
             sessions: [
-              { key: 'agent:main:session-a', displayName: 'ClawX', updatedAt: 1000 },
-              { key: 'agent:main:session-b', displayName: 'ClawX', updatedAt: 1001 },
-              { key: 'agent:main:main', displayName: 'ClawX', updatedAt: 1002 },
+              { key: 'agent:main:session-a', displayName: 'insightAllX', updatedAt: 1000 },
+              { key: 'agent:main:session-b', displayName: 'insightAllX', updatedAt: 1001 },
+              { key: 'agent:main:main', displayName: 'insightAllX', updatedAt: 1002 },
             ],
           },
         };

@@ -1,8 +1,8 @@
 /**
- * In-process OpenClaw image generation runtime (no CLI subprocess).
+ * In-process insightAll image generation runtime (no CLI subprocess).
  */
 import { pathToFileURL } from 'node:url';
-import { resolveOpenClawRuntimeModulePath } from './runtime-package-resolution';
+import { resolveinsightAllRuntimeModulePath } from './runtime-package-resolution';
 
 type ImageGenerationRuntimeModule = {
   generateImage: (params: {
@@ -57,14 +57,14 @@ let mediaStoreModule: MediaStoreModule | null = null;
 let imageOpsModule: ImageOpsModule | null = null;
 let modelInputModule: ModelInputModule | null = null;
 
-async function importOpenClawSdkModule<T>(specifier: string): Promise<T> {
-  const modulePath = resolveOpenClawRuntimeModulePath(specifier);
+async function importinsightAllSdkModule<T>(specifier: string): Promise<T> {
+  const modulePath = resolveinsightAllRuntimeModulePath(specifier);
   return import(pathToFileURL(modulePath).href) as Promise<T>;
 }
 
 async function getImageGenerationRuntime(): Promise<ImageGenerationRuntimeModule> {
   if (!imageRuntimeModule) {
-    const mod = await importOpenClawSdkModule<{
+    const mod = await importinsightAllSdkModule<{
       generateImage: ImageGenerationRuntimeModule['generateImage'];
       listRuntimeImageGenerationProviders: ImageGenerationRuntimeModule['listRuntimeImageGenerationProviders'];
     }>(OPENCLAW_IMAGE_GENERATION_RUNTIME);
@@ -78,7 +78,7 @@ async function getImageGenerationRuntime(): Promise<ImageGenerationRuntimeModule
 
 async function getMediaStore(): Promise<MediaStoreModule> {
   if (!mediaStoreModule) {
-    const mod = await importOpenClawSdkModule<{ saveMediaBuffer: MediaStoreModule['saveMediaBuffer'] }>(
+    const mod = await importinsightAllSdkModule<{ saveMediaBuffer: MediaStoreModule['saveMediaBuffer'] }>(
       OPENCLAW_MEDIA_STORE,
     );
     mediaStoreModule = { saveMediaBuffer: mod.saveMediaBuffer };
@@ -88,7 +88,7 @@ async function getMediaStore(): Promise<MediaStoreModule> {
 
 async function getImageOps(): Promise<ImageOpsModule> {
   if (!imageOpsModule) {
-    const mod = await importOpenClawSdkModule<{ getImageMetadata: ImageOpsModule['getImageMetadata'] }>(
+    const mod = await importinsightAllSdkModule<{ getImageMetadata: ImageOpsModule['getImageMetadata'] }>(
       OPENCLAW_MEDIA_RUNTIME,
     );
     imageOpsModule = { getImageMetadata: mod.getImageMetadata };
@@ -105,7 +105,7 @@ export async function resolveImageGenerationPrimaryFromConfig(
 
 async function getModelInputHelpers(): Promise<ModelInputModule> {
   if (!modelInputModule) {
-    const mod = await importOpenClawSdkModule<{ resolveAgentModelPrimaryValue: ModelInputModule['resolveAgentModelPrimaryValue'] }>(
+    const mod = await importinsightAllSdkModule<{ resolveAgentModelPrimaryValue: ModelInputModule['resolveAgentModelPrimaryValue'] }>(
       OPENCLAW_IMAGE_GENERATION_CORE,
     );
     modelInputModule = { resolveAgentModelPrimaryValue: mod.resolveAgentModelPrimaryValue };

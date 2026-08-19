@@ -10,7 +10,7 @@ touchedAreas:
   - tests/unit/chat-input.test.tsx
   - tests/e2e/chat-model-picker.spec.ts
 expectedUserBehavior:
-  - Starting ClawX with an existing agent model override does not clear the override before configured providers load.
+  - Starting insightAllX with an existing agent model override does not clear the override before configured providers load.
   - ACP session loading is not interrupted by a model-triggered Gateway restart during startup.
 requiredProfiles:
   - fast
@@ -40,4 +40,4 @@ docs:
 ## Out Of Scope
 
 - Changing Gateway restart or ACP retry policy.
-- Repairing unrelated stale OpenClaw extensions.
+- Repairing unrelated stale insightAll extensions.

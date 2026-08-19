@@ -33,7 +33,7 @@ import {
   type ChannelConfigField,
 } from '@/types/channel';
 import {
-  isCanonicalOpenClawAccountId,
+  isCanonicalinsightAllAccountId,
   usesPluginManagedQrAccounts,
 } from '@/lib/channel-alias';
 import { toast } from 'sonner';
@@ -336,7 +336,7 @@ export function ChannelConfigModal({
           setConnecting(false);
           return;
         }
-        if (!isCanonicalOpenClawAccountId(nextAccountId)) {
+        if (!isCanonicalinsightAllAccountId(nextAccountId)) {
           const message = t('account.invalidCanonicalId');
           setAccountIdError(message);
           toast.error(message);

@@ -3,7 +3,7 @@ id: sidebar-session-attention
 title: Show Gateway-authoritative sidebar session attention
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Show active and unread-completion state in sidebar session rows using the OpenClaw Gateway session catalog as the only status authority.
+intent: Show active and unread-completion state in sidebar session rows using the insightAll Gateway session catalog as the only status authority.
 touchedAreas:
   - harness/reference/sidebar-session-attention.md
   - harness/specs/tasks/sidebar-session-attention.md
@@ -43,7 +43,7 @@ expectedUserBehavior:
   - A sidebar session shows a loading indicator while its exact Gateway session row is active.
   - An observed completion outside the visible Chat session shows an unread indicator until the conversation is opened.
   - The visible Chat session remains read when its active run completes, while retaining a current session on another route does not mark it read.
-  - Reconnect hydration and persisted observed-busy state recover only transitions that ClawX can prove from Gateway session rows.
+  - Reconnect hydration and persisted observed-busy state recover only transitions that insightAllX can prove from Gateway session rows.
 requiredProfiles:
   - fast
   - comms
@@ -69,7 +69,7 @@ requiredTests:
   - pnpm harness validate --spec harness/specs/tasks/sidebar-session-attention.md
   - pnpm harness run --spec harness/specs/tasks/sidebar-session-attention.md
 acceptance:
-  - Sidebar busy and completion state comes only from exact-key OpenClaw Gateway session rows; ACP prompt state, ACP timeline events, and Gateway agent runtime events are never secondary authorities.
+  - Sidebar busy and completion state comes only from exact-key insightAll Gateway session rows; ACP prompt state, ACP timeline events, and Gateway agent runtime events are never secondary authorities.
   - Gateway connection epochs, canonical list hydration, ordered event replay, and per-key timestamps fence stale list and event results from replacing newer state.
   - Busy replaces the relative timestamp, unread completion replaces busy, and a read conversation restores the relative timestamp.
   - Unread clears only when the user opens the conversation or that conversation is visibly mounted in Chat; retaining its key on another route does not clear it.
@@ -87,6 +87,6 @@ The durable architecture, ordering and failure semantics, current limitations, a
 
 ## Out Of Scope
 
-- Modifying OpenClaw or upgrading the bundled OpenClaw dependency.
+- Modifying insightAll or upgrading the bundled insightAll dependency.
 - Using ACP or Gateway agent runtime events as a second sidebar status source.
 - Guessing unread completion from activity timestamps or unrecoverable run-scoped cron activity.

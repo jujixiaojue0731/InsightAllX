@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 const require = createRequire(import.meta.url);
 
 describe('openclaw bundle config', () => {
-  it('pins the OpenClaw 2026.7.1-2 runtime compatibility matrix', () => {
+  it('pins the insightAll 2026.7.1-2 runtime compatibility matrix', () => {
     const packageJson = JSON.parse(readFileSync(resolve(process.cwd(), 'package.json'), 'utf8')) as {
       dependencies?: Record<string, string>;
       devDependencies?: Record<string, string>;
@@ -32,7 +32,7 @@ describe('openclaw bundle config', () => {
     expect(nodeDownloadScript).toContain("const NODE_VERSION = '22.22.3'");
   });
 
-  it('uses an Electron runtime with OpenClaw-compatible Node and SQLite versions', () => {
+  it('uses an Electron runtime with insightAll-compatible Node and SQLite versions', () => {
     const electronPath = require('electron') as string;
     const raw = execFileSync(
       electronPath,

@@ -7,7 +7,7 @@ appliesTo:
   - chat-workspace-and-navigation
 ---
 
-Sidebar attention MUST derive only from normalized OpenClaw Gateway session rows in the existing Renderer catalog. Rows and attention MUST match by exact normalized catalog key; ACP prompt/timeline state, local sending state, and Gateway agent runtime events MUST NOT derive or override it. Run-scoped cron keys MUST NOT be folded into base-row attention while `sessions.list` cannot recover that relationship.
+Sidebar attention MUST derive only from normalized insightAll Gateway session rows in the existing Renderer catalog. Rows and attention MUST match by exact normalized catalog key; ACP prompt/timeline state, local sending state, and Gateway agent runtime events MUST NOT derive or override it. Run-scoped cron keys MUST NOT be folded into base-row attention while `sessions.list` cannot recover that relationship.
 
 List rows and event patches MUST use the shared allowlisted normalizer. Event merge MUST preserve explicit `false`, clear optional fields only for explicit `null`, leave omitted fields unchanged, reject conflicting envelope/nested keys, and insert unknown rows only from reliable nested snapshots.
 

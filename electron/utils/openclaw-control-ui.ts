@@ -1,11 +1,11 @@
 /**
- * Build the external OpenClaw Control UI URL.
+ * Build the external insightAll Control UI URL.
  *
- * OpenClaw 2026.3.13 imports one-time auth tokens from the URL fragment
+ * insightAll 2026.3.13 imports one-time auth tokens from the URL fragment
  * (`#token=...`) and strips them after load. Query-string tokens are removed
  * by the UI bootstrap but are not imported for auth.
  */
-export function buildOpenClawControlUiUrl(
+export function buildinsightAllControlUiUrl(
   port: number,
   token: string,
 ): string {

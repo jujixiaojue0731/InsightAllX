@@ -4,7 +4,7 @@ title: Make channel deletion responsive while preserving durable cleanup
 type: ai-coding-task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Remove a deleted channel or account from the Channels UI immediately after confirmation while Main completes the durable OpenClaw configuration and binding cleanup.
+intent: Remove a deleted channel or account from the Channels UI immediately after confirmation while Main completes the durable insightAll configuration and binding cleanup.
 touchedAreas:
   - harness/specs/tasks/optimize-channel-delete-latency.md
   - harness/specs/tasks/optimize-channel-save-latency.md
@@ -31,7 +31,7 @@ touchedAreas:
   - tests/e2e/channels-supported-catalog.spec.ts
   - tests/e2e/channels-delete-latency.spec.ts
 expectedUserBehavior:
-  - Confirming deletion closes the confirmation dialog and removes the target row immediately instead of blocking on Gateway/OpenClaw configuration delivery.
+  - Confirming deletion closes the confirmation dialog and removes the target row immediately instead of blocking on Gateway/insightAll configuration delivery.
   - Main still durably deletes the channel configuration and associated binding.
   - A failed deletion reports an error and refreshes the file-backed channel view to restore the actual state.
   - Runtime convergence refresh remains asynchronous and does not block the delete interaction.
@@ -53,7 +53,7 @@ requiredTests:
   - tests/e2e/channels-delete-latency.spec.ts
 acceptance:
   - The UI applies deletion optimistically before the host delete promise settles.
-  - The host delete request remains the only mutation path; Renderer does not edit OpenClaw configuration directly.
+  - The host delete request remains the only mutation path; Renderer does not edit insightAll configuration directly.
   - Failure triggers a config-only refresh rather than leaving stale optimistic state.
   - No direct Renderer Gateway request or new transport path is added.
 docs:

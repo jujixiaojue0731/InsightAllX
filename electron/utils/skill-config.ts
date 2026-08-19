@@ -6,10 +6,10 @@ import { readFile, writeFile, mkdir, readdir, rm } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { getOpenClawDir, getOpenClawResolvedDir, getResourcesDir } from './paths';
+import { getinsightAllDir, getinsightAllResolvedDir, getResourcesDir } from './paths';
 import { logger } from './logger';
 import { cpAsyncSafe } from './plugin-install';
-import { mutateOpenClawConfig, readOpenClawConfigSnapshot } from '../gateway/config-delivery';
+import { mutateinsightAllConfig, readinsightAllConfigSnapshot } from '../gateway/config-delivery';
 
 const BUNDLED_OPENCLAW_SKILL_ALLOWLIST = new Set(['skill-creator']);
 
@@ -21,7 +21,7 @@ export interface SkillConfigUpdates {
 
 type SkillEntry = SkillConfigUpdates;
 
-interface OpenClawConfig {
+interface insightAllConfig {
     skills?: {
         entries?: Record<string, SkillEntry>;
         [key: string]: unknown;
@@ -49,18 +49,18 @@ interface PreinstalledLockFile {
 }
 
 interface PreinstalledMarker {
-    source: 'clawx-preinstalled';
+    source: 'insightallx-preinstalled';
     slug: string;
     version: string;
     installedAt: string;
 }
 
 /**
- * Read the current OpenClaw config
+ * Read the current insightAll config
  */
-async function readConfig(): Promise<OpenClawConfig> {
+async function readConfig(): Promise<insightAllConfig> {
     try {
-        return (await readOpenClawConfigSnapshot()).config as OpenClawConfig;
+        return (await readinsightAllConfigSnapshot()).config as insightAllConfig;
     } catch (err) {
         console.error('Failed to read openclaw config:', err);
         return {};
@@ -71,8 +71,8 @@ async function setSkillsEnabled(skillKeys: string[], enabled: boolean): Promise<
     if (skillKeys.length === 0) {
         return;
     }
-    await mutateOpenClawConfig((config) => {
-        const skillConfig = config as OpenClawConfig;
+    await mutateinsightAllConfig((config) => {
+        const skillConfig = config as insightAllConfig;
         if (!skillConfig.skills) {
             skillConfig.skills = {};
         }
@@ -107,7 +107,7 @@ function isEmptySkillEntry(entry: SkillEntry | undefined): boolean {
 }
 
 async function applySkillConfigUpdates(
-    config: OpenClawConfig,
+    config: insightAllConfig,
     updates: Array<{ skillKey: string; remove?: boolean } & SkillConfigUpdates>,
 ): Promise<void> {
     if (!config.skills) {
@@ -187,8 +187,8 @@ export async function updateSkillConfigs(
     updates: Array<{ skillKey: string } & SkillConfigUpdates>,
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        await mutateOpenClawConfig(async (config) => {
-            await applySkillConfigUpdates(config as OpenClawConfig, updates);
+        await mutateinsightAllConfig(async (config) => {
+            await applySkillConfigUpdates(config as insightAllConfig, updates);
         });
         return { success: true };
     } catch (err) {
@@ -208,8 +208,8 @@ export async function removeSkillConfigs(skillKeys: string[]): Promise<{ success
             .filter(Boolean);
         let removed = 0;
 
-        await mutateOpenClawConfig(async (config) => {
-            const skillConfig = config as OpenClawConfig;
+        await mutateinsightAllConfig(async (config) => {
+            const skillConfig = config as insightAllConfig;
             const existingEntries = skillConfig.skills?.entries || {};
             removed = normalizedSkillKeys.filter((skillKey) => Object.prototype.hasOwnProperty.call(existingEntries, skillKey)).length;
             if (removed === 0) {
@@ -236,19 +236,19 @@ export async function getAllSkillConfigs(): Promise<Record<string, SkillEntry>> 
     return config.skills?.entries || {};
 }
 
-function getDisallowedBundledOpenClawSkillSlugs(bundledSkillSlugs: string[]): string[] {
+function getDisallowedBundledinsightAllSkillSlugs(bundledSkillSlugs: string[]): string[] {
     return bundledSkillSlugs.filter((slug) => !BUNDLED_OPENCLAW_SKILL_ALLOWLIST.has(slug));
 }
 
-export async function trimBundledOpenClawSkills(options?: { bundledSkillsRoot?: string }): Promise<{ removed: number; removedSlugs: string[]; kept: string[] }> {
-    const bundledSkillsRoot = options?.bundledSkillsRoot || join(getOpenClawResolvedDir(), 'skills');
+export async function trimBundledinsightAllSkills(options?: { bundledSkillsRoot?: string }): Promise<{ removed: number; removedSlugs: string[]; kept: string[] }> {
+    const bundledSkillsRoot = options?.bundledSkillsRoot || join(getinsightAllResolvedDir(), 'skills');
     if (!existsSync(bundledSkillsRoot)) {
         return { removed: 0, removedSlugs: [], kept: Array.from(BUNDLED_OPENCLAW_SKILL_ALLOWLIST) };
     }
 
     try {
         const entries = await readdir(bundledSkillsRoot, { withFileTypes: true });
-        const disallowed = getDisallowedBundledOpenClawSkillSlugs(
+        const disallowed = getDisallowedBundledinsightAllSkillSlugs(
             entries
                 .filter((entry) => entry.isDirectory())
                 .map((entry) => entry.name),
@@ -268,15 +268,15 @@ export async function trimBundledOpenClawSkills(options?: { bundledSkillsRoot?: 
 
         return { removed, removedSlugs, kept: Array.from(BUNDLED_OPENCLAW_SKILL_ALLOWLIST) };
     } catch (error) {
-        logger.warn('Failed to trim bundled OpenClaw skills:', error);
+        logger.warn('Failed to trim bundled insightAll skills:', error);
         return { removed: 0, removedSlugs: [], kept: Array.from(BUNDLED_OPENCLAW_SKILL_ALLOWLIST) };
     }
 }
 
-export async function trimBundledOpenClawSkillsAndConfigs(
+export async function trimBundledinsightAllSkillsAndConfigs(
     options?: { bundledSkillsRoot?: string },
 ): Promise<{ removed: number; removedSlugs: string[]; removedConfigs: number; kept: string[] }> {
-    const trimResult = await trimBundledOpenClawSkills(options);
+    const trimResult = await trimBundledinsightAllSkills(options);
     const removeResult = trimResult.removedSlugs.length > 0
         ? await removeSkillConfigs(trimResult.removedSlugs)
         : { success: true, removed: 0 };
@@ -292,7 +292,7 @@ export async function trimBundledOpenClawSkillsAndConfigs(
 }
 
 /**
- * Built-in skills bundled with ClawX that should be pre-deployed to
+ * Built-in skills bundled with insightAllX that should be pre-deployed to
  * ~/.openclaw/skills/ on first launch.  These come from the openclaw package's
  * extensions directory and are available in both dev and packaged builds.
  */
@@ -315,7 +315,7 @@ export async function ensureBuiltinSkillsInstalled(): Promise<void> {
             continue; // already installed
         }
 
-        const openclawDir = getOpenClawDir();
+        const openclawDir = getinsightAllDir();
         const sourceDir = join(openclawDir, 'extensions', sourceExtension, 'skills', slug);
 
         if (!existsSync(join(sourceDir, 'SKILL.md'))) {
@@ -334,7 +334,7 @@ export async function ensureBuiltinSkillsInstalled(): Promise<void> {
 }
 
 const PREINSTALLED_MANIFEST_NAME = 'preinstalled-manifest.json';
-const PREINSTALLED_MARKER_NAME = '.clawx-preinstalled.json';
+const PREINSTALLED_MARKER_NAME = '.insightallx-preinstalled.json';
 
 async function readPreinstalledManifest(): Promise<PreinstalledSkillSpec[]> {
     const candidates = [
@@ -469,7 +469,7 @@ export async function ensurePreinstalledSkillsInstalled(): Promise<void> {
             await mkdir(targetDir, { recursive: true });
             await cpAsyncSafe(sourceDir, targetDir);
             const markerPayload: PreinstalledMarker = {
-                source: 'clawx-preinstalled',
+                source: 'insightallx-preinstalled',
                 slug: spec.slug,
                 version: desiredVersion,
                 installedAt: new Date().toISOString(),

@@ -1,9 +1,9 @@
 ---
 id: acp-media-attachments
-title: Render ACP resources and bounded OpenClaw media attachments
+title: Render ACP resources and bounded insightAll media attachments
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Render standard ACP resources and recover canonical persisted OpenClaw media facts or explicit MEDIA attachments omitted by the distributed ACP adapter through a bounded transcript compatibility projection.
+intent: Render standard ACP resources and recover canonical persisted insightAll media facts or explicit MEDIA attachments omitted by the distributed ACP adapter through a bounded transcript compatibility projection.
 touchedAreas:
   - package.json
   - harness/specs/tasks/acp-media-attachments.md
@@ -116,7 +116,7 @@ touchedAreas:
 expectedUserBehavior:
   - Standard ACP resource_link and URI-backed resource content renders as paperclip attachment cards.
   - Canonical assistant `__openclaw.media` facts render as attachment cards even when visible prose only mentions the output path.
-  - Explicit assistant OpenClaw MEDIA directives omitted by ACP are recovered for live completions and historical session loads without displaying the raw directive.
+  - Explicit assistant insightAll MEDIA directives omitted by ACP are recovered for live completions and historical session loads without displaying the raw directive.
   - Completed turn durations use transcript timing for both live completion and historical reload so navigating between conversations does not change the displayed value.
   - MEDIA recovery remains aligned when the triggering ACP user turn contains structured resources, images, or no text.
   - Attachment rows render after assistant prose and preserve declaration order.
@@ -162,7 +162,7 @@ acceptance:
   - A canonical persisted assistant `__openclaw.media` fact renders an actionable attachment card and carries its declared filename, content type, size, and transcript message identity into Main validation.
   - User image attachments render as thumbnails with the filename revealed by a hover overlay.
   - User non-image attachments render the filename followed by a muted, truncating source path and no MIME label.
-  - The reported OpenClaw MEDIA directive for budget_sample.xlsx renders an attachment in ACP Chat even though OpenClaw ACP emits no resource block.
+  - The reported insightAll MEDIA directive for budget_sample.xlsx renders an attachment in ACP Chat even though insightAll ACP emits no resource block.
   - User resource links and attachment-only prompts do not prevent the same turn's assistant MEDIA attachment from rendering.
   - The raw MEDIA directive is not displayed.
   - The attachment renders after assistant prose and preserves declaration order.
@@ -177,7 +177,7 @@ acceptance:
   - Attachment access remains bound to Main-owned session, generation, target revalidation, and outgoing-record authority on every operation.
   - Attachment rows use semantic controls with safe accessible labels, keyboard activation, and disabled unavailable states.
   - The implementation contains the required compatibility rationale comment and links it to durable architecture documentation.
-  - No OpenClaw source or distributed package is modified.
+  - No insightAll source or distributed package is modified.
   - No legacy Chat renderer, direct Renderer IPC, or direct Gateway HTTP request is introduced.
   - Unit, Electron E2E, typecheck, harness, and required communication regression checks pass.
 docs:
@@ -186,11 +186,11 @@ docs:
 
 ## Scope
 
-Standard ACP resource content is the preferred attachment source. The OpenClaw transcript path is a bounded compatibility exception for canonical persisted assistant `__openclaw.media` facts and explicit assistant `MEDIA:` directives that the distributed ACP adapter omits; it is not a second Chat history source.
+Standard ACP resource content is the preferred attachment source. The insightAll transcript path is a bounded compatibility exception for canonical persisted assistant `__openclaw.media` facts and explicit assistant `MEDIA:` directives that the distributed ACP adapter omits; it is not a second Chat history source.
 
 ## Out Of Scope
 
-- Modifying OpenClaw or its distributed package.
+- Modifying insightAll or its distributed package.
 - Reconstructing ordinary messages, tools, plans, permissions, thoughts, or file activity from transcripts.
 - Treating bare paths or inline paths from ordinary assistant prose as attachment evidence without a canonical persisted media fact.
 - Persisting a synthetic ACP attachment ledger or compatibility cache.
@@ -200,7 +200,7 @@ Standard ACP resource content is the preferred attachment source. The OpenClaw t
 | Acceptance behavior | Test or durable rule |
 | --- | --- |
 | Standard ACP resources render actionable cards | `tests/unit/acp-reducer.test.ts`, `tests/unit/acp-chat-components.test.tsx`, `tests/e2e/chat-acp-attachments.spec.ts` |
-| Canonical persisted OpenClaw media facts, explicit `MEDIA:` recovery, and hidden raw directives | `tests/unit/acp-media-attachments.test.ts`, `tests/unit/acp-chat-store.test.ts`, `tests/e2e/chat-acp-attachments.spec.ts` |
+| Canonical persisted insightAll media facts, explicit `MEDIA:` recovery, and hidden raw directives | `tests/unit/acp-media-attachments.test.ts`, `tests/unit/acp-chat-store.test.ts`, `tests/e2e/chat-acp-attachments.spec.ts` |
 | Stable completed-turn duration across live completion and session navigation | `tests/unit/acp-chat-store.test.ts`, `tests/unit/acp-turn-timings.test.ts`, `tests/e2e/chat-acp-inline-timeline.spec.ts` |
 | Explicit parser grammar rejects fenced, wrapped, inline, malformed, unknown-scheme, and overlong values | `tests/unit/acp-media-attachments.test.ts`, `acp-compatibility-content-safety` |
 | Transcript suffix alignment uses normalized user text and occurrence from the tail without guessing | `tests/unit/acp-media-attachments.test.ts`, `tests/unit/acp-chat-store.test.ts`, `acp-chat-state-and-history` |
@@ -216,5 +216,5 @@ Standard ACP resource content is the preferred attachment source. The OpenClaw t
 | Outside-workspace files resolve while stale session/generation access is rejected | `tests/unit/attachment-access.test.ts`, `tests/unit/acp-session-access-registry.test.ts`, `tests/e2e/chat-acp-attachments.spec.ts`, `attachment-access-safety`, `session-workspace-authority` |
 | Turn-scoped live/history dedupe, unavailable upgrade, and native ACP precedence | `tests/unit/acp-chat-store.test.ts`, `tests/unit/acp-media-attachments.test.ts`, `acp-chat-state-and-history`, `acp-compatibility-content-safety` |
 | Compatibility rationale remains marked and bounded | `harness/reference/acp-generated-media-and-diagnostics.md#bounded-transcript-exceptions`, `acp-compatibility-content-safety` |
-| No OpenClaw, legacy Renderer, direct IPC, or direct Gateway regression | `renderer-main-boundary`, `backend-communication-boundary`, `acp-chat-state-and-history`, harness validation |
+| No insightAll, legacy Renderer, direct IPC, or direct Gateway regression | `renderer-main-boundary`, `backend-communication-boundary`, `acp-chat-state-and-history`, harness validation |
 | Complete regression validation passes | `requiredTests` above and `comms-regression` |

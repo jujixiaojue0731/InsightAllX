@@ -40,8 +40,8 @@ import {
 } from './attachment-open-with';
 import {
   expandPath,
-  resolveOpenClawConfigDir,
-  resolveOpenClawStateDir,
+  resolveinsightAllConfigDir,
+  resolveinsightAllStateDir,
 } from '../utils/paths';
 
 const MAX_REFERENCE_LENGTH = 4096;
@@ -167,8 +167,8 @@ export class StagedAttachmentRegistry {
   }
 }
 
-export function resolveClawXStagingDir(stateDir = resolveOpenClawStateDir()): string {
-  return join(resolve(stateDir), 'media', 'outbound', 'clawx-staging');
+export function resolveinsightAllXStagingDir(stateDir = resolveinsightAllStateDir()): string {
+  return join(resolve(stateDir), 'media', 'outbound', 'insightallx-staging');
 }
 
 function attachmentFailure(error: unknown): AttachmentAccessError {
@@ -282,7 +282,7 @@ function localPathFromUri(uri: string, executionCwd: string): string {
 function parseOutgoingUrl(uri: string): { attachmentId: string; sessionKey: string } | null {
   let url: URL;
   try {
-    url = uri.startsWith('/') ? new URL(uri, 'http://clawx.local') : new URL(uri);
+    url = uri.startsWith('/') ? new URL(uri, 'http://insightallx.local') : new URL(uri);
   } catch {
     return null;
   }
@@ -319,7 +319,7 @@ async function canonicalManagedMediaRoots(
   configDir: string,
   fs: AttachmentFs,
 ): Promise<string[]> {
-  // OpenClaw 2026.6.10 exposes only resolveStateDir()/media and resolveConfigDir()/media.
+  // insightAll 2026.6.10 exposes only resolveStateDir()/media and resolveConfigDir()/media.
   // Keep this list exact until the distributed runtime adds a real media-root setting.
   const managedRoots = await Promise.all([stateDir, configDir].map(async (parentPath) => {
     try {
@@ -472,8 +472,8 @@ export async function resolveOutgoingMediaAttachment(input: {
     const outgoing = parseOutgoingUrl(input.uri);
     if (!outgoing || (input.expectedSessionKey && outgoing.sessionKey !== input.expectedSessionKey)) return null;
     const fs = input.fs ?? await import('node:fs/promises');
-    const stateDir = resolve(input.stateDir ?? resolveOpenClawStateDir());
-    const configDir = resolve(input.configDir ?? resolveOpenClawConfigDir());
+    const stateDir = resolve(input.stateDir ?? resolveinsightAllStateDir());
+    const configDir = resolve(input.configDir ?? resolveinsightAllConfigDir());
     const recordPath = join(stateDir, 'media', 'outgoing', 'records', `${outgoing.attachmentId}.json`);
     let handle: FileHandle | undefined;
     let raw: Buffer | null;
@@ -522,8 +522,8 @@ export async function resolveOutgoingMediaAttachment(input: {
 }
 
 export function createAttachmentAccess(dependencies: AttachmentAccessDependencies): AttachmentAccess {
-  const stateDir = resolve(dependencies.stateDir ?? resolveOpenClawStateDir());
-  const configDir = resolve(dependencies.configDir ?? resolveOpenClawConfigDir());
+  const stateDir = resolve(dependencies.stateDir ?? resolveinsightAllStateDir());
+  const configDir = resolve(dependencies.configDir ?? resolveinsightAllConfigDir());
   const shell = dependencies.shell ?? electronShell;
   const getFs = async (): Promise<AttachmentFs> => dependencies.fs ?? await import('node:fs/promises');
   const stateAuthority: ManagedAuthoritySlot = { lexicalParent: stateDir };

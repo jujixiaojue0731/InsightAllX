@@ -221,7 +221,7 @@ describe('ACP image-generation compatibility extraction', () => {
     });
   });
 
-  it('accepts OpenClaw message-tool delivery details when lifecycle meta is completed', () => {
+  it('accepts insightAll message-tool delivery details when lifecycle meta is completed', () => {
     const evidence = extractImageGenerationCompletionFromRuntimeEvent({
       type: 'tool.completed',
       runId: `image_generate:${TASK_ID}:ok`,
@@ -388,7 +388,7 @@ describe('ACP image-generation compatibility extraction', () => {
           messageId: 'replayed-image-result',
           content: {
             type: 'text',
-            text: '图片生成完成！这是为你创建的蓝天白云风景图。\n\nMEDIA:/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png',
+            text: '图片生成完成！这是为你创建的蓝天白云风景图。\n\nMEDIA:/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png',
           },
         },
       },
@@ -402,8 +402,8 @@ describe('ACP image-generation compatibility extraction', () => {
     });
     expect(evidence?.candidates).toEqual([
       {
-        key: '/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png',
-        filePath: '/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png',
+        key: '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png',
+        filePath: '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png',
         mimeType: 'image/png',
       },
     ]);
@@ -426,7 +426,7 @@ describe('ACP image-generation compatibility extraction', () => {
         id: 'assistant-image-ready',
         content: [{
           type: 'text',
-          text: '图片生成完成！\n\nMEDIA:/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png',
+          text: '图片生成完成！\n\nMEDIA:/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png',
         }],
       },
     ], SESSION_KEY);
@@ -446,8 +446,8 @@ describe('ACP image-generation compatibility extraction', () => {
     });
     expect(supplement.completions[0]?.candidates).toEqual([
       {
-        key: '/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png',
-        filePath: '/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png',
+        key: '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png',
+        filePath: '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png',
         mimeType: 'image/png',
       },
     ]);
@@ -593,7 +593,7 @@ describe('ACP image-generation compatibility extraction', () => {
           messageId: 'spaced-media-marker',
           content: {
             type: 'text',
-            text: '图片生成完成！\n\nMEDIA: /Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png',
+            text: '图片生成完成！\n\nMEDIA: /Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png',
           },
         },
       },

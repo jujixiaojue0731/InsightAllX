@@ -1,9 +1,9 @@
 ---
 id: chat-workspace-context
-title: Bind chat sessions to OpenClaw cwd workspace context
+title: Bind chat sessions to insightAll cwd workspace context
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Add chat workspace selection while keeping OpenClaw ACP session cwd as the single source of truth for bound sessions.
+intent: Add chat workspace selection while keeping insightAll ACP session cwd as the single source of truth for bound sessions.
 touchedAreas:
   - .gitignore
   - .prettierrc
@@ -56,14 +56,14 @@ touchedAreas:
 expectedUserBehavior:
   - New chat sessions use the globally selected workspace until their first send.
   - Editable new chats list persisted recent and known session workspaces in the composer menu, alongside the default workspace and native folder picker.
-  - First send initializes the OpenClaw ACP session with the selected cwd.
-  - Existing sessions use OpenClaw ACP cwd as their read-only workspace context.
-  - Historical sessions with recoverable OpenClaw cwd group under their real cwd.
+  - First send initializes the insightAll ACP session with the selected cwd.
+  - Existing sessions use insightAll ACP cwd as their read-only workspace context.
+  - Historical sessions with recoverable insightAll cwd group under their real cwd.
   - Sessions without recoverable cwd group under the default workspace label.
   - Imported workspace display names can be renamed without changing their authoritative paths.
   - Renamed workspace labels stay synchronized between the sidebar and chat composer, while hover text exposes the path.
-  - OpenClaw ACP cwd injection remains enabled, while automatic conversation titles omit its leading working-directory envelope.
-  - OpenClaw UUID-date fallback titles are replaced by the transcript's first user prompt and are never persisted by an unchanged rename.
+  - insightAll ACP cwd injection remains enabled, while automatic conversation titles omit its leading working-directory envelope.
+  - insightAll UUID-date fallback titles are replaced by the transcript's first user prompt and are never persisted by an unchanged rename.
   - Renderer continues to use host-api and never calls direct IPC or Gateway HTTP.
 requiredProfiles:
   - fast
@@ -85,15 +85,15 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
-  - OpenClaw ACP cwd is the authoritative session workspace when available.
-  - ClawX only persists global workspace selection and recent workspaces.
+  - insightAll ACP cwd is the authoritative session workspace when available.
+  - insightAllX only persists global workspace selection and recent workspaces.
   - The editable composer workspace menu shows deduplicated recent and known-session non-default workspaces with their custom display labels.
   - Bound session footer workspace is read-only.
   - Right workspace tree root matches effective chat workspace.
   - Sidebar groups sessions by workspace, then sorts each flat group by the shared activity timestamp without date buckets.
   - Custom workspace labels persist through Main-owned settings and never replace path identity.
   - Explicit user session labels remain unchanged even when they begin with a working-directory-looking string.
-  - A UUID-date fallback matching the OpenClaw session id is not treated as an explicit or derived user-facing title.
+  - A UUID-date fallback matching the insightAll session id is not treated as an explicit or derived user-facing title.
 docs:
   required: true
 ---

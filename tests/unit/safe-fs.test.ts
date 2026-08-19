@@ -17,7 +17,7 @@ describe('safeRmSync', () => {
   });
 
   it('removes a directory tree without deleting outbound symlink/junction targets', () => {
-    root = mkdtempSync(join(tmpdir(), 'clawx-safe-rm-'));
+    root = mkdtempSync(join(tmpdir(), 'insightallx-safe-rm-'));
     const bundledRuntime = join(root, 'bundled-openclaw');
     const pluginDir = join(root, 'extensions', 'openclaw-weixin');
     const peerLink = join(pluginDir, 'node_modules', 'openclaw');
@@ -38,7 +38,7 @@ describe('safeRmSync', () => {
   });
 
   it('removes a top-level outbound directory link without deleting its target', () => {
-    root = mkdtempSync(join(tmpdir(), 'clawx-safe-rm-link-'));
+    root = mkdtempSync(join(tmpdir(), 'insightallx-safe-rm-link-'));
     const target = join(root, 'runtime');
     const link = join(root, 'plugin-link');
 
@@ -53,14 +53,14 @@ describe('safeRmSync', () => {
   });
 
   it('is a no-op when the path is already missing', () => {
-    root = mkdtempSync(join(tmpdir(), 'clawx-safe-rm-missing-'));
+    root = mkdtempSync(join(tmpdir(), 'insightallx-safe-rm-missing-'));
     const missing = join(root, 'does-not-exist');
 
     expect(() => safeRmSync(missing)).not.toThrow();
   });
 
   it.runIf(process.platform === 'win32')('removes a directory tree through a Windows namespaced path', () => {
-    root = mkdtempSync(join(tmpdir(), 'clawx-safe-rm-namespaced-'));
+    root = mkdtempSync(join(tmpdir(), 'insightallx-safe-rm-namespaced-'));
     const pluginDir = join(root, 'extensions', 'wecom');
     const namespacedPluginDir = toNamespacedPath(pluginDir);
 

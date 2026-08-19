@@ -52,7 +52,7 @@ describe('cleanupAgentsSymlinkedSkills', () => {
   let workspaceAgentsSkillsDir: string;
 
   beforeEach(() => {
-    root = mkdtempSync(path.join(tmpdir(), 'clawx-skills-cleanup-'));
+    root = mkdtempSync(path.join(tmpdir(), 'insightallx-skills-cleanup-'));
     skillsDir = path.join(root, 'openclaw', 'skills');
     agentsRootDir = path.join(root, 'agents');
     agentsSkillsDir = path.join(agentsRootDir, 'skills');
@@ -335,16 +335,16 @@ describe('cleanupAgentsSymlinkedSkills', () => {
 describe('cleanupStalePluginRuntimeDeps', () => {
   let root: string;
   let runtimeDepsDir: string;
-  let currentOpenClawDir: string;
-  let oldOpenClawDir: string;
+  let currentinsightAllDir: string;
+  let oldinsightAllDir: string;
 
   beforeEach(() => {
-    root = mkdtempSync(path.join(tmpdir(), 'clawx-runtime-deps-cleanup-'));
+    root = mkdtempSync(path.join(tmpdir(), 'insightallx-runtime-deps-cleanup-'));
     runtimeDepsDir = path.join(root, 'openclaw', 'plugin-runtime-deps');
-    currentOpenClawDir = path.join(root, 'current-worktree', 'node_modules', 'openclaw');
-    oldOpenClawDir = path.join(root, 'old-worktree', 'node_modules', 'openclaw');
-    mkdirSync(path.join(currentOpenClawDir, 'dist'), { recursive: true });
-    mkdirSync(path.join(oldOpenClawDir, 'dist'), { recursive: true });
+    currentinsightAllDir = path.join(root, 'current-worktree', 'node_modules', 'openclaw');
+    oldinsightAllDir = path.join(root, 'old-worktree', 'node_modules', 'openclaw');
+    mkdirSync(path.join(currentinsightAllDir, 'dist'), { recursive: true });
+    mkdirSync(path.join(oldinsightAllDir, 'dist'), { recursive: true });
     mkdirSync(runtimeDepsDir, { recursive: true });
   });
 
@@ -352,15 +352,15 @@ describe('cleanupStalePluginRuntimeDeps', () => {
     rmSync(root, { recursive: true, force: true });
   });
 
-  function writeOpenClawDistFile(openClawDir: string, name: string): string {
+  function writeinsightAllDistFile(openClawDir: string, name: string): string {
     const filePath = path.join(openClawDir, 'dist', name);
     writeFileSync(filePath, 'export {}\n');
     return filePath;
   }
 
-  it('removes OpenClaw runtime cache roots that symlink to an old worktree package', () => {
-    const oldDistFile = writeOpenClawDistFile(oldOpenClawDir, 'runtime.js');
-    const currentDistFile = writeOpenClawDistFile(currentOpenClawDir, 'runtime.js');
+  it('removes insightAll runtime cache roots that symlink to an old worktree package', () => {
+    const oldDistFile = writeinsightAllDistFile(oldinsightAllDir, 'runtime.js');
+    const currentDistFile = writeinsightAllDistFile(currentinsightAllDir, 'runtime.js');
     const staleRoot = path.join(runtimeDepsDir, 'openclaw-2026.4.26-old');
     const currentRoot = path.join(runtimeDepsDir, 'openclaw-2026.5.1-current');
     mkdirSync(path.join(staleRoot, 'dist'), { recursive: true });
@@ -368,7 +368,7 @@ describe('cleanupStalePluginRuntimeDeps', () => {
     symlinkSync(oldDistFile, path.join(staleRoot, 'dist', 'runtime.js'), 'file');
     symlinkSync(currentDistFile, path.join(currentRoot, 'dist', 'runtime.js'), 'file');
 
-    const res = cleanupStalePluginRuntimeDeps({ runtimeDepsDir, currentOpenClawDir });
+    const res = cleanupStalePluginRuntimeDeps({ runtimeDepsDir, currentinsightAllDir });
 
     expect(res.removed).toEqual(['openclaw-2026.4.26-old']);
     expect(res.examined).toBe(2);
@@ -377,7 +377,7 @@ describe('cleanupStalePluginRuntimeDeps', () => {
     expect(existsSync(oldDistFile)).toBe(true);
   });
 
-  it('keeps non-OpenClaw runtime cache roots and non-OpenClaw symlinks', () => {
+  it('keeps non-insightAll runtime cache roots and non-insightAll symlinks', () => {
     const externalPackageFile = path.join(root, 'external-plugin', 'dist', 'runtime.js');
     mkdirSync(path.dirname(externalPackageFile), { recursive: true });
     writeFileSync(externalPackageFile, 'export {}\n');
@@ -389,7 +389,7 @@ describe('cleanupStalePluginRuntimeDeps', () => {
     symlinkSync(externalPackageFile, path.join(openClawNamedRoot, 'dist', 'runtime.js'), 'file');
     symlinkSync(externalPackageFile, path.join(externalNamedRoot, 'dist', 'runtime.js'), 'file');
 
-    const res = cleanupStalePluginRuntimeDeps({ runtimeDepsDir, currentOpenClawDir });
+    const res = cleanupStalePluginRuntimeDeps({ runtimeDepsDir, currentinsightAllDir });
 
     expect(res.removed).toEqual([]);
     expect(res.examined).toBe(1);

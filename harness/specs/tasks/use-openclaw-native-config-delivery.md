@@ -1,9 +1,9 @@
 ---
 id: use-openclaw-native-config-delivery
-title: Use OpenClaw-native config delivery and restart planning
+title: Use insightAll-native config delivery and restart planning
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Make one Main-owned coordinator the only ClawX path for OpenClaw config mutation, using config.get and config.set while running and a file fallback before startup.
+intent: Make one Main-owned coordinator the only insightAllX path for insightAll config mutation, using config.get and config.set while running and a file fallback before startup.
 touchedAreas:
   - harness/specs/tasks/use-openclaw-native-config-delivery.md
   - harness/specs/rules/openclaw-config-delivery.md
@@ -35,8 +35,8 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
 expectedUserBehavior:
-  - Saving providers, agents, channels, bindings, skills, or other hot-applicable OpenClaw configuration does not replace the Gateway process.
-  - Every ClawX mutation of the active OpenClaw config goes through one coordinator-owned read-modify-write transaction.
+  - Saving providers, agents, channels, bindings, skills, or other hot-applicable insightAll configuration does not replace the Gateway process.
+  - Every insightAllX mutation of the active insightAll config goes through one coordinator-owned read-modify-write transaction.
   - A running Gateway mutation uses config.get as its baseline and config.set as its commit instead of writing the file directly.
   - Saving config while the Gateway is stopped does not start it.
   - Proxy and other process-launch environment changes still replace the running Gateway process.
@@ -69,10 +69,10 @@ acceptance:
   - Channel account deletion removes matching credentials from plugin-backed account mirrors, including Agent deletion paths.
   - Gateway WebSocket traces redact serialized raw config-write payloads before logging them.
   - Proxy environment changes, manual restart, heartbeat recovery, process crash recovery, app update, and app shutdown/startup retain their lifecycle behavior.
-  - No production helper outside the coordinator writes the active OpenClaw config file.
-  - Coordinator file fallback uses the configured OpenClaw config path rather than a hardcoded home-directory path.
+  - No production helper outside the coordinator writes the active insightAll config file.
+  - Coordinator file fallback uses the configured insightAll config path rather than a hardcoded home-directory path.
 docs:
   required: true
 ---
 
-Use this task spec for the OpenClaw 2026.7.1 config-delivery convergence change.
+Use this task spec for the insightAll 2026.7.1 config-delivery convergence change.

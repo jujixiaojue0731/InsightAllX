@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/clawx-wechat-login-${suffix}`,
+    testHome: `/tmp/insightallx-wechat-login-${suffix}`,
   };
 });
 
@@ -25,7 +25,7 @@ vi.mock('node:os', async () => {
 vi.mock('electron', () => ({
   app: {
     isPackaged: false,
-    getPath: () => '/tmp/clawx-test-user-data',
+    getPath: () => '/tmp/insightallx-test-user-data',
     getVersion: () => '0.0.0-test',
     getAppPath: () => '/tmp',
   },
@@ -129,8 +129,8 @@ describe('wechat login utility', () => {
       }),
     });
     vi.stubGlobal('fetch', fetchMock);
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
     const { startWeChatLoginSession } = await import('@electron/utils/wechat-login');
 
     await startWeChatLoginSession({ accountId: 'bot@im.bot' });

@@ -12,7 +12,7 @@ type ContextWindowRule = {
  * that would otherwise carry no `contextWindow`.
  *
  * Why this matters: when a model row has neither `contextTokens` nor
- * `contextWindow`, OpenClaw's embedded runner skips preemptive compaction and
+ * `contextWindow`, insightAll's embedded runner skips preemptive compaction and
  * context-window guarding entirely, so long sessions only fail at the provider
  * with "Context overflow: prompt too large" instead of being compacted early.
  *
@@ -85,7 +85,7 @@ export const DEFAULT_CUSTOM_MODEL_CONTEXT_WINDOW = 200_000;
  * Ceiling for locally hosted runtimes (Ollama and friends). A local `qwen3`
  * tag is a quantised small model, not the hosted flagship of the same name, so
  * family rules must not hand it a frontier-sized window. Kept at 128K because
- * ClawX seeds `compaction.reserveTokensFloor = 50000` — dropping the ceiling
+ * insightAllX seeds `compaction.reserveTokensFloor = 50000` — dropping the ceiling
  * near or below that floor leaves the runner no usable budget.
  */
 export const LOCAL_MODEL_CONTEXT_WINDOW = 131_072;
@@ -95,11 +95,11 @@ export const LOCAL_MODEL_CONTEXT_WINDOW = 131_072;
  *
  * OAuth against a ChatGPT plan does not get the API-tier window: the backend
  * enforces a far smaller per-session budget than `gpt-5.6-sol`'s published
- * 1.05M. OpenClaw's own Codex catalog hard-codes 272,000 for every model on
+ * 1.05M. insightAll's own Codex catalog hard-codes 272,000 for every model on
  * this transport, so we mirror that figure rather than inventing our own.
  *
- * This matters because ClawX writes OAuth rows into `models.providers.openai`
- * while OpenClaw's cap lives on its separate `codex` provider — nothing else
+ * This matters because insightAllX writes OAuth rows into `models.providers.openai`
+ * while insightAll's cap lives on its separate `codex` provider — nothing else
  * would clamp the value we write.
  */
 export const CHATGPT_OAUTH_CONTEXT_WINDOW = 272_000;
@@ -114,7 +114,7 @@ const SUBSCRIPTION_API_PROTOCOLS = new Set([
 ]);
 
 export type ModelCapabilityContext = {
-  /** OpenClaw runtime provider key, used to detect locally hosted models. */
+  /** insightAll runtime provider key, used to detect locally hosted models. */
   providerKey?: string;
   /** `models.providers.*.api` value, used to detect subscription transports. */
   apiProtocol?: string;
@@ -181,7 +181,7 @@ const VISION_MODEL_PATTERNS: RegExp[] = [
 ];
 
 /**
- * Mirrors OpenClaw 2026.5.20 custom-provider onboarding inference.
+ * Mirrors insightAll 2026.5.20 custom-provider onboarding inference.
  * Unknown models use the same conservative text-only fallback as non-interactive onboarding.
  */
 export function inferCustomModelInputModalities(modelId: string): ModelInputModality[] {

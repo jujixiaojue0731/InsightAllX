@@ -6,7 +6,7 @@ appliesTo:
   - gateway-backend-communication
 ---
 
-When ClawX rewrites an explicit `models.providers.*` entry, existing model rows
+When insightAllX rewrites an explicit `models.providers.*` entry, existing model rows
 must be merged by exact model ID instead of reconstructed from only `id` and
 `name`.
 

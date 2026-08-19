@@ -151,10 +151,10 @@ describe('AcpChatService', () => {
     vi.clearAllMocks();
     acpSdkMock.state.connectionForSpawn = undefined;
     childProcessMock.state.child = undefined;
-    storeMock.getSetting.mockResolvedValue('clawx-test-gateway-token');
+    storeMock.getSetting.mockResolvedValue('insightallx-test-gateway-token');
   });
 
-  it('forks the embedded OpenClaw entry for ACP instead of spawning a public CLI wrapper', async () => {
+  it('forks the embedded insightAll entry for ACP instead of spawning a public CLI wrapper', async () => {
     const { service } = await createSpawnedService();
 
     await expect(service.loadSession({ sessionKey: 'agent:pi:s1', workspaceRoot: '/repo', cwd: '/repo' })).resolves.toEqual({
@@ -173,14 +173,14 @@ describe('AcpChatService', () => {
         windowsHide: true,
         env: expect.objectContaining({
           OPENCLAW_NO_RESPAWN: '1',
-          OPENCLAW_EMBEDDED_IN: 'ClawX',
+          OPENCLAW_EMBEDDED_IN: 'insightAllX',
           OPENCLAW_EXEC_SHELL_SNAPSHOT: '0',
         }),
       }),
     );
   });
 
-  it('passes the authoritative ClawX Gateway token to the ACP child environment', async () => {
+  it('passes the authoritative insightAllX Gateway token to the ACP child environment', async () => {
     const { service } = await createSpawnedService();
 
     await expect(service.loadSession({ sessionKey: 'agent:pi:s1', workspaceRoot: '/repo', cwd: '/repo' })).resolves.toEqual({
@@ -194,7 +194,7 @@ describe('AcpChatService', () => {
       ['acp'],
       expect.objectContaining({
         env: expect.objectContaining({
-          OPENCLAW_GATEWAY_TOKEN: 'clawx-test-gateway-token',
+          OPENCLAW_GATEWAY_TOKEN: 'insightallx-test-gateway-token',
         }),
       }),
     );
@@ -293,7 +293,7 @@ describe('AcpChatService', () => {
     });
   });
 
-  it('rewrites fresh-session ACP updates to the ClawX session key for the renderer', async () => {
+  it('rewrites fresh-session ACP updates to the insightAllX session key for the renderer', async () => {
     const { service, send } = await createService();
 
     await service.loadSession({ sessionKey: 'agent:pi:session-123', workspaceRoot: '/repo', cwd: '/repo', createIfMissing: true });
@@ -930,7 +930,7 @@ describe('AcpChatService', () => {
     { createIfMissing: false, operation: 'loadSession' as const },
     { createIfMissing: true, operation: 'newSession' as const },
   ])('commits a canonical access grant only after $operation resolves', async ({ createIfMissing, operation }) => {
-    const parent = mkdtempSync(join(tmpdir(), 'clawx-acp-service-access-'));
+    const parent = mkdtempSync(join(tmpdir(), 'insightallx-acp-service-access-'));
     const workspaceRoot = join(parent, 'workspace');
     const executionCwd = join(workspaceRoot, 'nested');
     mkdirSync(executionCwd, { recursive: true });
@@ -966,7 +966,7 @@ describe('AcpChatService', () => {
   });
 
   it('restores the previous access grant when a later load fails', async () => {
-    const parent = mkdtempSync(join(tmpdir(), 'clawx-acp-service-rollback-'));
+    const parent = mkdtempSync(join(tmpdir(), 'insightallx-acp-service-rollback-'));
     const firstRoot = join(parent, 'first');
     const secondRoot = join(parent, 'second');
     mkdirSync(firstRoot);
@@ -996,7 +996,7 @@ describe('AcpChatService', () => {
   });
 
   it('rejects a prompt cwd that differs from the registered execution cwd', async () => {
-    const workspaceRoot = mkdtempSync(join(tmpdir(), 'clawx-acp-service-prompt-cwd-'));
+    const workspaceRoot = mkdtempSync(join(tmpdir(), 'insightallx-acp-service-prompt-cwd-'));
 
     try {
       const { AcpSessionAccessRegistry } = await import('../../electron/services/acp-session-access-registry');
@@ -1170,8 +1170,8 @@ describe('AcpChatService', () => {
   });
 
   it('builds ACP prompt blocks from message and media', async () => {
-    const imagePath = join(tmpdir(), `clawx-acp-service-${Date.now()}.png`);
-    const filePath = join(tmpdir(), `clawx-acp-service-${Date.now()}.txt`);
+    const imagePath = join(tmpdir(), `insightallx-acp-service-${Date.now()}.png`);
+    const filePath = join(tmpdir(), `insightallx-acp-service-${Date.now()}.txt`);
     writeFileSync(imagePath, 'fake-image');
     writeFileSync(filePath, 'plain text');
 
@@ -1199,14 +1199,14 @@ describe('AcpChatService', () => {
             data: Buffer.from('fake-image').toString('base64'),
             mimeType: 'image/png',
             uri: imagePath,
-            _meta: { clawx: { stagingId: 'staged-image', fileName: 'image.png' } },
+            _meta: { insightallx: { stagingId: 'staged-image', fileName: 'image.png' } },
           },
           {
             type: 'resource_link',
             uri: filePath,
             name: 'notes.txt',
             mimeType: 'text/plain',
-            _meta: { clawx: { stagingId: 'staged-notes' } },
+            _meta: { insightallx: { stagingId: 'staged-notes' } },
           },
         ],
         _meta: { sessionKey: 'agent:pi:s1', prefixCwd: true, messageId: 'msg-user-1' },

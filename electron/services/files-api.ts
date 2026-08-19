@@ -29,9 +29,9 @@ import {
   FILE_PREVIEW_MAX_TEXT_BYTES,
 } from '@shared/file-preview/limits';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
-import { expandPath, resolveOpenClawStateDir } from '../utils/paths';
+import { expandPath, resolveinsightAllStateDir } from '../utils/paths';
 import {
-  resolveClawXStagingDir,
+  resolveinsightAllXStagingDir,
   type AttachmentAccess,
   type StagedAttachmentRegistry,
 } from './attachment-access';
@@ -384,7 +384,7 @@ function getFilePreviewWriteRoots(): string[] {
   } catch {
     // ignore
   }
-  roots.push(resolve(resolveClawXStagingDir()));
+  roots.push(resolve(resolveinsightAllXStagingDir()));
   return roots;
 }
 
@@ -443,7 +443,7 @@ function getBinaryOptions(opts: unknown): FileReadBinaryOptions {
 export function createFilesApi(dependencies: FilesApiDependencies = {}): CompleteHostServiceRegistry['files'] {
   const getWorkspaceFs = async (): Promise<WorkspaceFs> => dependencies.workspaceFs
     ?? await import('node:fs/promises');
-  const stagingAreaName = `clawx-${process.pid}-${crypto.randomUUID()}`;
+  const stagingAreaName = `insightallx-${process.pid}-${crypto.randomUUID()}`;
   let stagingAreaPromise: Promise<PinnedStagingArea> | null = null;
 
   const initializeStagingArea = async (): Promise<PinnedStagingArea> => {
@@ -460,13 +460,13 @@ export function createFilesApi(dependencies: FilesApiDependencies = {}): Complet
         entryStat = await fsP.lstat(lexicalPath);
       }
       if (entryStat.isSymbolicLink() || !entryStat.isDirectory()) {
-        throw new Error('Invalid ClawX staging directory');
+        throw new Error('Invalid insightAllX staging directory');
       }
       const canonicalPath = await fsP.realpath(lexicalPath);
       const canonicalStat = await fsP.stat(canonicalPath);
       if (!canonicalStat.isDirectory()
         || (parent && !isPathInside(canonicalPath, parent.canonicalPath))) {
-        throw new Error('Invalid ClawX staging directory');
+        throw new Error('Invalid insightAllX staging directory');
       }
       const pinned = {
         lexicalPath,
@@ -478,10 +478,10 @@ export function createFilesApi(dependencies: FilesApiDependencies = {}): Complet
       return pinned;
     };
 
-    const stateDir = await ensureDirectory(resolveOpenClawStateDir());
+    const stateDir = await ensureDirectory(resolveinsightAllStateDir());
     const mediaDir = await ensureDirectory(join(stateDir.canonicalPath, 'media'), stateDir);
     const outboundDir = await ensureDirectory(join(mediaDir.canonicalPath, 'outbound'), mediaDir);
-    const stagingRoot = await ensureDirectory(join(outboundDir.canonicalPath, 'clawx-staging'), outboundDir);
+    const stagingRoot = await ensureDirectory(join(outboundDir.canonicalPath, 'insightallx-staging'), outboundDir);
     const stagingArea = await ensureDirectory(join(stagingRoot.canonicalPath, stagingAreaName), stagingRoot);
     return { stagingDir: stagingArea.canonicalPath, directories };
   };
@@ -495,14 +495,14 @@ export function createFilesApi(dependencies: FilesApiDependencies = {}): Complet
     const fsP = await import('node:fs/promises');
     for (const directory of area.directories) {
       const entryStat = await fsP.lstat(directory.lexicalPath);
-      if (entryStat.isSymbolicLink()) throw new Error('Invalid ClawX staging directory');
+      if (entryStat.isSymbolicLink()) throw new Error('Invalid insightAllX staging directory');
       const currentPath = await fsP.realpath(directory.lexicalPath);
       const currentStat = await fsP.stat(currentPath);
       if (!currentStat.isDirectory()
         || !isSamePath(currentPath, directory.canonicalPath)
         || currentStat.dev !== directory.dev
         || currentStat.ino !== directory.ino) {
-        throw new Error('Invalid ClawX staging directory');
+        throw new Error('Invalid insightAllX staging directory');
       }
     }
   };
@@ -552,7 +552,7 @@ export function createFilesApi(dependencies: FilesApiDependencies = {}): Complet
       if (!isPathInside(canonicalDestination, area.stagingDir)
         || pathStat.dev !== openedStat.dev
         || pathStat.ino !== openedStat.ino) {
-        throw new Error('Invalid ClawX staging destination');
+        throw new Error('Invalid insightAllX staging destination');
       }
 
       await write(handle);
@@ -563,7 +563,7 @@ export function createFilesApi(dependencies: FilesApiDependencies = {}): Complet
       if (!isSamePath(finalPath, canonicalDestination)
         || finalPathStat.dev !== finalStat.dev
         || finalPathStat.ino !== finalStat.ino) {
-        throw new Error('Invalid ClawX staging destination');
+        throw new Error('Invalid insightAllX staging destination');
       }
       await handle.close();
       handle = undefined;
@@ -573,7 +573,7 @@ export function createFilesApi(dependencies: FilesApiDependencies = {}): Complet
       if (!isSamePath(registrationPath, finalPath)
         || registrationStat.dev !== finalStat.dev
         || registrationStat.ino !== finalStat.ino) {
-        throw new Error('Invalid ClawX staging destination');
+        throw new Error('Invalid insightAllX staging destination');
       }
       return { path: registrationPath, stat: finalStat };
     } catch (error) {

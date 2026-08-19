@@ -96,7 +96,7 @@ describe('harness specs', () => {
     expect(workspaceScenario?.body).toContain('harness/reference/web-browser.md');
 
     for (const contractAnchor of [
-      'persist:clawx-web-browser',
+      'persist:insightallx-web-browser',
       '`file:///`',
       'one-live-guest registry',
       'All links are inert',
@@ -243,7 +243,7 @@ describe('harness specs', () => {
     }
 
     for (const anchor of [
-      '`clawx.session-attention`',
+      '`insightallx.session-attention`',
       '`sessions.changed`',
       '`list.ts`',
       '`event.ts`',

@@ -79,7 +79,7 @@ const getDefaultSkills = (t: TFunction): DefaultSkill[] => [
   { id: 'terminal', name: t('defaultSkills.terminal.name'), description: t('defaultSkills.terminal.description') },
 ];
 
-import clawxIcon from '@/assets/logo.svg';
+import insightallxIcon from '@/assets/logo.svg';
 
 // NOTE: Channel types moved to Settings > Channels page
 // NOTE: Skill bundles moved to Settings > Skills page - auto-install essential skills during setup
@@ -267,7 +267,7 @@ function WelcomeContent() {
   return (
     <div data-testid="setup-welcome-step" className="text-center space-y-4">
       <div className="mb-4 flex justify-center">
-        <img src={clawxIcon} alt="ClawX" className="h-16 w-16" />
+        <img src={insightallxIcon} alt="insightAllX" className="h-16 w-16" />
       </div>
       <h2 className="text-xl font-serif font-normal tracking-tight">{t('welcome.title')}</h2>
       <p className="text-muted-foreground">
@@ -349,7 +349,7 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
       nodejs: { status: 'success', message: t('runtime.status.success') },
     }));
 
-    // Check OpenClaw package status
+    // Check insightAll package status
     try {
       const openclawStatus = await hostApi.openclaw.status();
 
@@ -360,7 +360,7 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
           ...prev,
           openclaw: {
             status: 'error',
-            message: `OpenClaw package not found at: ${openclawStatus.dir}`
+            message: `insightAll package not found at: ${openclawStatus.dir}`
           },
         }));
       } else if (!openclawStatus.isBuilt) {
@@ -368,7 +368,7 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
           ...prev,
           openclaw: {
             status: 'error',
-            message: 'OpenClaw package found but dist is missing'
+            message: 'insightAll package found but dist is missing'
           },
         }));
       } else {
@@ -377,7 +377,7 @@ function RuntimeContent({ onStatusChange }: RuntimeContentProps) {
           ...prev,
           openclaw: {
             status: 'success',
-            message: `OpenClaw package ready${versionLabel}`
+            message: `insightAll package ready${versionLabel}`
           },
         }));
       }

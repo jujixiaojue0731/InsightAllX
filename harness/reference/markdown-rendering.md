@@ -10,7 +10,7 @@ Related task: `replace-markdown-renderer-with-streamdown`
 
 ## Rendering Ownership
 
-ClawX has two application Markdown surfaces with distinct update behavior and one shared renderer configuration:
+insightAllX has two application Markdown surfaces with distinct update behavior and one shared renderer configuration:
 
 | Surface | Mode | Content |
 | --- | --- | --- |
@@ -57,7 +57,7 @@ Earlier parts, completed segments, thoughts, user messages, and tool output neve
 
 ## Presentation Contract
 
-Chat keeps the assistant-without-bubble layout and ClawX's established prose rhythm. Scoped Streamdown selectors restore heading and horizontal-rule margins over Streamdown's root spacing utility, compact ordered, unordered, and task-list items, and remove table wrapper borders while retaining the cell grid. Fenced code preserves Shiki's source-row spans as block lines, soft-wraps long lines, uses a compact right-aligned language header with vertically centered actions, and exposes copy without download; file preview keeps its preview-specific headings and inline code. Styling uses existing ClawX surfaces, text colors, dark-mode variants, and other design tokens; Streamdown defaults must not leak broad global changes into unrelated prose.
+Chat keeps the assistant-without-bubble layout and insightAllX's established prose rhythm. Scoped Streamdown selectors restore heading and horizontal-rule margins over Streamdown's root spacing utility, compact ordered, unordered, and task-list items, and remove table wrapper borders while retaining the cell grid. Fenced code preserves Shiki's source-row spans as block lines, soft-wraps long lines, uses a compact right-aligned language header with vertically centered actions, and exposes copy without download; file preview keeps its preview-specific headings and inline code. Styling uses existing insightAllX surfaces, text colors, dark-mode variants, and other design tokens; Streamdown defaults must not leak broad global changes into unrelated prose.
 
 The supported math contract includes `$...$`, `$$...$$`, `\(...\)`, and `\[...\]`. CJK tests anchor punctuation exclusion from autolinks. Code tests wait for Shiki token output rather than assuming highlighting is synchronous.
 

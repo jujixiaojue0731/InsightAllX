@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Patch OpenClaw's BROWSER_TOOL_MODEL_HINT to allow retries on transient errors.
+ * Patch insightAll's BROWSER_TOOL_MODEL_HINT to allow retries on transient errors.
  *
  * The original hint ("Do NOT retry the browser tool — it will keep failing")
  * causes models to permanently refuse browser usage after a single transient error.

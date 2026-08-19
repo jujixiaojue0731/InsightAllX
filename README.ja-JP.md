@@ -1,16 +1,16 @@
 
 <p align="center">
-  <img src="src/assets/logo.svg" width="128" height="128" alt="ClawX Logo" />
+  <img src="src/assets/logo.svg" width="128" height="128" alt="insightAllX Logo" />
 </p>
 
-<h1 align="center">ClawX</h1>
+<h1 align="center">insightAllX</h1>
 
 <p align="center">
-  <strong>OpenClaw AIエージェントのためのデスクトップインターフェース</strong>
+  <strong>insightAll AIエージェントのためのデスクトップインターフェース</strong>
 </p>
 
 <p align="center">
-  <a href="#clawxを選ぶ理由">ClawXを選ぶ理由</a> •
+  <a href="#insightallxを選ぶ理由">insightAllXを選ぶ理由</a> •
   <a href="#はじめに">はじめに</a> •
   <a href="#アーキテクチャ">アーキテクチャ</a> •
   <a href="#開発">開発</a> •
@@ -24,7 +24,7 @@
   <a href="https://discord.com/invite/84Kex3GGAh" target="_blank">
   <img src="https://img.shields.io/discord/1399603591471435907?logo=discord&labelColor=%20%235462eb&logoColor=%20%23f5f5f5&color=%20%235462eb" alt="chat on Discord" />
   </a>
-  <img src="https://img.shields.io/github/downloads/ValueCell-ai/ClawX/total?color=%23027DEB" alt="Downloads" />
+  <img src="https://img.shields.io/github/downloads/ValueCell-ai/insightAllX/total?color=%23027DEB" alt="Downloads" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
 </p>
 
@@ -36,11 +36,11 @@
 
 ## 概要
 
-**ClawX**は、強力なAIエージェントと日常のユーザーとの間のギャップを埋めます。[OpenClaw](https://github.com/OpenClaw)をベースに構築されており、コマンドラインによるAIオーケストレーションを、使いやすく美しいデスクトップ体験に変換します。ターミナルは必要ありません。
+**insightAllX**は、強力なAIエージェントと日常のユーザーとの間のギャップを埋めます。[insightAll](https://github.com/insightAll)をベースに構築されており、コマンドラインによるAIオーケストレーションを、使いやすく美しいデスクトップ体験に変換します。ターミナルは必要ありません。
 
-ワークフローの自動化、AI搭載チャネルの管理、インテリジェントなタスクのスケジューリングなど、ClawXはAIエージェントを効果的に活用するために必要なインターフェースを提供します。
+ワークフローの自動化、AI搭載チャネルの管理、インテリジェントなタスクのスケジューリングなど、insightAllXはAIエージェントを効果的に活用するために必要なインターフェースを提供します。
 
-ClawXにはベストプラクティスに基づくモデルプロバイダーがあらかじめ設定されており、Windowsと多言語設定をネイティブにサポートしています。高度な設定は **設定 → 詳細設定 → 開発者モード** から調整できます。
+insightAllXにはベストプラクティスに基づくモデルプロバイダーがあらかじめ設定されており、Windowsと多言語設定をネイティブにサポートしています。高度な設定は **設定 → 詳細設定 → 開発者モード** から調整できます。
 
 <p align="center"><strong style="font-size:1.1em; text-decoration: underline;">完全なエンタープライズ版、専用サービスサポート、またはビジネスシナリオに合わせた導入支援が必要な場合は、<a href="mailto:public@valuecell.ai">public@valuecell.ai</a> までお問い合わせください。</strong></p>
 
@@ -61,11 +61,11 @@ ClawXにはベストプラクティスに基づくモデルプロバイダーが
   </tr>
 </table>
 
-## ClawXを選ぶ理由
+## insightAllXを選ぶ理由
 
-AIエージェントの構築にコマンドラインの習得は不要であるべきです。ClawXはシンプルな哲学のもとに設計されました：**強力な技術には、あなたの時間を尊重するインターフェースがふさわしい。** ClawXは公式の **OpenClaw** コアを直接ベースに構築されています。別途インストールする必要はなく、ランタイムをアプリケーション内に組み込むことで、シームレスな「すべて込み」の体験を提供します。上流のOpenClawと緊密に連携し、公式の最新機能、安定性の改善、エコシステムとの互換性を利用できるようにしています。
+AIエージェントの構築にコマンドラインの習得は不要であるべきです。insightAllXはシンプルな哲学のもとに設計されました：**強力な技術には、あなたの時間を尊重するインターフェースがふさわしい。** insightAllXは公式の **insightAll** コアを直接ベースに構築されています。別途インストールする必要はなく、ランタイムをアプリケーション内に組み込むことで、シームレスな「すべて込み」の体験を提供します。上流のinsightAllと緊密に連携し、公式の最新機能、安定性の改善、エコシステムとの互換性を利用できるようにしています。
 
-| 課題 | ClawXのソリューション |
+| 課題 | insightAllXのソリューション |
 |------|----------------------|
 | 複雑なCLIセットアップ | ガイド付きセットアップウィザードによるワンクリックインストール |
 | 設定ファイル | リアルタイム検証付きのビジュアル設定 |
@@ -80,7 +80,7 @@ AIエージェントの構築にコマンドラインの習得は不要である
 - **💬 インテリジェントチャットインターフェース**：複数セッションのコンテキストと履歴、シンタックスハイライト付きストリーミングMarkdown、CJK対応解析、テーブル、KaTeX数式、`@agent` による直接ルーティング、インライン `/skill` カード、ワークスペース優先のセッション、Markdown・`.docx`・`.pptx`・ローカルHTMLの読み取り専用プレビューに対応します。
 - **📡 マルチチャネル管理**：複数アカウント、アカウント単位のAgent紐付け、既定アカウントの切り替え、Tencent公式個人WeChatチャネルプラグインを備えた独立したAIチャネルを設定・監視できます。
 - **⏰ Cronベースの自動化**：繰り返しまたは1回限りのスケジュールを定義し、スケジュール済みプロンプトにスキルを挿入し、結果を外部チャネルへ配信できます。
-- **🧩 拡張可能なスキルシステム**：Gatewayに依存せずスキルをローカルで管理できます。複数のOpenClawソースからスキルを検出し、`pdf`、`xlsx`、`docx`、`pptx` の文書処理スキルも利用できます。
+- **🧩 拡張可能なスキルシステム**：Gatewayに依存せずスキルをローカルで管理できます。複数のinsightAllソースからスキルを検出し、`pdf`、`xlsx`、`docx`、`pptx` の文書処理スキルも利用できます。
 - **🔐 セキュアなプロバイダー統合**：OpenAI、Anthropic、Z.AI / GLMなどに接続し、認証情報をOSのネイティブキーチェーンに安全に保存できます。OAuth、カスタムプロバイダー、画像生成エンドポイント、互換性フォールバックにも対応します。
 - **🌙 アダプティブテーマ**：ライト、ダーク、システム同期テーマを選択できます。
 - **🚀 自動起動設定**：**設定 → 一般** で **システム起動時に自動起動** を有効にできます。
@@ -107,14 +107,14 @@ AIエージェントの構築にコマンドラインの習得は不要である
 
 #### ビルド済みリリース（推奨）
 
-[Releases](https://github.com/ValueCell-ai/ClawX/releases) ページから、お使いのプラットフォーム向けの最新リリースをダウンロードしてください。
+[Releases](https://github.com/ValueCell-ai/insightAllX/releases) ページから、お使いのプラットフォーム向けの最新リリースをダウンロードしてください。
 
 #### ソースからビルド
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/ValueCell-ai/ClawX.git
-cd ClawX
+git clone https://github.com/ValueCell-ai/insightAllX.git
+cd insightAllX
 
 # プロジェクトを初期化
 pnpm run init
@@ -125,7 +125,7 @@ pnpm dev
 
 ### 初回起動
 
-ClawXを初めて起動すると、**セットアップウィザード**が次の手順を案内します。
+insightAllXを初めて起動すると、**セットアップウィザード**が次の手順を案内します。
 
 1. **言語と地域**：使用するロケールを設定
 2. **AIプロバイダー**：ブラウザまたはデバイスログインに対応したプロバイダーでは、APIキーまたはOAuthで追加
@@ -134,25 +134,25 @@ ClawXを初めて起動すると、**セットアップウィザード**が次�
 
 サポートされている場合、ウィザードはシステム言語を初期選択し、対応していない場合は英語にフォールバックします。
 
-> Web検索について：ClawXはAgentとGatewayの両方のポリシーレイヤーで、OpenClawの汎用 `web_search` ツールを無効にします。Moonshot（Kimi）検索も対象です。管理対象のブラウザ自動化と `web_fetch` は引き続き利用できます。
+> Web検索について：insightAllXはAgentとGatewayの両方のポリシーレイヤーで、insightAllの汎用 `web_search` ツールを無効にします。Moonshot（Kimi）検索も対象です。管理対象のブラウザ自動化と `web_fetch` は引き続き利用できます。
 >
-> 内部ツールについて：ClawXは両方のポリシーレイヤーで、Agentに対して `gateway`、`nodes`、`create_goal`、`get_goal`、`update_goal` も無効にします。ClawXアプリケーション自身のGateway RPCに加え、メッセージング、セッションオーケストレーション、Agent検出ツールは引き続き利用できます。
+> 内部ツールについて：insightAllXは両方のポリシーレイヤーで、Agentに対して `gateway`、`nodes`、`create_goal`、`get_goal`、`update_goal` も無効にします。insightAllXアプリケーション自身のGateway RPCに加え、メッセージング、セッションオーケストレーション、Agent検出ツールは引き続き利用できます。
 
 ### プロキシ設定
 
-ClawXには、Electron、OpenClaw Gateway、Telegramなどのチャネルがローカルプロキシクライアント経由でインターネットにアクセスする必要がある環境向けの、組み込みプロキシ設定があります。
+insightAllXには、Electron、insightAll Gateway、Telegramなどのチャネルがローカルプロキシクライアント経由でインターネットにアクセスする必要がある環境向けの、組み込みプロキシ設定があります。
 
 **設定 → Gateway → プロキシ**を開き、既定のプロキシ、バイパスルール、開発者モードでのHTTP・HTTPS・`ALL_PROXY` / SOCKSの上書きを設定します。ローカル設定の例は `http://127.0.0.1:7890` です。
 
-> プロキシのフォールバック動作、Telegramとの同期、**OpenClaw Doctor**については [docs/ja-JP/proxy-settings.md](docs/ja-JP/proxy-settings.md) を参照してください。
+> プロキシのフォールバック動作、Telegramとの同期、**insightAll Doctor**については [docs/ja-JP/proxy-settings.md](docs/ja-JP/proxy-settings.md) を参照してください。
 
 ## アーキテクチャ
 
-ClawXは **Host API統一レイヤーを備えたデュアルプロセスアーキテクチャ**を採用しています。React Rendererは単一のクライアント抽象を呼び出し、Electron Mainがプロトコル選択、Gatewayのライフサイクル、ACP Chatのstdio bridgeを管理します。
+insightAllXは **Host API統一レイヤーを備えたデュアルプロセスアーキテクチャ**を採用しています。React Rendererは単一のクライアント抽象を呼び出し、Electron Mainがプロトコル選択、Gatewayのライフサイクル、ACP Chatのstdio bridgeを管理します。
 
-- **プロセスモデル**：Electron Mainがウィンドウ、Gateway監視、システム統合、更新を管理します。OpenClaw GatewayはAIオーケストレーション、チャネル、スキル機能を提供し、Rendererはローカルエンドポイントへ直接アクセスしません。
+- **プロセスモデル**：Electron Mainがウィンドウ、Gateway監視、システム統合、更新を管理します。insightAll GatewayはAIオーケストレーション、チャネル、スキル機能を提供し、Rendererはローカルエンドポイントへ直接アクセスしません。
 - **設定の配信**：Gateway実行中は `config.get` / `config.set` を使い、停止中または起動中は解決済みJSON5設定を更新します。通常のプロバイダー、Agent、スキル、モデル変更ではプロセスを置き換えず、認証情報は `secrets.reload` でホットリロードされます。ハートビートが4回連続で失敗した場合は、ライフサイクルで保護された復旧を要求します。
-- **ACP Chat**：Chat UIは [ACP（Agent Client Protocol）](https://agentclientprotocol.com) を介してOpenClawとやり取りし、頻繁に反復されるOpenClawの前に比較的安定したチャットプロトコル面を確保します。ACPはMainが所有するstdio bridge経由で動作し、設定リロード後の認証済み履歴リプレイ、ページ移動中のストリーミング、Mainが検証したメディア・添付ファイル・ファイルアクティビティに対応します。保護されたGateway再起動によって受理済みターンが中断された場合、パッチ済みOpenClawランタイムは復旧runを元のACP promptへ明示的に関連付け、後続のテキストとツールアクティビティを同じメモリ内ターンで継続します。その後の履歴リプレイでも、永続化されたツール境界をネイティブACP updateとして復元します。
+- **ACP Chat**：Chat UIは [ACP（Agent Client Protocol）](https://agentclientprotocol.com) を介してinsightAllとやり取りし、頻繁に反復されるinsightAllの前に比較的安定したチャットプロトコル面を確保します。ACPはMainが所有するstdio bridge経由で動作し、設定リロード後の認証済み履歴リプレイ、ページ移動中のストリーミング、Mainが検証したメディア・添付ファイル・ファイルアクティビティに対応します。保護されたGateway再起動によって受理済みターンが中断された場合、パッチ済みinsightAllランタイムは復旧runを元のACP promptへ明示的に関連付け、後続のテキストとツールアクティビティを同じメモリ内ターンで継続します。その後の履歴リプレイでも、永続化されたツール境界をネイティブACP updateとして復元します。
 - **設計原則**：フロントエンドの単一入口、Mainによるトランスポート管理、再接続・タイムアウト・バックオフによるグレースフルリカバリ、安全なストレージ、CORSセーフな境界を採用しています。
 
 > プロセス図、設定の調整、ACPファイルアクティビティのセマンティクス、Gatewayのトラブルシューティングについては [docs/ja-JP/architecture.md](docs/ja-JP/architecture.md) を参照してください。
@@ -182,7 +182,7 @@ pnpm package         # 現在のプラットフォーム向けにパッケージ
 
 ## コントリビューション
 
-コミュニティからの貢献を歓迎します。バグ修正、新機能、ドキュメントの改善、翻訳など、あらゆる貢献がClawXをより良くします。
+コミュニティからの貢献を歓迎します。バグ修正、新機能、ドキュメントの改善、翻訳など、あらゆる貢献がinsightAllXをより良くします。
 
 ### 貢献方法
 
@@ -201,9 +201,9 @@ pnpm package         # 現在のプラットフォーム向けにパッケージ
 
 ## 謝辞
 
-ClawXは次の優れたオープンソースプロジェクトの上に構築されています。
+insightAllXは次の優れたオープンソースプロジェクトの上に構築されています。
 
-- [OpenClaw](https://github.com/OpenClaw) - AIエージェントランタイム
+- [insightAll](https://github.com/insightAll) - AIエージェントランタイム
 - [Electron](https://www.electronjs.org/) - クロスプラットフォームデスクトップフレームワーク
 - [React](https://react.dev/) - UIコンポーネントライブラリ
 - [shadcn/ui](https://ui.shadcn.com/) - 美しく設計されたコンポーネント
@@ -217,23 +217,23 @@ ClawXは次の優れたオープンソースプロジェクトの上に構築さ
 | :---: | :---: | :---: |
 | <img src="src/assets/community/wecom-qr.png" width="150" alt="WeChat QRコード" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="Feishu QRコード" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord QRコード" /> |
 
-### ClawXパートナープログラム
+### insightAllXパートナープログラム
 
-ClawXをより多くのお客様、特にカスタムAIエージェントや自動化のニーズを持つお客様に紹介してくださるパートナーを募集しています。
+insightAllXをより多くのお客様、特にカスタムAIエージェントや自動化のニーズを持つお客様に紹介してくださるパートナーを募集しています。
 
-パートナーは見込みユーザーやプロジェクトとの接点づくりを担い、ClawXチームは技術サポート、カスタマイズ、統合を全面的に提供します。AIツールや自動化に関心のあるお客様と仕事をされている方は、ぜひご一緒ください。
+パートナーは見込みユーザーやプロジェクトとの接点づくりを担い、insightAllXチームは技術サポート、カスタマイズ、統合を全面的に提供します。AIツールや自動化に関心のあるお客様と仕事をされている方は、ぜひご一緒ください。
 
 詳細はDM、または [public@valuecell.ai](mailto:public@valuecell.ai) までお問い合わせください。
 
 ## Star History
 
 <p align="center">
-  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/ClawX&type=Date" alt="Star History Chart" />
+  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/insightAllX&type=Date" alt="Star History Chart" />
 </p>
 
 ## ライセンス
 
-ClawXは [MITライセンス](LICENSE) のもとで公開されています。本ソフトウェアは自由に使用、変更、配布できます。
+insightAllXは [MITライセンス](LICENSE) のもとで公開されています。本ソフトウェアは自由に使用、変更、配布できます。
 
 <hr>
 

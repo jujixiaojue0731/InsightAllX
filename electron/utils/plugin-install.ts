@@ -1,7 +1,7 @@
 /**
- * Shared OpenClaw Plugin Install Utilities
+ * Shared insightAll Plugin Install Utilities
  *
- * Provides version-aware install/upgrade logic for bundled OpenClaw plugins
+ * Provides version-aware install/upgrade logic for bundled insightAll plugins
  * (DingTalk, WeCom, Feishu, WeChat, Discord, QQBot, WhatsApp).  Used both at app startup (to auto-upgrade
  * stale plugins) and when a user configures a channel.
  */
@@ -12,14 +12,14 @@ import { readdir, stat, copyFile, mkdir } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { logger } from './logger';
-import { getOpenClawResolvedDir } from './paths';
+import { getinsightAllResolvedDir } from './paths';
 import { safeRmSync } from './safe-fs';
 import {
   upsertPluginInstallRecordsIntoSqlite,
   removePluginInstallRecordsFromSqlite,
-  ensureOpenClawStateDirExists,
+  ensureinsightAllStateDirExists,
 } from './plugin-install-index';
-import { mutateOpenClawConfig } from '../gateway/config-delivery';
+import { mutateinsightAllConfig } from '../gateway/config-delivery';
 
 function normalizeFsPathForWindows(filePath: string): string {
   if (process.platform !== 'win32') return filePath;
@@ -129,7 +129,7 @@ const MANIFEST_ID_FIXES: Record<string, string> = {
 /**
  * After a plugin has been copied to ~/.openclaw/extensions/<dir>, fix any
  * known manifest-ID mismatches so the Gateway can load the plugin.
- * Also keeps package.json npm metadata usable by OpenClaw's repair planner.
+ * Also keeps package.json npm metadata usable by insightAll's repair planner.
  */
 export function fixupPluginManifest(targetDir: string): void {
   // 1. Fix openclaw.plugin.json id
@@ -146,10 +146,10 @@ export function fixupPluginManifest(targetDir: string): void {
       logger.info(`[plugin] Fixed manifest ID: ${oldId} → ${newId}`);
     }
 
-    // OpenClaw 2026.7.1 treats configured channel plugins without a static
+    // insightAll 2026.7.1 treats configured channel plugins without a static
     // channelConfigs descriptor as stale/missing and invokes its npm repair
     // flow. The WeCom package has no descriptor upstream, so provide a
-    // permissive schema that preserves ClawX's existing channel config fields.
+    // permissive schema that preserves insightAllX's existing channel config fields.
     if (manifest.id === 'wecom' && !manifest.channelConfigs?.wecom) {
       manifest.channelConfigs = {
         ...(manifest.channelConfigs ?? {}),
@@ -178,10 +178,10 @@ export function fixupPluginManifest(targetDir: string): void {
     const pkg = JSON.parse(raw);
     let modified = false;
 
-    // Keep the real upstream npm package name/spec even though ClawX patches
+    // Keep the real upstream npm package name/spec even though insightAllX patches
     // the effective plugin id. Rewriting these to the non-existent
-    // `@wecom/wecom` package makes OpenClaw's repair planner fail before the
-    // Gateway starts. Restore metadata previously rewritten by older ClawX
+    // `@wecom/wecom` package makes insightAll's repair planner fail before the
+    // Gateway starts. Restore metadata previously rewritten by older insightAllX
     // compatibility code.
     if (pkg.name === '@wecom/wecom') {
       pkg.name = '@wecom/wecom-openclaw-plugin';
@@ -266,23 +266,23 @@ const PLUGIN_NPM_NAMES: Record<string, string> = {
 };
 
 /**
- * Channel plugins whose ClawX-managed mirrors need synchronized install
- * metadata. OpenClaw 2026.6+ reads these records from SQLite for trust checks;
- * OpenClaw 2026.7.1 also uses them to decide whether startup migrations should
+ * Channel plugins whose insightAllX-managed mirrors need synchronized install
+ * metadata. insightAll 2026.6+ reads these records from SQLite for trust checks;
+ * insightAll 2026.7.1 also uses them to decide whether startup migrations should
  * update an installed plugin.
  */
 type TrustedOfficialExtensionPlugin = {
   npmName: string;
   /** Effective manifest/config id when it differs from the mirror directory. */
   pluginId?: string;
-  /** Path records keep OpenClaw from replacing a ClawX-patched mirror. */
+  /** Path records keep insightAll from replacing a insightAllX-patched mirror. */
   recordSource?: 'npm' | 'path';
   legacyPluginIds?: string[];
 };
 
 const TRUSTED_OFFICIAL_EXTENSION_PLUGINS: Record<string, TrustedOfficialExtensionPlugin> = {
   dingtalk: { npmName: '@soimy/dingtalk' },
-  // WeCom intentionally runs under ClawX's legacy-compatible `wecom` id even
+  // WeCom intentionally runs under insightAllX's legacy-compatible `wecom` id even
   // though the upstream package manifest still declares
   // `wecom-openclaw-plugin`. Keep it path-owned so startup migration does not
   // replace the compatibility-patched mirror with the raw npm package.
@@ -292,8 +292,8 @@ const TRUSTED_OFFICIAL_EXTENSION_PLUGINS: Record<string, TrustedOfficialExtensio
     legacyPluginIds: ['wecom-openclaw-plugin'],
   },
   // @larksuite/openclaw-lark 2026.7.9 declares ./dist/index.js as `main`, but
-  // publishes its runtime entry as ./index.js. OpenClaw 2026.7.1 rejects old
-  // managed npm records during its post-core smoke check. Make ClawX's complete
+  // publishes its runtime entry as ./index.js. insightAll 2026.7.1 rejects old
+  // managed npm records during its post-core smoke check. Make insightAllX's complete
   // mirror the canonical path-owned payload instead.
   'feishu-openclaw-plugin': {
     npmName: '@larksuite/openclaw-lark',
@@ -305,8 +305,8 @@ const TRUSTED_OFFICIAL_EXTENSION_PLUGINS: Record<string, TrustedOfficialExtensio
   discord: { npmName: '@openclaw/discord' },
   qqbot: { npmName: '@openclaw/qqbot' },
   'openclaw-weixin': { npmName: '@tencent-weixin/openclaw-weixin' },
-  'clawx-openai-image': {
-    npmName: 'clawx-openai-image-plugin',
+  'insightallx-openai-image': {
+    npmName: 'insightallx-openai-image-plugin',
     recordSource: 'path',
   },
 };
@@ -319,7 +319,7 @@ type TrustedOfficialPluginInstallRecord = Record<string, unknown> & {
   installedAt: string;
 };
 
-/** Store plain paths for OpenClaw install-record matching (no Windows \\?\ prefix). */
+/** Store plain paths for insightAll install-record matching (no Windows \\?\ prefix). */
 function normalizePluginInstallPathForRecord(targetDir: string): string | null {
   try {
     const resolved = realpathSync(targetDir);
@@ -382,7 +382,7 @@ function pluginInstallRecordIds(pluginDirName: string): string[] {
 
 async function removeLegacyPluginInstallMetadataFromConfig(pluginIds: string[]): Promise<boolean> {
   const removedIds = new Set<string>();
-  const changed = await mutateOpenClawConfig((config) => {
+  const changed = await mutateinsightAllConfig((config) => {
     removedIds.clear();
     const plugins = config.plugins;
     if (!plugins || typeof plugins !== 'object' || Array.isArray(plugins)) return;
@@ -418,13 +418,13 @@ function canonicalComparablePath(filePath: string): string {
 }
 
 /**
- * Materialized mirrors live outside the bundled OpenClaw package tree, so
+ * Materialized mirrors live outside the bundled insightAll package tree, so
  * Node's normal package lookup cannot resolve their declared `openclaw` peer.
- * OpenClaw 2026.7.1 also audits this exact link before reporting Gateway ready.
+ * insightAll 2026.7.1 also audits this exact link before reporting Gateway ready.
  */
-export function repairPluginOpenClawPeerLink(
+export function repairPlugininsightAllPeerLink(
   targetDir: string,
-  openclawDir = getOpenClawResolvedDir(),
+  openclawDir = getinsightAllResolvedDir(),
 ): boolean {
   let packageJson: Record<string, unknown>;
   try {
@@ -444,7 +444,7 @@ export function repairPluginOpenClawPeerLink(
   }
 
   if (!existsSync(fsPath(join(openclawDir, 'package.json')))) {
-    logger.warn(`[plugin] Cannot link OpenClaw peer for ${targetDir}: runtime package missing at ${openclawDir}`);
+    logger.warn(`[plugin] Cannot link insightAll peer for ${targetDir}: runtime package missing at ${openclawDir}`);
     return false;
   }
 
@@ -454,7 +454,7 @@ export function repairPluginOpenClawPeerLink(
     mkdirSync(fsPath(nodeModulesDir), { recursive: true });
     const nodeModulesStat = lstatSync(fsPath(nodeModulesDir));
     if (!nodeModulesStat.isDirectory() || nodeModulesStat.isSymbolicLink()) {
-      logger.warn(`[plugin] Cannot link OpenClaw peer because ${nodeModulesDir} is not a real directory`);
+      logger.warn(`[plugin] Cannot link insightAll peer because ${nodeModulesDir} is not a real directory`);
       return false;
     }
 
@@ -485,25 +485,25 @@ export function repairPluginOpenClawPeerLink(
           existingPackageName = null;
         }
         if (existingPackageName !== 'openclaw') {
-          logger.warn(`[plugin] Cannot replace non-OpenClaw peer directory at ${linkPath}`);
+          logger.warn(`[plugin] Cannot replace non-insightAll peer directory at ${linkPath}`);
           return false;
         }
         safeRmSync(fsPath(linkPath));
       } else {
-        logger.warn(`[plugin] Cannot replace non-directory OpenClaw peer at ${linkPath}`);
+        logger.warn(`[plugin] Cannot replace non-directory insightAll peer at ${linkPath}`);
         return false;
       }
     }
 
     symlinkSync(openclawDir, fsPath(linkPath), 'junction');
     if (canonicalComparablePath(linkPath) !== canonicalComparablePath(openclawDir)) {
-      logger.warn(`[plugin] OpenClaw peer link audit failed after creating ${linkPath}`);
+      logger.warn(`[plugin] insightAll peer link audit failed after creating ${linkPath}`);
       return false;
     }
-    logger.info(`[plugin] Linked OpenClaw peer: ${linkPath} → ${openclawDir}`);
+    logger.info(`[plugin] Linked insightAll peer: ${linkPath} → ${openclawDir}`);
     return true;
   } catch (error) {
-    logger.warn(`[plugin] Failed to link OpenClaw peer for ${targetDir}:`, error);
+    logger.warn(`[plugin] Failed to link insightAll peer for ${targetDir}:`, error);
     return false;
   }
 }
@@ -515,8 +515,8 @@ function persistTrustedOfficialPluginInstallRecordsToSqlite(
 }
 
 /**
- * Persist a ClawX-mirrored plugin install record in OpenClaw's canonical SQLite
- * index. OpenClaw 2026.7.1 treats config-level plugins.installs as legacy
+ * Persist a insightAllX-mirrored plugin install record in insightAll's canonical SQLite
+ * index. insightAll 2026.7.1 treats config-level plugins.installs as legacy
  * migration input, so remove that transient copy instead of recreating it.
  * Safe to call repeatedly; no-ops when metadata is already current.
  */
@@ -532,14 +532,14 @@ export async function syncTrustedOfficialPluginInstallRecord(
   }
 
   // Repair this even when install metadata already matches. A copied plugin's
-  // node_modules intentionally excludes host peers, and OpenClaw's migration
+  // node_modules intentionally excludes host peers, and insightAll's migration
   // smoke check runs before the Gateway can supply any runtime fallback.
-  repairPluginOpenClawPeerLink(targetDir);
+  repairPlugininsightAllPeerLink(targetDir);
 
   const recordIds = pluginInstallRecordIds(pluginDirName);
   let jsonChanged = false;
   try {
-    ensureOpenClawStateDirExists();
+    ensureinsightAllStateDirExists();
     jsonChanged = await removeLegacyPluginInstallMetadataFromConfig(recordIds);
   } catch (error) {
     // Keep the canonical SQLite repair available even if legacy config cleanup
@@ -547,7 +547,7 @@ export async function syncTrustedOfficialPluginInstallRecord(
     logger.warn(`[plugin] Failed to remove legacy install metadata for ${pluginDirName}:`, error);
   }
 
-  // Remove aliases left by older ClawX/OpenClaw ownership conventions, but do
+  // Remove aliases left by older insightAllX/insightAll ownership conventions, but do
   // not delete the canonical id first: upsert can replace npm/path ownership
   // atomically without creating a missing-record window.
   const staleRecordIds = recordIds.filter((pluginId) => pluginId !== expected.pluginId);
@@ -559,9 +559,9 @@ export async function syncTrustedOfficialPluginInstallRecord(
 }
 
 /**
- * Remove metadata for a ClawX mirror that is no longer configured. This must
+ * Remove metadata for a insightAllX mirror that is no longer configured. This must
  * run even when its extension directory is already missing: stale records are
- * themselves enough to fail OpenClaw's post-core payload smoke check.
+ * themselves enough to fail insightAll's post-core payload smoke check.
  */
 export async function removeTrustedOfficialPluginInstallRecord(pluginDirName: string): Promise<boolean> {
   const recordIds = pluginInstallRecordIds(pluginDirName);
@@ -904,11 +904,11 @@ export function ensureWhatsAppPluginInstalled(): Promise<{ installed: boolean; w
   return ensurePluginInstalled('whatsapp', buildCandidateSources('whatsapp'), 'WhatsApp');
 }
 
-export function ensureClawXOpenAiImagePluginInstalled(): Promise<{ installed: boolean; warning?: string }> {
+export function ensureinsightAllXOpenAiImagePluginInstalled(): Promise<{ installed: boolean; warning?: string }> {
   return ensurePluginInstalled(
-    'clawx-openai-image',
-    buildCandidateSources('clawx-openai-image'),
-    'ClawX OpenAI Image',
+    'insightallx-openai-image',
+    buildCandidateSources('insightallx-openai-image'),
+    'insightAllX OpenAI Image',
   );
 }
 
@@ -926,11 +926,11 @@ const ALL_BUNDLED_PLUGINS = [
   { fn: ensureDiscordPluginInstalled, label: 'Discord' },
   { fn: ensureQQBotPluginInstalled, label: 'QQBot' },
   { fn: ensureWhatsAppPluginInstalled, label: 'WhatsApp' },
-  { fn: ensureClawXOpenAiImagePluginInstalled, label: 'ClawX OpenAI Image' },
+  { fn: ensureinsightAllXOpenAiImagePluginInstalled, label: 'insightAllX OpenAI Image' },
 ] as const;
 
 /**
- * Ensure all bundled OpenClaw plugins are installed/upgraded in
+ * Ensure all bundled insightAll plugins are installed/upgraded in
  * `~/.openclaw/extensions/`.  Designed to be called once at app startup
  * as a fire-and-forget task — errors are logged but never thrown.
  */

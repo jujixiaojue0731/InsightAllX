@@ -3,7 +3,7 @@ id: packaged-runtime-pruning-guards
 title: Guard packaged runtime pruning for universal builds
 scenario: plugin-lifecycle-management
 taskType: plugin-lifecycle
-intent: Keep packaged OpenClaw runtime cleanup size-conscious without deleting native payloads required by macOS universal artifacts.
+intent: Keep packaged insightAll runtime cleanup size-conscious without deleting native payloads required by macOS universal artifacts.
 touchedAreas:
   - scripts/after-pack.cjs
   - scripts/bundle-openclaw.mjs
@@ -29,7 +29,7 @@ docs:
   required: false
 ---
 
-This task captures packaged-runtime cleanup invariants for OpenClaw extension
+This task captures packaged-runtime cleanup invariants for insightAll extension
 and native payload bundling. The size optimization path may prune unused
 platform binaries, generated declarations, source maps and known non-runtime
 files, but it must not treat macOS `universal` as a literal architecture.

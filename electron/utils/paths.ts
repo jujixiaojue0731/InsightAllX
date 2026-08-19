@@ -24,7 +24,7 @@ function getElectronApp() {
     return (require('electron') as typeof import('electron')).app;
   }
 
-  const fallbackUserData = process.env.CLAWX_USER_DATA_DIR?.trim() || join(homedir(), '.clawx');
+  const fallbackUserData = process.env.INSIGHTALLX_USER_DATA_DIR?.trim() || join(homedir(), '.insightallx');
   const fallbackAppPath = process.cwd();
   const fallbackApp: ElectronAppLike = {
     isPackaged: false,
@@ -48,49 +48,49 @@ export function expandPath(path: string): string {
 }
 
 /**
- * Get OpenClaw config directory
+ * Get insightAll config directory
  */
-export function getOpenClawConfigDir(): string {
+export function getinsightAllConfigDir(): string {
   return join(homedir(), '.openclaw');
 }
 
-export function resolveOpenClawStateDir(env: NodeJS.ProcessEnv = process.env): string {
+export function resolveinsightAllStateDir(env: NodeJS.ProcessEnv = process.env): string {
   const configured = env.OPENCLAW_STATE_DIR?.trim();
   return resolve(expandPath(configured || join(homedir(), '.openclaw')));
 }
 
-export function resolveOpenClawConfigPath(env: NodeJS.ProcessEnv = process.env): string {
+export function resolveinsightAllConfigPath(env: NodeJS.ProcessEnv = process.env): string {
   const configured = env.OPENCLAW_CONFIG_PATH?.trim();
-  return resolve(expandPath(configured || join(resolveOpenClawStateDir(env), 'openclaw.json')));
+  return resolve(expandPath(configured || join(resolveinsightAllStateDir(env), 'openclaw.json')));
 }
 
-export function resolveOpenClawConfigDir(env: NodeJS.ProcessEnv = process.env): string {
-  return dirname(resolveOpenClawConfigPath(env));
+export function resolveinsightAllConfigDir(env: NodeJS.ProcessEnv = process.env): string {
+  return dirname(resolveinsightAllConfigPath(env));
 }
 
 /**
- * Get OpenClaw skills directory
+ * Get insightAll skills directory
  */
-export function getOpenClawSkillsDir(): string {
-  return join(getOpenClawConfigDir(), 'skills');
+export function getinsightAllSkillsDir(): string {
+  return join(getinsightAllConfigDir(), 'skills');
 }
 
 /**
- * Get ClawX config directory
+ * Get insightAllX config directory
  */
-export function getClawXConfigDir(): string {
-  return join(homedir(), '.clawx');
+export function getinsightAllXConfigDir(): string {
+  return join(homedir(), '.insightallx');
 }
 
 /**
- * Get ClawX logs directory
+ * Get insightAllX logs directory
  */
 export function getLogsDir(): string {
   return join(getElectronApp().getPath('userData'), 'logs');
 }
 
 /**
- * Get ClawX data directory
+ * Get insightAllX data directory
  */
 export function getDataDir(): string {
   return getElectronApp().getPath('userData');
@@ -123,11 +123,11 @@ export function getPreloadPath(): string {
 }
 
 /**
- * Get OpenClaw package directory
+ * Get insightAll package directory
  * - Production (packaged): from resources/openclaw (copied by electron-builder extraResources)
  * - Development: from node_modules/openclaw
  */
-export function getOpenClawDir(): string {
+export function getinsightAllDir(): string {
   if (getElectronApp().isPackaged) {
     return join(process.resourcesPath, 'openclaw');
   }
@@ -136,11 +136,11 @@ export function getOpenClawDir(): string {
 }
 
 /**
- * Get OpenClaw package directory resolved to a real path.
+ * Get insightAll package directory resolved to a real path.
  * Useful when consumers need deterministic module resolution under pnpm symlinks.
  */
-export function getOpenClawResolvedDir(): string {
-  const dir = getOpenClawDir();
+export function getinsightAllResolvedDir(): string {
+  const dir = getinsightAllDir();
   if (!existsSync(dir)) {
     return dir;
   }
@@ -152,10 +152,10 @@ export function getOpenClawResolvedDir(): string {
 }
 
 /**
- * Get OpenClaw entry script path (openclaw.mjs)
+ * Get insightAll entry script path (openclaw.mjs)
  */
-export function getOpenClawEntryPath(): string {
-  return join(getOpenClawDir(), 'openclaw.mjs');
+export function getinsightAllEntryPath(): string {
+  return join(getinsightAllDir(), 'openclaw.mjs');
 }
 
 /**
@@ -174,29 +174,29 @@ export function getClawHubCliBinPath(): string {
 }
 
 /**
- * Check if OpenClaw package exists
+ * Check if insightAll package exists
  */
-export function isOpenClawPresent(): boolean {
-  const dir = getOpenClawDir();
+export function isinsightAllPresent(): boolean {
+  const dir = getinsightAllDir();
   const pkgJsonPath = join(dir, 'package.json');
   return existsSync(dir) && existsSync(pkgJsonPath);
 }
 
 /**
- * Check if OpenClaw is built (has dist folder)
+ * Check if insightAll is built (has dist folder)
  * For the npm package, this should always be true since npm publishes the built dist.
  */
-export function isOpenClawBuilt(): boolean {
-  const dir = getOpenClawDir();
+export function isinsightAllBuilt(): boolean {
+  const dir = getinsightAllDir();
   const distDir = join(dir, 'dist');
   const hasDist = existsSync(distDir);
   return hasDist;
 }
 
 /**
- * Get OpenClaw status for environment check
+ * Get insightAll status for environment check
  */
-export interface OpenClawStatus {
+export interface insightAllStatus {
   packageExists: boolean;
   isBuilt: boolean;
   entryPath: string;
@@ -204,8 +204,8 @@ export interface OpenClawStatus {
   version?: string;
 }
 
-export function getOpenClawStatus(): OpenClawStatus {
-  const dir = getOpenClawDir();
+export function getinsightAllStatus(): insightAllStatus {
+  const dir = getinsightAllDir();
   let version: string | undefined;
 
   // Try to read version from package.json
@@ -219,17 +219,17 @@ export function getOpenClawStatus(): OpenClawStatus {
     // Ignore version read errors
   }
 
-  const status: OpenClawStatus = {
-    packageExists: isOpenClawPresent(),
-    isBuilt: isOpenClawBuilt(),
-    entryPath: getOpenClawEntryPath(),
+  const status: insightAllStatus = {
+    packageExists: isinsightAllPresent(),
+    isBuilt: isinsightAllBuilt(),
+    entryPath: getinsightAllEntryPath(),
     dir,
     version,
   };
 
   try {
     const { logger } = require('./logger') as typeof import('./logger');
-    logger.info('OpenClaw status:', status);
+    logger.info('insightAll status:', status);
   } catch {
     // Ignore logger bootstrap issues in non-Electron contexts such as unit tests.
   }

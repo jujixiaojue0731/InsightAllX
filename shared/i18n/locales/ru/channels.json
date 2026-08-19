@@ -186,17 +186,17 @@
             ]
         },
         "wechat": {
-            "description": "Подключите личный WeChat через официальный плагин OpenClaw от Tencent, сканированием QR-кода",
+            "description": "Подключите личный WeChat через официальный плагин insightAll от Tencent, сканированием QR-кода",
             "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/GHYZwuPCriF0gWkXwkFcJ9zon3b",
             "instructions": [
-                "Нажмите \"Сгенерировать QR-код\" для установки и включения официального плагина WeChat внутри OpenClaw",
+                "Нажмите \"Сгенерировать QR-код\" для установки и включения официального плагина WeChat внутри insightAll",
                 "Сканируйте QR-код ниже через WeChat и подтвердите подключение на телефоне",
                 "После успешного связывания новый чат WeChat ClawBot автоматически появится в WeChat",
                 "Вы можете повторить QR-процедуру позже, чтобы добавить другую учётную запись WeChat или переподключить существующую"
             ]
         },
         "dingtalk": {
-            "description": "Подключите DingTalk через плагин канала OpenClaw (режим Stream)",
+            "description": "Подключите DingTalk через плагин канала insightAll (режим Stream)",
             "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/Y5eNwiSiZidkLskrwtJc1rUln0b#doxcnDgA78n43DbkiQjI1OqUA7b",
             "fields": {
                 "clientId": {
@@ -209,7 +209,7 @@
                 }
             },
             "instructions": [
-                "Установите и включите плагин dingtalk в OpenClaw",
+                "Установите и включите плагин dingtalk в insightAll",
                 "Создайте внутреннее приложение DingTalk и включите режим Stream",
                 "Заполните Client ID (AppKey) и Client Secret (AppSecret)"
             ]
@@ -254,7 +254,7 @@
             ]
         },
         "qqbot": {
-            "description": "Подключите канал QQ Bot (встроенный с OpenClaw 3.31)",
+            "description": "Подключите канал QQ Bot (встроенный с insightAll 3.31)",
             "docsUrl": "https://icnnp7d0dymg.feishu.cn/wiki/KPIJwlyiGiupMrkiS9ice39Zn2c",
             "fields": {
                 "appId": {

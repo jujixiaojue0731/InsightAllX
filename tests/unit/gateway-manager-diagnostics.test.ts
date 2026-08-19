@@ -153,7 +153,7 @@ describe('GatewayManager diagnostics', () => {
     expect(manager.getCapabilitySnapshot().memory.error).toContain('doctor.memory.status');
   });
 
-  it('does not let health polling mark core rpc degraded when OpenClaw health/status are slow', async () => {
+  it('does not let health polling mark core rpc degraded when insightAll health/status are slow', async () => {
     const { GatewayManager } = await import('@electron/gateway/manager');
     const { buildGatewayHealthSummary } = await import('@electron/utils/gateway-health');
     const manager = new GatewayManager();

@@ -71,7 +71,7 @@ afterEach(() => {
   useGatewayStore.setState(initialGatewayState, true);
   useSessionAttentionStore.setState(initialSessionAttentionState, true);
   useSettingsStore.setState(initialSettingsState, true);
-  localStorage.removeItem('clawx.session-attention');
+  localStorage.removeItem('insightallx.session-attention');
 });
 
 describe('sidebar session helpers', () => {

@@ -4,9 +4,9 @@ import { chmod, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { deflateSync } from 'node:zlib';
-import { readOpenClawConfigSnapshot } from '../gateway/config-delivery';
-import { normalizeOpenClawAccountId } from './channel-alias';
-import { resolveOpenClawRuntimeModulePath } from './runtime-package-resolution';
+import { readinsightAllConfigSnapshot } from '../gateway/config-delivery';
+import { normalizeinsightAllAccountId } from './channel-alias';
+import { resolveinsightAllRuntimeModulePath } from './runtime-package-resolution';
 
 export const DEFAULT_WECHAT_BASE_URL = 'https://ilinkai.weixin.qq.com';
 const DEFAULT_ILINK_BOT_TYPE = '3';
@@ -43,8 +43,8 @@ function getQrRenderDeps(): QrRenderDeps {
     return qrRenderDeps;
   }
 
-  const qrCodeModulePath = resolveOpenClawRuntimeModulePath('qrcode-terminal/vendor/QRCode/index.js');
-  const qrErrorCorrectLevelPath = resolveOpenClawRuntimeModulePath(
+  const qrCodeModulePath = resolveinsightAllRuntimeModulePath('qrcode-terminal/vendor/QRCode/index.js');
+  const qrErrorCorrectLevelPath = resolveinsightAllRuntimeModulePath(
     'qrcode-terminal/vendor/QRCode/QRErrorCorrectLevel.js',
   );
   qrRenderDeps = {
@@ -211,7 +211,7 @@ function isLoginFresh(login: ActiveLogin): boolean {
 
 async function loadWeChatRouteTag(accountId?: string): Promise<string | undefined> {
   try {
-    const parsed = (await readOpenClawConfigSnapshot()).config as {
+    const parsed = (await readinsightAllConfigSnapshot()).config as {
       channels?: Record<string, {
         routeTag?: string | number;
         accounts?: Record<string, { routeTag?: string | number }>;
@@ -220,7 +220,7 @@ async function loadWeChatRouteTag(accountId?: string): Promise<string | undefine
     const section = parsed.channels?.['openclaw-weixin'];
     if (!section) return undefined;
     if (accountId) {
-      const normalizedAccountId = normalizeOpenClawAccountId(accountId);
+      const normalizedAccountId = normalizeinsightAllAccountId(accountId);
       const scopedRouteTag = section.accounts?.[normalizedAccountId]?.routeTag;
       if (typeof scopedRouteTag === 'number') return String(scopedRouteTag);
       if (typeof scopedRouteTag === 'string' && scopedRouteTag.trim()) return scopedRouteTag.trim();
@@ -301,7 +301,7 @@ export async function saveWeChatAccountState(rawAccountId: string, payload: {
   baseUrl?: string;
   userId?: string;
 }): Promise<string> {
-  const accountId = normalizeOpenClawAccountId(rawAccountId);
+  const accountId = normalizeinsightAllAccountId(rawAccountId);
   await mkdir(WECHAT_ACCOUNTS_DIR, { recursive: true });
 
   const filePath = join(WECHAT_ACCOUNTS_DIR, `${accountId}.json`);

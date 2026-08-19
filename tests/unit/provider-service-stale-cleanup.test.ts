@@ -5,10 +5,10 @@ const mocks = vi.hoisted(() => ({
   listProviderAccounts: vi.fn(),
   deleteProviderAccount: vi.fn(),
   saveProviderAccount: vi.fn(),
-  getActiveOpenClawProviders: vi.fn(),
-  getOpenClawProvidersConfig: vi.fn(),
-  getProviderApiKeyFromOpenClaw: vi.fn(),
-  getOpenClawProviderKeyForType: vi.fn(),
+  getActiveinsightAllProviders: vi.fn(),
+  getinsightAllProvidersConfig: vi.fn(),
+  getProviderApiKeyFrominsightAll: vi.fn(),
+  getinsightAllProviderKeyForType: vi.fn(),
   getAliasSourceTypes: vi.fn(),
   getProviderDefinition: vi.fn(),
   getApiKey: vi.fn(),
@@ -33,21 +33,21 @@ vi.mock('@electron/services/providers/provider-store', () => ({
 }));
 
 vi.mock('@electron/utils/openclaw-auth', () => ({
-  getActiveOpenClawProviders: mocks.getActiveOpenClawProviders,
-  getOpenClawProvidersConfig: mocks.getOpenClawProvidersConfig,
-  getProviderApiKeyFromOpenClaw: mocks.getProviderApiKeyFromOpenClaw,
+  getActiveinsightAllProviders: mocks.getActiveinsightAllProviders,
+  getinsightAllProvidersConfig: mocks.getinsightAllProvidersConfig,
+  getProviderApiKeyFrominsightAll: mocks.getProviderApiKeyFrominsightAll,
 }));
 
 vi.mock('@electron/utils/provider-keys', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@electron/utils/provider-keys')>();
   return {
     ...actual,
-    getOpenClawProviderKeyForType: mocks.getOpenClawProviderKeyForType,
-    resolveOpenClawProviderKey: (account: { vendorId: string; id: string; authMode?: string }) => {
+    getinsightAllProviderKeyForType: mocks.getinsightAllProviderKeyForType,
+    resolveinsightAllProviderKey: (account: { vendorId: string; id: string; authMode?: string }) => {
       if (account.authMode === 'oauth_browser' && account.vendorId === 'openai') {
         return 'openai';
       }
-      return mocks.getOpenClawProviderKeyForType(account.vendorId, account.id);
+      return mocks.getinsightAllProviderKeyForType(account.vendorId, account.id);
     },
     getAliasSourceTypes: mocks.getAliasSourceTypes,
   };
@@ -95,11 +95,11 @@ function makeAccount(overrides: Partial<ProviderAccount> = {}): ProviderAccount 
 }
 
 /**
- * Default mock: getOpenClawProviderKeyForType maps type to itself,
+ * Default mock: getinsightAllProviderKeyForType maps type to itself,
  * except minimax-portal-cn → minimax-portal (alias).
  */
 function setupDefaultKeyMapping() {
-  mocks.getOpenClawProviderKeyForType.mockImplementation(
+  mocks.getinsightAllProviderKeyForType.mockImplementation(
     (type: string) => type === 'minimax-portal-cn' ? 'minimax-portal' : type,
   );
 }
@@ -113,8 +113,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
     setupDefaultKeyMapping();
     mocks.getAliasSourceTypes.mockReturnValue([]);
     mocks.getProviderDefinition.mockReturnValue(undefined);
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({ providers: {}, defaultModel: undefined });
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue(null);
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({ providers: {}, defaultModel: undefined });
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue(null);
     mocks.getApiKey.mockResolvedValue(null);
     mocks.hasApiKey.mockResolvedValue(false);
     mocks.listProviderAccounts.mockResolvedValue([]);
@@ -125,7 +125,7 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
     mocks.listProviderAccounts.mockResolvedValue([
       makeAccount({ id: 'moonshot-1', vendorId: 'moonshot' as ProviderAccount['vendorId'] }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set<string>());
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set<string>());
 
     const result = await service.listAccounts();
 
@@ -138,8 +138,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
       makeAccount({ id: 'custom-orphan', vendorId: 'custom' as ProviderAccount['vendorId'] }),
     ]);
     // Only moonshot is active — custom is NOT in openclaw.json
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['moonshot']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['moonshot']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { moonshot: { baseUrl: 'https://api.moonshot.cn/v1' } },
       defaultModel: undefined,
     });
@@ -152,8 +152,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
 
   it('seeds new account from openclaw.json when no store match exists', async () => {
     mocks.listProviderAccounts.mockResolvedValue([]); // empty store
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['siliconflow']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['siliconflow']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { siliconflow: { baseUrl: 'https://api.siliconflow.cn/v1' } },
       defaultModel: undefined,
     });
@@ -169,8 +169,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
 
   it('seeds custom model metadata from openclaw provider model lists', async () => {
     mocks.listProviderAccounts.mockResolvedValue([]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['custom-model-hub']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['custom-model-hub']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         'custom-model-hub': {
           baseUrl: 'http://127.0.0.1:3100/v1',
@@ -202,8 +202,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
     mocks.listProviderAccounts.mockResolvedValue([
       makeAccount({ id: 'moonshot', vendorId: 'moonshot' as ProviderAccount['vendorId'], label: 'My Moonshot' }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['moonshot']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['moonshot']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { moonshot: { baseUrl: 'https://api.moonshot.cn/v1' } },
       defaultModel: undefined,
     });
@@ -225,8 +225,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
         metadata: { customModels: ['gpt-5.4', 'claude-sonnet-4', 'gemini-2.5-pro'] },
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['custom-model-hub']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['custom-model-hub']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         'custom-model-hub': {
           baseUrl: 'http://127.0.0.1:3100/v1',
@@ -263,8 +263,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
         model: 'openrouter/openai/gpt-5.5',
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openrouter']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openrouter']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         openrouter: {
           baseUrl: 'https://openrouter.ai/api/v1',
@@ -299,9 +299,9 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
       }),
     ]);
     mocks.getApiKey.mockResolvedValue(null);
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue(null);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openai']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue(null);
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openai']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         openai: {
           baseUrl: 'https://chatgpt.com/backend-api/codex',
@@ -319,7 +319,7 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
   });
 
   it('hides stale OpenAI API key accounts when OAuth is active only via auth profile', async () => {
-    // Regression: newer OpenClaw versions drop the explicit models.providers
+    // Regression: newer insightAll versions drop the explicit models.providers
     // "openai-codex" entry and the "openai-codex-auth" plugin entry, leaving
     // the OAuth auth profile as the only active signal. The bare "openai"
     // slot must still be hidden and the stale seeded api_key account removed.
@@ -338,11 +338,11 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
       }),
     ]);
     mocks.getApiKey.mockResolvedValue(null);
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue(null);
-    // Active set as produced by getActiveOpenClawProviders() when only the
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue(null);
+    // Active set as produced by getActiveinsightAllProviders() when only the
     // OpenAI OAuth profile exists in the auth store.
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openai']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openai']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { openai: {} },
       defaultModel: undefined,
     });
@@ -365,8 +365,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
         label: 'OpenAI Codex',
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openai']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openai']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {},
       defaultModel: 'openai/gpt-5.5',
     });
@@ -389,9 +389,9 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
       }),
     ]);
     mocks.getApiKey.mockResolvedValue(null);
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue(null);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openai']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue(null);
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openai']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {},
       defaultModel: 'minimax-portal/MiniMax-M3',
     });
@@ -403,14 +403,14 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
     expect(mocks.saveProviderAccount).not.toHaveBeenCalled();
   });
 
-  it('keeps openai visible when only OpenClaw auth-profiles has the API key', async () => {
+  it('keeps openai visible when only insightAll auth-profiles has the API key', async () => {
     mocks.listProviderAccounts.mockResolvedValue([]);
     mocks.getApiKey.mockResolvedValue(null);
-    mocks.getProviderApiKeyFromOpenClaw.mockImplementation(async (provider: string) => (
+    mocks.getProviderApiKeyFrominsightAll.mockImplementation(async (provider: string) => (
       provider === 'openai' ? 'sk-openclaw-imported' : null
     ));
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openai']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openai']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         openai: { baseUrl: 'https://api.openai.com/v1', api: 'openai-responses' },
       },
@@ -444,12 +444,12 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
     expect(mocks.deleteProviderAccount).not.toHaveBeenCalled();
   });
 
-  it('matches UUID-based store account to openclaw key via getOpenClawProviderKeyForType', async () => {
+  it('matches UUID-based store account to openclaw key via getinsightAllProviderKeyForType', async () => {
     mocks.listProviderAccounts.mockResolvedValue([
       makeAccount({ id: 'openrouter-uuid-1234', vendorId: 'openrouter' as ProviderAccount['vendorId'] }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openrouter']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openrouter']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { openrouter: { baseUrl: 'https://openrouter.ai/api/v1' } },
       defaultModel: undefined,
     });
@@ -476,8 +476,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
         updatedAt: '2026-03-21T00:00:00.000Z',
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['minimax-portal']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['minimax-portal']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { 'minimax-portal': { baseUrl: 'https://api.minimaxi.com/anthropic' } },
       defaultModel: undefined,
     });
@@ -499,8 +499,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
         label: 'MiniMax (CN)',
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['minimax-portal']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['minimax-portal']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { 'minimax-portal': { baseUrl: 'https://api.minimaxi.com/anthropic' } },
       defaultModel: undefined,
     });
@@ -531,8 +531,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
         updatedAt: '2026-03-22T00:00:00.000Z',
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['minimax-portal']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['minimax-portal']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { 'minimax-portal': {} },
       defaultModel: undefined,
     });
@@ -551,8 +551,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
       makeAccount({ id: 'openrouter-uuid', vendorId: 'openrouter' as ProviderAccount['vendorId'] }),
       makeAccount({ id: 'minimax-portal-cn-uuid', vendorId: 'minimax-portal-cn' as ProviderAccount['vendorId'] }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openrouter', 'minimax-portal']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openrouter', 'minimax-portal']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         openrouter: { baseUrl: 'https://openrouter.ai/api/v1' },
         'minimax-portal': { baseUrl: 'https://api.minimaxi.com/anthropic' },
@@ -570,8 +570,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
 
   it('seeds a MiniMax CN account when minimax-portal baseUrl points at the CN endpoint', async () => {
     mocks.listProviderAccounts.mockResolvedValue([]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['minimax-portal']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['minimax-portal']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         'minimax-portal': { baseUrl: 'https://api.minimaxi.com/anthropic' },
       },
@@ -613,8 +613,8 @@ describe('ProviderService.listAccounts (openclaw.json as sole source of truth)',
 
   it('seeds builtin providers discovered from auth profiles without explicit models.providers entries', async () => {
     mocks.listProviderAccounts.mockResolvedValue([]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openai', 'anthropic']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openai', 'anthropic']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: {
         anthropic: {},
       },
@@ -668,31 +668,31 @@ describe('ProviderService.listAccountsKeyInfo', () => {
     setupDefaultKeyMapping();
     mocks.getAliasSourceTypes.mockReturnValue([]);
     mocks.getProviderDefinition.mockReturnValue(undefined);
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({ providers: {}, defaultModel: undefined });
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue(null);
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({ providers: {}, defaultModel: undefined });
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue(null);
     mocks.getApiKey.mockResolvedValue(null);
     mocks.hasApiKey.mockResolvedValue(false);
     service = new ProviderService();
   });
 
-  it('prefers OpenClaw runtime auth when reporting account key status', async () => {
+  it('prefers insightAll runtime auth when reporting account key status', async () => {
     mocks.listProviderAccounts.mockResolvedValue([
       makeAccount({
         id: 'custom-ui-account-id',
         vendorId: 'custom' as ProviderAccount['vendorId'],
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['custom-runtime']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['custom-runtime']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { 'custom-runtime': { baseUrl: 'https://llm.example.com/v1' } },
       defaultModel: undefined,
     });
-    mocks.getOpenClawProviderKeyForType.mockReturnValue('custom-runtime');
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue('sk-openclaw-runtime-key');
+    mocks.getinsightAllProviderKeyForType.mockReturnValue('custom-runtime');
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue('sk-openclaw-runtime-key');
 
     const result = await service.listAccountsKeyInfo();
 
-    expect(mocks.getProviderApiKeyFromOpenClaw).toHaveBeenCalledWith('custom-runtime');
+    expect(mocks.getProviderApiKeyFrominsightAll).toHaveBeenCalledWith('custom-runtime');
     expect(mocks.getApiKey).not.toHaveBeenCalled();
     expect(result).toEqual([
       {
@@ -703,26 +703,26 @@ describe('ProviderService.listAccountsKeyInfo', () => {
     ]);
   });
 
-  it('falls back to ClawX local secrets when OpenClaw has no runtime key', async () => {
+  it('falls back to insightAllX local secrets when insightAll has no runtime key', async () => {
     mocks.listProviderAccounts.mockResolvedValue([
       makeAccount({
         id: 'openrouter-ui-account-id',
         vendorId: 'openrouter' as ProviderAccount['vendorId'],
       }),
     ]);
-    mocks.getActiveOpenClawProviders.mockResolvedValue(new Set(['openrouter']));
-    mocks.getOpenClawProvidersConfig.mockResolvedValue({
+    mocks.getActiveinsightAllProviders.mockResolvedValue(new Set(['openrouter']));
+    mocks.getinsightAllProvidersConfig.mockResolvedValue({
       providers: { openrouter: { baseUrl: 'https://openrouter.ai/api/v1' } },
       defaultModel: undefined,
     });
-    mocks.getOpenClawProviderKeyForType.mockReturnValue('openrouter');
+    mocks.getinsightAllProviderKeyForType.mockReturnValue('openrouter');
     mocks.getApiKey.mockImplementation(async (id: string) => (
       id === 'openrouter-ui-account-id' ? 'sk-local-provider-key' : null
     ));
 
     const result = await service.listAccountsKeyInfo();
 
-    expect(mocks.getProviderApiKeyFromOpenClaw).toHaveBeenCalledWith('openrouter');
+    expect(mocks.getProviderApiKeyFrominsightAll).toHaveBeenCalledWith('openrouter');
     expect(mocks.getApiKey).toHaveBeenCalledWith('openrouter-ui-account-id');
     expect(result[0]).toMatchObject({
       accountId: 'openrouter-ui-account-id',

@@ -63,7 +63,7 @@ expectedUserBehavior:
   - Catalog reconciliation repairs removed selections atomically, resets suppression and timestamp fences across Gateway generations, withholds a selected persisted session until its workspace summary settles, and never overwrites a newer local catalog or selection mutation with the delayed snapshot.
   - A failed hard delete keeps the session and confirmation dialog intact; navigation and dialog closure happen only after host-confirmed deletion.
   - Bulk deletion repairs a deleted current selection atomically with the remaining catalog, preferring a valid non-cron/non-channel session or creating an agent-local placeholder.
-  - Asynchronous OpenClaw image-generation completions continue to appear when accepted by the existing bounded ACP compatibility checks.
+  - Asynchronous insightAll image-generation completions continue to appear when accepted by the existing bounded ACP compatibility checks.
 requiredProfiles:
   - fast
   - comms
@@ -114,7 +114,7 @@ acceptance:
   - The unreachable chat media-send shared/Main/Renderer contract is removed; ACP load, prompt, cancel, and permission operations remain the exact typed Chat host actions.
   - The unused standalone Gateway client and Chat-history-only RPC backpressure layer are removed; typed generic Gateway RPC validates the same method and timeout inputs before delegating directly to GatewayManager.rpc.
   - Generic Gateway RPC diagnostics and proxy tests use non-Chat methods; one Electron E2E assertion prevents ordinary Chat from resurrecting a chat.history call.
-  - No OpenClaw source, installed package source, bundled OpenClaw distribution, or OpenClaw patch is modified.
+  - No insightAll source, installed package source, bundled insightAll distribution, or insightAll patch is modified.
   - Typecheck, focused ACP and host tests, relevant ACP Electron E2E, communication regression checks, task validation, and harness CI pass.
 docs:
   required: true
@@ -134,7 +134,7 @@ Keep the ACP timeline and composer as the sole normal Chat implementation. Prese
 
 ## Out Of Scope
 
-- Modifying OpenClaw source, package contents, or bundled runtime behavior.
+- Modifying insightAll source, package contents, or bundled runtime behavior.
 - Replacing ACP replay with Gateway Chat history or broad transcript reconstruction.
 - Removing or widening the bounded ACP image-generation completion compatibility path.
 - Redesigning the ACP timeline, composer, sidebar, workspace, attachment, permission, or file-activity experiences.

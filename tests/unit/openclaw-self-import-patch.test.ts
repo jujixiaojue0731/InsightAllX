@@ -5,15 +5,15 @@ import { existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import {
-  patchExtensionOpenClawSelfImports,
-  rewriteOpenClawPluginSdkSpecifiers,
+  patchExtensioninsightAllSelfImports,
+  rewriteinsightAllPluginSdkSpecifiers,
   toImportSpecifier,
 } from '../../scripts/openclaw-self-import-patch.mjs';
 
 const tempRoots: string[] = [];
 
-async function createTempOpenClawBundle(): Promise<string> {
-  const root = await mkdtemp(path.join(tmpdir(), 'clawx-openclaw-self-import-'));
+async function createTempinsightAllBundle(): Promise<string> {
+  const root = await mkdtemp(path.join(tmpdir(), 'insightallx-openclaw-self-import-'));
   tempRoots.push(root);
   return root;
 }
@@ -23,8 +23,8 @@ afterEach(async () => {
 });
 
 describe('openclaw self-import bundle patch', () => {
-  it('converts OpenClaw plugin-sdk package specifiers to bundled relative paths', async () => {
-    const root = await createTempOpenClawBundle();
+  it('converts insightAll plugin-sdk package specifiers to bundled relative paths', async () => {
+    const root = await createTempinsightAllBundle();
     const distDir = path.join(root, 'dist');
     const pluginSdkDir = path.join(distDir, 'plugin-sdk');
     const extensionDir = path.join(distDir, 'extensions', 'codex');
@@ -42,7 +42,7 @@ describe('openclaw self-import bundle patch', () => {
       ].join('\n'),
     );
 
-    const result = patchExtensionOpenClawSelfImports(root);
+    const result = patchExtensioninsightAllSelfImports(root);
 
     expect(result).toMatchObject({
       filesPatched: 1,
@@ -53,8 +53,8 @@ describe('openclaw self-import bundle patch', () => {
     );
   });
 
-  it('leaves extension files without OpenClaw self-imports untouched', async () => {
-    const root = await createTempOpenClawBundle();
+  it('leaves extension files without insightAll self-imports untouched', async () => {
+    const root = await createTempinsightAllBundle();
     const extensionDir = path.join(root, 'dist', 'extensions', 'telegram');
     await mkdir(extensionDir, { recursive: true });
 
@@ -62,7 +62,7 @@ describe('openclaw self-import bundle patch', () => {
     const source = 'export const runtime = true;\n';
     await writeFile(filePath, source);
 
-    const result = patchExtensionOpenClawSelfImports(root);
+    const result = patchExtensioninsightAllSelfImports(root);
 
     expect(result.filesScanned).toBe(1);
     expect(result.filesPatched).toBe(0);
@@ -75,7 +75,7 @@ describe('openclaw self-import bundle patch', () => {
     const distDir = path.join(root, 'dist');
     const filePath = path.join(distDir, 'extensions', 'codex', 'prompt-overlay.js');
 
-    expect(() => rewriteOpenClawPluginSdkSpecifiers(
+    expect(() => rewriteinsightAllPluginSdkSpecifiers(
       'import "openclaw/plugin-sdk/provider-model-shared";',
       { filePath, distDir },
     )).toThrow(/missing bundled SDK target/);
@@ -89,10 +89,10 @@ describe('openclaw self-import bundle patch', () => {
   });
 
   it('returns an empty patch summary when the extensions directory is absent', async () => {
-    const root = await createTempOpenClawBundle();
+    const root = await createTempinsightAllBundle();
     await mkdir(path.join(root, 'dist', 'plugin-sdk'), { recursive: true });
 
-    const result = patchExtensionOpenClawSelfImports(root);
+    const result = patchExtensioninsightAllSelfImports(root);
 
     expect(existsSync(path.join(root, 'dist', 'extensions'))).toBe(false);
     expect(result).toEqual({

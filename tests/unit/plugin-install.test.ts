@@ -18,7 +18,7 @@ const {
   mockLoggerInfo,
   mockUpsertPluginInstallRecordsIntoSqlite,
   mockRemovePluginInstallRecordsFromSqlite,
-  mockMutateOpenClawConfig,
+  mockMutateinsightAllConfig,
   mockHomedir,
   mockApp,
   configState,
@@ -40,7 +40,7 @@ const {
   mockLoggerInfo: vi.fn(),
   mockUpsertPluginInstallRecordsIntoSqlite: vi.fn(() => true),
   mockRemovePluginInstallRecordsFromSqlite: vi.fn(() => true),
-  mockMutateOpenClawConfig: vi.fn(),
+  mockMutateinsightAllConfig: vi.fn(),
   mockHomedir: vi.fn(() => '/home/test'),
   mockApp: {
     isPackaged: true,
@@ -109,11 +109,11 @@ vi.mock('@electron/utils/logger', () => ({
 vi.mock('@electron/utils/plugin-install-index', () => ({
   upsertPluginInstallRecordsIntoSqlite: mockUpsertPluginInstallRecordsIntoSqlite,
   removePluginInstallRecordsFromSqlite: mockRemovePluginInstallRecordsFromSqlite,
-  ensureOpenClawStateDirExists: vi.fn(),
+  ensureinsightAllStateDirExists: vi.fn(),
 }));
 
 vi.mock('@electron/gateway/config-delivery', () => ({
-  mutateOpenClawConfig: mockMutateOpenClawConfig,
+  mutateinsightAllConfig: mockMutateinsightAllConfig,
 }));
 
 function setPlatform(platform: NodeJS.Platform): void {
@@ -147,7 +147,7 @@ describe('plugin installer diagnostics', () => {
     mockReaddirSync.mockReturnValue([]);
     mockRealpathSync.mockImplementation((input: string) => input);
     configState.authoritative = {};
-    mockMutateOpenClawConfig.mockImplementation(async (
+    mockMutateinsightAllConfig.mockImplementation(async (
       mutator: (config: Record<string, unknown>) => void | Promise<void>,
     ) => {
       const before = structuredClone(configState.authoritative);
@@ -221,8 +221,8 @@ describe('plugin installer diagnostics', () => {
     setPlatform('win32');
     mockHomedir.mockReturnValue('C:\\Users\\test');
 
-    const sourceDir = 'C:\\Program Files\\ClawX\\resources\\openclaw-plugins\\wecom';
-    const sourceManifestSuffix = 'Program Files\\ClawX\\resources\\openclaw-plugins\\wecom\\openclaw.plugin.json';
+    const sourceDir = 'C:\\Program Files\\insightAllX\\resources\\openclaw-plugins\\wecom';
+    const sourceManifestSuffix = 'Program Files\\insightAllX\\resources\\openclaw-plugins\\wecom\\openclaw.plugin.json';
 
     mockExistsSync.mockImplementation((input: string) => String(input).includes(sourceManifestSuffix));
     // On win32, cpSyncSafe uses _copyDirSyncRecursive (readdirSync) instead of cpSync.
@@ -274,8 +274,8 @@ describe('plugin installer diagnostics', () => {
     setPlatform('win32');
     mockHomedir.mockReturnValue('C:\\Users\\test');
 
-    const sourceDir = 'C:\\Program Files\\ClawX\\resources\\openclaw-plugins\\wecom';
-    const sourceManifestSuffix = 'Program Files\\ClawX\\resources\\openclaw-plugins\\wecom\\openclaw.plugin.json';
+    const sourceDir = 'C:\\Program Files\\insightAllX\\resources\\openclaw-plugins\\wecom';
+    const sourceManifestSuffix = 'Program Files\\insightAllX\\resources\\openclaw-plugins\\wecom\\openclaw.plugin.json';
 
     mockExistsSync.mockImplementation((input: string) => String(input).includes(sourceManifestSuffix));
     // On win32, cpSyncSafe uses _copyDirSyncRecursive (readdirSync) instead of cpSync.
@@ -369,7 +369,7 @@ describe('plugin installer diagnostics', () => {
     const { syncTrustedOfficialPluginInstallRecord } = await import('@electron/utils/plugin-install');
     await expect(syncTrustedOfficialPluginInstallRecord('wecom', targetDir)).resolves.toBe(true);
     expect(configState.authoritative).toEqual({ gatewayOnly: true, plugins: {} });
-    expect(mockMutateOpenClawConfig).toHaveBeenCalledOnce();
+    expect(mockMutateinsightAllConfig).toHaveBeenCalledOnce();
     expect(mockWriteFileSync).not.toHaveBeenCalled();
     expect(mockRemovePluginInstallRecordsFromSqlite).toHaveBeenCalledWith(['wecom-openclaw-plugin']);
     expect(mockUpsertPluginInstallRecordsIntoSqlite).toHaveBeenCalledWith({
@@ -382,7 +382,7 @@ describe('plugin installer diagnostics', () => {
     });
   });
 
-  it('replaces legacy Feishu npm ownership with the ClawX path mirror', async () => {
+  it('replaces legacy Feishu npm ownership with the insightAllX path mirror', async () => {
     const targetDir = '/home/test/.openclaw/extensions/feishu-openclaw-plugin';
     configState.authoritative = {
       gatewayOnly: true,
@@ -410,7 +410,7 @@ describe('plugin installer diagnostics', () => {
     await expect(syncTrustedOfficialPluginInstallRecord('feishu-openclaw-plugin', targetDir)).resolves.toBe(true);
 
     expect(configState.authoritative).toEqual({ gatewayOnly: true, plugins: {} });
-    expect(mockMutateOpenClawConfig).toHaveBeenCalledOnce();
+    expect(mockMutateinsightAllConfig).toHaveBeenCalledOnce();
     expect(mockWriteFileSync).not.toHaveBeenCalled();
     expect(mockRemovePluginInstallRecordsFromSqlite).toHaveBeenCalledWith([
       'feishu-openclaw-plugin',
@@ -431,7 +431,7 @@ describe('plugin installer diagnostics', () => {
 
     const { removeTrustedOfficialPluginInstallRecord } = await import('@electron/utils/plugin-install');
     await expect(removeTrustedOfficialPluginInstallRecord('whatsapp')).resolves.toBe(true);
-    expect(mockMutateOpenClawConfig).toHaveBeenCalledOnce();
+    expect(mockMutateinsightAllConfig).toHaveBeenCalledOnce();
     expect(mockRemovePluginInstallRecordsFromSqlite).toHaveBeenCalledWith(['whatsapp']);
   });
 
@@ -467,8 +467,8 @@ describe('plugin installer diagnostics', () => {
       linked && String(input) === linkPath ? openclawDir : String(input)
     ));
 
-    const { repairPluginOpenClawPeerLink } = await import('@electron/utils/plugin-install');
-    expect(repairPluginOpenClawPeerLink(targetDir, openclawDir)).toBe(true);
+    const { repairPlugininsightAllPeerLink } = await import('@electron/utils/plugin-install');
+    expect(repairPlugininsightAllPeerLink(targetDir, openclawDir)).toBe(true);
     expect(mockSymlinkSync).toHaveBeenCalledWith(openclawDir, linkPath, 'junction');
   });
 });

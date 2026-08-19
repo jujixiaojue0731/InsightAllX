@@ -3,7 +3,7 @@ id: fix-api-key-model-picker-stale-id
 title: Hide stale API-key model IDs after provider edits
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Keep chat model selection aligned with the explicit model saved for single-model built-in provider accounts while preserving historical OpenClaw model metadata and custom/local multi-model behavior.
+intent: Keep chat model selection aligned with the explicit model saved for single-model built-in provider accounts while preserving historical insightAll model metadata and custom/local multi-model behavior.
 touchedAreas:
   - harness/specs/tasks/fix-api-key-model-picker-stale-id.md
   - harness/specs/rules/provider-model-selection-authority.md
@@ -38,7 +38,7 @@ docs:
 
 ## Background
 
-OpenClaw provider synchronization intentionally retains existing model rows to
+insightAll provider synchronization intentionally retains existing model rows to
 preserve capability metadata. Provider account snapshots copy those rows into
 `metadata.customModels`. The chat picker already ignores stale metadata for
 browser OAuth accounts, but API-key and device-OAuth built-in accounts still
@@ -48,7 +48,7 @@ allow historical IDs to override the explicit model saved by the user.
 
 - Make the explicit model authoritative for every single-model built-in account.
 - Preserve custom and local multi-model options from synchronized metadata.
-- Preserve historical OpenClaw model rows and their capability metadata.
+- Preserve historical insightAll model rows and their capability metadata.
 - Cover API-key stale-ID behavior with unit and Electron E2E tests.
 
 ## Out Of Scope

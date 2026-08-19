@@ -3,7 +3,7 @@ id: make-gateway-heartbeat-observability-only
 title: Make Gateway heartbeat misses observability-only
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Prevent long-running OpenClaw work from being interrupted when the Gateway control plane temporarily stops answering WebSocket ping frames.
+intent: Prevent long-running insightAll work from being interrupted when the Gateway control plane temporarily stops answering WebSocket ping frames.
 touchedAreas:
   - harness/specs/tasks/make-gateway-heartbeat-observability-only.md
   - harness/specs/rules/gateway-heartbeat-safety.md

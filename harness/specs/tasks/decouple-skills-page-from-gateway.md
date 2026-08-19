@@ -15,7 +15,7 @@ touchedAreas:
   - electron/extensions/builtin/index.ts
   - electron/extensions/builtin/clawhub-marketplace.ts
   - electron/extensions/types.ts
-  - clawx-extensions.json
+  - insightallx-extensions.json
   - package.json
   - pnpm-lock.yaml
   - playground/clawhub-skillshub-gateway-analysis.md
@@ -69,9 +69,9 @@ acceptance:
   - Skills page first loads /api/skills/local and remains usable when Gateway is stopped.
   - Gateway skills.status becomes a best-effort runtime merge, not a hard dependency for initial rendering.
   - Enabling/disabling skills writes skills.entries.<skillKey>.enabled in openclaw.json via Host API.
-  - Gateway-offline local scan includes the allowlisted bundled OpenClaw skill `skill-creator`.
-  - Non-allowlisted bundled OpenClaw skills are physically trimmed from the active OpenClaw runtime (dev + packaged), and stale openclaw.json entries for those removed bundled skills are pruned.
-  - Packaged OpenClaw bundles physically keep only the allowlisted bundled skill `skill-creator`.
+  - Gateway-offline local scan includes the allowlisted bundled insightAll skill `skill-creator`.
+  - Non-allowlisted bundled insightAll skills are physically trimmed from the active insightAll runtime (dev + packaged), and stale openclaw.json entries for those removed bundled skills are pruned.
+  - Packaged insightAll bundles physically keep only the allowlisted bundled skill `skill-creator`.
   - Uninstalling a managed skill removes skills.entries.<skillKey> instead of preserving stale config.
   - Without an extension marketplace provider, /api/clawhub/capability reports local-only and install/search are unavailable.
   - package.json no longer depends on npm clawhub.

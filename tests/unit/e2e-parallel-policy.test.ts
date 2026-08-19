@@ -119,7 +119,7 @@ describe('Electron E2E parallel policy', () => {
     expect(playwrightConfig.fullyParallel).toBe(false);
     expect(DEFAULT_E2E_WORKERS).toBeGreaterThan(1);
     expect(playwrightConfig.workers).toBe(
-      process.env.CLAWX_E2E_WORKERS ? Number(process.env.CLAWX_E2E_WORKERS) : DEFAULT_E2E_WORKERS,
+      process.env.INSIGHTALLX_E2E_WORKERS ? Number(process.env.INSIGHTALLX_E2E_WORKERS) : DEFAULT_E2E_WORKERS,
     );
     expect(exclusive?.workers).toBe(1);
     expect(String(exclusive?.grep)).toContain(E2E_EXCLUSIVE_TAG);

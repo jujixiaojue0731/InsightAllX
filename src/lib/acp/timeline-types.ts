@@ -55,7 +55,7 @@ export type MessageSegmentItem = {
   messageId: string;
   segmentIndex: number;
   parts: RenderPart[];
-  /** Binary-free text blocks produced by OpenClaw's ACP prompt flattening. */
+  /** Binary-free text blocks produced by insightAll's ACP prompt flattening. */
   userPromptTextBlocks?: string[];
   /** Keep the locally-sent projection authoritative while ACP echoes prompt chunks. */
   userPromptTextBlocksOptimistic?: boolean;

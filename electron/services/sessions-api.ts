@@ -3,10 +3,10 @@ import { access } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import { stripAcpWorkingDirectoryPrefix } from '@shared/chat/session-title';
-import { isOpenClawHeartbeatPollText } from '@shared/chat/openclaw-internal';
+import { isinsightAllHeartbeatPollText } from '@shared/chat/openclaw-internal';
 import type { RawMessage } from '@shared/chat/types';
 import type { SessionTurnTimingCandidate } from '@shared/host-api/contract';
-import { resolveOpenClawStateDir } from '../utils/paths';
+import { resolveinsightAllStateDir } from '../utils/paths';
 import { logger } from '../utils/logger';
 import {
   removeSessionEntry,
@@ -88,7 +88,7 @@ function cleanSummaryUserText(text: string): string {
 
 function isInternalSummaryText(text: string): boolean {
   if (!text) return true;
-  if (isOpenClawHeartbeatPollText(text)) return true;
+  if (isinsightAllHeartbeatPollText(text)) return true;
   if (/^\s*System\s*\(untrusted\)\s*:/i.test(text)) return true;
   if (
     /An async command you ran earlier has completed/i.test(text)
@@ -226,12 +226,12 @@ function readAcpRuntimeMetaCwd(db: SqliteDatabaseLike, sessionKey: string): stri
   }
 }
 
-async function readOpenClawAcpSessionCwds(sessionKeys: string[]): Promise<Map<string, string>> {
+async function readinsightAllAcpSessionCwds(sessionKeys: string[]): Promise<Map<string, string>> {
   const normalizedKeys = Array.from(new Set(sessionKeys.map((sessionKey) => sessionKey.trim()).filter(Boolean)));
   const workspaceByKey = new Map<string, string>();
   if (normalizedKeys.length === 0) return workspaceByKey;
 
-  const databasePath = join(resolveOpenClawStateDir(), 'state', 'openclaw.sqlite');
+  const databasePath = join(resolveinsightAllStateDir(), 'state', 'openclaw.sqlite');
   try {
     await access(databasePath);
     const sqliteSpecifier = 'node:sqlite';
@@ -351,7 +351,7 @@ function summarizeTranscriptMessages(
     if (firstUserText == null && message.role === 'user') {
       const text = cleanSummaryUserText(extractMessageText(message.content));
       if (text && isInternalSummaryText(text)) {
-        if (isOpenClawHeartbeatPollText(text)) {
+        if (isinsightAllHeartbeatPollText(text)) {
           sawHeartbeatPollText = true;
         }
       } else if (text) {
@@ -397,7 +397,7 @@ function getLimit(payload: unknown, fallback = 200): number {
 
 async function readSessionsJson(agentId: string): Promise<Record<string, unknown>> {
   const fsP = await import('node:fs/promises');
-  const sessionsJsonPath = join(resolveOpenClawStateDir(), 'agents', agentId, 'sessions', 'sessions.json');
+  const sessionsJsonPath = join(resolveinsightAllStateDir(), 'agents', agentId, 'sessions', 'sessions.json');
   const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
   return JSON.parse(raw) as Record<string, unknown>;
 }
@@ -459,7 +459,7 @@ async function loadSessionSummary(sessionKey: string, workspacePath: string | nu
   }
 
   try {
-    const sessionsDir = join(resolveOpenClawStateDir(), 'agents', parsed.agentId, 'sessions');
+    const sessionsDir = join(resolveinsightAllStateDir(), 'agents', parsed.agentId, 'sessions');
     const sessionsJson = await readSessionsJson(parsed.agentId);
     const transcriptPath = resolveSessionTranscriptPathByKey(sessionKey, sessionsDir, sessionsJson);
     if (!transcriptPath) {
@@ -478,7 +478,7 @@ export async function loadSessionTranscriptByKey(sessionKey: string, limit: numb
   if (!parsed) return null;
 
   try {
-    const sessionsDir = join(resolveOpenClawStateDir(), 'agents', parsed.agentId, 'sessions');
+    const sessionsDir = join(resolveinsightAllStateDir(), 'agents', parsed.agentId, 'sessions');
     const sessionsJson = await readSessionsJson(parsed.agentId);
     const transcriptPath = resolveSessionTranscriptPathByKey(sessionKey, sessionsDir, sessionsJson);
     if (!transcriptPath) return null;
@@ -497,7 +497,7 @@ async function loadSessionTurnTimingsByKey(
   if (!parsed) return null;
 
   try {
-    const sessionsDir = join(resolveOpenClawStateDir(), 'agents', parsed.agentId, 'sessions');
+    const sessionsDir = join(resolveinsightAllStateDir(), 'agents', parsed.agentId, 'sessions');
     const sessionsJson = await readSessionsJson(parsed.agentId);
     const transcriptPath = resolveSessionTranscriptPathByKey(sessionKey, sessionsDir, sessionsJson);
     if (!transcriptPath) return null;
@@ -524,7 +524,7 @@ async function deleteSession(sessionKey: string): Promise<{ success: boolean; er
     return { success: false, error: `Invalid agentId: ${agentId}` };
   }
 
-  const sessionsDir = join(resolveOpenClawStateDir(), 'agents', agentId, 'sessions');
+  const sessionsDir = join(resolveinsightAllStateDir(), 'agents', agentId, 'sessions');
   const sessionsJsonPath = join(sessionsDir, 'sessions.json');
   logger.info(`[session:delete] key=${sessionKey} agentId=${agentId}`);
   logger.info(`[session:delete] sessionsJson=${sessionsJsonPath}`);
@@ -592,7 +592,7 @@ async function renameSession(sessionKey: string, label: string): Promise<{ succe
     return { success: false, error: `Invalid agentId in sessionKey: ${agentId}` };
   }
 
-  const sessionsJsonPath = join(resolveOpenClawStateDir(), 'agents', agentId, 'sessions', 'sessions.json');
+  const sessionsJsonPath = join(resolveinsightAllStateDir(), 'agents', agentId, 'sessions', 'sessions.json');
   const fsP = await import('node:fs/promises');
   const raw = await fsP.readFile(sessionsJsonPath, 'utf8');
   const json = JSON.parse(raw) as Record<string, unknown>;
@@ -639,7 +639,7 @@ export function createSessionsApi(): CompleteHostServiceRegistry['sessions'] {
         ? body.sessionKeys.filter((value): value is string => typeof value === 'string' && value.startsWith('agent:'))
         : [];
       if (sessionKeys.length === 0) return { success: true, summaries: [] };
-      const workspaceByKey = await readOpenClawAcpSessionCwds(sessionKeys);
+      const workspaceByKey = await readinsightAllAcpSessionCwds(sessionKeys);
       return {
         success: true,
         summaries: await Promise.all(sessionKeys.map((sessionKey) => (
@@ -667,7 +667,7 @@ export function createSessionsApi(): CompleteHostServiceRegistry['sessions'] {
       }
 
       try {
-        const transcriptPath = join(resolveOpenClawStateDir(), 'agents', agentId, 'sessions', `${sessionId}.jsonl`);
+        const transcriptPath = join(resolveinsightAllStateDir(), 'agents', agentId, 'sessions', `${sessionId}.jsonl`);
         return { success: true, messages: readRecentTranscriptMessages(transcriptPath, limit) };
       } catch (error) {
         if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT') {

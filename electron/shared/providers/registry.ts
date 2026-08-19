@@ -82,7 +82,7 @@ export const PROVIDER_DEFINITIONS: ProviderDefinition[] = [
       apiKeyEnv: 'OPENROUTER_API_KEY',
       headers: {
         'HTTP-Referer': 'https://claw-x.com',
-        'X-OpenRouter-Title': 'ClawX',
+        'X-OpenRouter-Title': 'insightAllX',
       },
     },
   },
@@ -311,7 +311,7 @@ export const PROVIDER_DEFINITIONS: ProviderDefinition[] = [
     },
   },
   {
-    // OpenClaw runtime key is always `zai` (CN + Global share one provider slot).
+    // insightAll runtime key is always `zai` (CN + Global share one provider slot).
     // Cross-checked with docs.openclaw.ai/providers/zai and docs.z.ai/devpack/tool/openclaw.
     id: 'zai',
     name: 'Z.AI (CN)',
@@ -369,7 +369,7 @@ export const PROVIDER_DEFINITIONS: ProviderDefinition[] = [
     },
   },
   {
-    // Aliases to OpenClaw runtime key `zai` — mutually exclusive with CN in the UI.
+    // Aliases to insightAll runtime key `zai` — mutually exclusive with CN in the UI.
     id: 'zai-global',
     name: 'Z.AI (Global)',
     icon: 'Z',

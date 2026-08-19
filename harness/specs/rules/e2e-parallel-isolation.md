@@ -9,7 +9,7 @@ requiredProfiles:
   - e2e
 ---
 
-Electron E2E tests are parallel by default because each test owns its HOME, OpenClaw state directory, Electron user-data directory, and Host API configuration. Keep those fixtures test-scoped.
+Electron E2E tests are parallel by default because each test owns its HOME, insightAll state directory, Electron user-data directory, and Host API configuration. Keep those fixtures test-scoped.
 
 Tests that mutate OS-global state must use `E2E_EXCLUSIVE_TAG`. Tests that profile shared host CPU, GPU, display, or frame pacing must use `E2E_PERFORMANCE_TAG`. Do not use Playwright serial mode as a cross-file mutex; serial mode only orders tests within its own group.
 

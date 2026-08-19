@@ -46,7 +46,7 @@ describe('provider metadata', () => {
     });
   });
 
-  it('includes Z.AI CN and Global with OpenClaw-aligned endpoints and glm-5.2 default', () => {
+  it('includes Z.AI CN and Global with insightAll-aligned endpoints and glm-5.2 default', () => {
     expect(PROVIDER_TYPES).toEqual(expect.arrayContaining(['zai', 'zai-global']));
     expect(BUILTIN_PROVIDER_TYPES).toEqual(expect.arrayContaining(['zai', 'zai-global']));
 

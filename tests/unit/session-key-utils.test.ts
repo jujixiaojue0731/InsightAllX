@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
-  findHiddenOpenClawHeartbeatSession,
+  findHiddeninsightAllHeartbeatSession,
   isChannelSessionKey,
-  isClawXDesktopSessionKey,
+  isinsightAllXDesktopSessionKey,
   isPlaceholderChannelSession,
   shouldIncludeSessionInSidebarList,
 } from '@/stores/chat/session-key-utils';
@@ -15,17 +15,17 @@ describe('session-key-utils', () => {
     expect(isChannelSessionKey('agent:main:whatsapp:dm:abc')).toBe(true);
   });
 
-  it('treats ClawX desktop session keys as non-channel', () => {
+  it('treats insightAllX desktop session keys as non-channel', () => {
     expect(isChannelSessionKey('agent:main:main')).toBe(false);
     expect(isChannelSessionKey('agent:main:session-1710000000000')).toBe(false);
     expect(isChannelSessionKey('agent:main:cron:heartbeat')).toBe(false);
   });
 
   it('excludes cron and channel keys from desktop-only session keys', () => {
-    expect(isClawXDesktopSessionKey('agent:main:main')).toBe(true);
-    expect(isClawXDesktopSessionKey('agent:main:session-1710000000000')).toBe(true);
-    expect(isClawXDesktopSessionKey('agent:main:feishu:ou_abc123')).toBe(false);
-    expect(isClawXDesktopSessionKey('agent:main:cron:heartbeat')).toBe(false);
+    expect(isinsightAllXDesktopSessionKey('agent:main:main')).toBe(true);
+    expect(isinsightAllXDesktopSessionKey('agent:main:session-1710000000000')).toBe(true);
+    expect(isinsightAllXDesktopSessionKey('agent:main:feishu:ou_abc123')).toBe(false);
+    expect(isinsightAllXDesktopSessionKey('agent:main:cron:heartbeat')).toBe(false);
   });
 
   it('detects placeholder channel sessions without any preview/title', () => {
@@ -90,29 +90,29 @@ describe('session-key-utils', () => {
     const channelSession: ChatSession = {
       key: 'agent:main:feishu:ou_abc123',
       displayName: 'Alice',
-      lastMessagePreview: '[OpenClaw heartbeat poll]',
+      lastMessagePreview: '[insightAll heartbeat poll]',
     };
 
     expect(isPlaceholderChannelSession(channelSession)).toBe(false);
     expect(shouldIncludeSessionInSidebarList(channelSession)).toBe(true);
   });
 
-  it('hides OpenClaw heartbeat-only desktop sessions from the sidebar', () => {
+  it('hides insightAll heartbeat-only desktop sessions from the sidebar', () => {
     const heartbeatOnly: ChatSession = {
       key: 'agent:main:main',
-      displayName: 'ClawX',
-      lastMessagePreview: '[OpenClaw heartbeat poll]',
+      displayName: 'insightAllX',
+      lastMessagePreview: '[insightAll heartbeat poll]',
     };
 
     expect(shouldIncludeSessionInSidebarList(heartbeatOnly)).toBe(false);
   });
 
-  it('hides heartbeat sessions whose preview is only the OpenClaw heartbeat acknowledgement', () => {
+  it('hides heartbeat sessions whose preview is only the insightAll heartbeat acknowledgement', () => {
     const heartbeatOnly: ChatSession = {
       key: 'agent:main:main',
-      label: '[OpenClaw heartbeat poll]',
-      displayName: '[OpenClaw heartbeat poll]',
-      derivedTitle: '[OpenClaw heartbeat poll]',
+      label: '[insightAll heartbeat poll]',
+      displayName: '[insightAll heartbeat poll]',
+      derivedTitle: '[insightAll heartbeat poll]',
       lastMessagePreview: 'HEARTBEAT_OK',
     };
 
@@ -123,30 +123,30 @@ describe('session-key-utils', () => {
     const sessions: ChatSession[] = [
       {
         key: 'agent:main:main',
-        displayName: 'ClawX',
-        lastMessagePreview: '[OpenClaw heartbeat poll]',
+        displayName: 'insightAllX',
+        lastMessagePreview: '[insightAll heartbeat poll]',
       },
       {
         key: 'agent:main:session-1710000000000',
-        displayName: 'ClawX',
+        displayName: 'insightAllX',
         lastMessagePreview: 'Summarize the repository structure',
       },
     ];
 
-    expect(findHiddenOpenClawHeartbeatSession('agent:main:main', sessions)?.key).toBe('agent:main:main');
-    expect(findHiddenOpenClawHeartbeatSession('agent:main:session-1710000000000', sessions)).toBeNull();
+    expect(findHiddeninsightAllHeartbeatSession('agent:main:main', sessions)?.key).toBe('agent:main:main');
+    expect(findHiddeninsightAllHeartbeatSession('agent:main:session-1710000000000', sessions)).toBeNull();
   });
 
   it('does not treat missing metadata as proof of a hidden heartbeat session', () => {
-    const sessions: ChatSession[] = [{ key: 'agent:main:main', displayName: 'ClawX' }];
+    const sessions: ChatSession[] = [{ key: 'agent:main:main', displayName: 'insightAllX' }];
 
-    expect(findHiddenOpenClawHeartbeatSession('agent:main:main', sessions)).toBeNull();
+    expect(findHiddeninsightAllHeartbeatSession('agent:main:main', sessions)).toBeNull();
   });
 
-  it('does not hide a real conversation only because it is titled ClawX', () => {
+  it('does not hide a real conversation only because it is titled insightAllX', () => {
     const realConversation: ChatSession = {
       key: 'agent:main:session-1710000000000',
-      label: 'ClawX',
+      label: 'insightAllX',
       lastMessagePreview: 'Summarize the repository structure',
     };
 
@@ -157,7 +157,7 @@ describe('session-key-utils', () => {
     const titledConversation: ChatSession = {
       key: 'agent:main:session-1710000000002',
       displayName: 'Project kickoff notes',
-      lastMessagePreview: '[OpenClaw heartbeat poll]',
+      lastMessagePreview: '[insightAll heartbeat poll]',
     };
 
     expect(shouldIncludeSessionInSidebarList(titledConversation)).toBe(true);
@@ -167,7 +167,7 @@ describe('session-key-utils', () => {
     const mixedConversation: ChatSession = {
       key: 'agent:main:session-1710000000001',
       derivedTitle: 'Debug startup',
-      lastMessagePreview: 'Why do I see [OpenClaw heartbeat poll] in the sidebar?',
+      lastMessagePreview: 'Why do I see [insightAll heartbeat poll] in the sidebar?',
     };
 
     expect(shouldIncludeSessionInSidebarList(mixedConversation)).toBe(true);

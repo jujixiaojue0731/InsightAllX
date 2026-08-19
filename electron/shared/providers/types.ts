@@ -42,7 +42,7 @@ export const OLLAMA_PLACEHOLDER_API_KEY = 'ollama-local';
 
 /**
  * Authoritative set of `models.providers.*.api` values accepted by the
- * OpenClaw Gateway config schema.  Keep in sync with OpenClaw's
+ * insightAll Gateway config schema.  Keep in sync with insightAll's
  * `assertValidGatewayStartupConfigSnapshot`.
  *
  * Writing any other value into `~/.openclaw/openclaw.json` triggers
@@ -61,26 +61,26 @@ export const OPENCLAW_API_PROTOCOLS = [
   'azure-openai-responses',
 ] as const;
 
-export type OpenClawApiProtocol = (typeof OPENCLAW_API_PROTOCOLS)[number];
+export type insightAllApiProtocol = (typeof OPENCLAW_API_PROTOCOLS)[number];
 
-/** Legacy api values ClawX previously wrote that OpenClaw no longer accepts. */
+/** Legacy api values insightAllX previously wrote that insightAll no longer accepts. */
 export const LEGACY_OPENCLAW_API_PROTOCOL_MIGRATIONS = {
   'openai-codex-responses': 'openai-chatgpt-responses',
-} as const satisfies Record<string, OpenClawApiProtocol>;
+} as const satisfies Record<string, insightAllApiProtocol>;
 
-export function normalizeOpenClawApiProtocol(api: unknown): OpenClawApiProtocol | undefined {
+export function normalizeinsightAllApiProtocol(api: unknown): insightAllApiProtocol | undefined {
   if (typeof api !== 'string') return undefined;
   if ((OPENCLAW_API_PROTOCOLS as readonly string[]).includes(api)) {
-    return api as OpenClawApiProtocol;
+    return api as insightAllApiProtocol;
   }
-  const migrated = (LEGACY_OPENCLAW_API_PROTOCOL_MIGRATIONS as Record<string, OpenClawApiProtocol>)[api];
+  const migrated = (LEGACY_OPENCLAW_API_PROTOCOL_MIGRATIONS as Record<string, insightAllApiProtocol>)[api];
   return migrated;
 }
 
 export class InvalidApiProtocolError extends Error {
   constructor(public readonly api: unknown, public readonly providerKey?: string) {
     super(
-      `Invalid OpenClaw api protocol${providerKey ? ` for provider "${providerKey}"` : ''}: ` +
+      `Invalid insightAll api protocol${providerKey ? ` for provider "${providerKey}"` : ''}: ` +
       `${JSON.stringify(api)}. Expected one of: ${OPENCLAW_API_PROTOCOLS.join(', ')}.`,
     );
     this.name = 'InvalidApiProtocolError';
@@ -90,13 +90,13 @@ export class InvalidApiProtocolError extends Error {
 export function assertValidApiProtocol(
   api: unknown,
   providerKey?: string,
-): asserts api is OpenClawApiProtocol {
+): asserts api is insightAllApiProtocol {
   if (typeof api !== 'string' || !(OPENCLAW_API_PROTOCOLS as readonly string[]).includes(api)) {
     throw new InvalidApiProtocolError(api, providerKey);
   }
 }
 
-export type ProviderProtocol = OpenClawApiProtocol;
+export type ProviderProtocol = insightAllApiProtocol;
 
 export type ProviderAuthMode =
   | 'api_key'
@@ -158,7 +158,7 @@ export interface ProviderModelEntry extends Record<string, unknown> {
 
 export interface ProviderBackendConfig {
   baseUrl: string;
-  api: OpenClawApiProtocol;
+  api: insightAllApiProtocol;
   apiKeyEnv: string;
   models?: ProviderModelEntry[];
   headers?: Record<string, string>;

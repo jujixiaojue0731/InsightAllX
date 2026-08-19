@@ -11,7 +11,7 @@
         "devConsole": "Консоль разработчика",
         "models": "Модели",
         "deleteSessionConfirm": "Удалить \"{{label}}\"?",
-        "openClawPage": "Страница OpenClaw",
+        "openClawPage": "Страница insightAll",
         "renameSession": "Переименовать",
         "deleteSession": "Удалить",
         "renameSessionPlaceholder": "Название сессии",
@@ -62,7 +62,7 @@
     },
     "gateway": {
         "notRunning": "Шлюз не запущен",
-        "notRunningDesc": "Для использования этой функции требуется запущенный шлюз OpenClaw. Он запустится автоматически, или вы можете запустить его в Настройках.",
+        "notRunningDesc": "Для использования этой функции требуется запущенный шлюз insightAll. Он запустится автоматически, или вы можете запустить его в Настройках.",
         "restarting": "Шлюз перезапускается",
         "warning": "Шлюз не запущен."
     }

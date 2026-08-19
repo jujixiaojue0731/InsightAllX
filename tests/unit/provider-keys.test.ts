@@ -3,41 +3,41 @@ import {
   OPENAI_CODEX_RUNTIME_PROVIDER_KEY,
   OPENCLAW_PROVIDER_KEY_ZAI,
   filterActiveProviderKeysForUi,
-  getOpenClawProviderKeyForType,
-  isOpenClawOAuthPluginProviderKey,
+  getinsightAllProviderKeyForType,
+  isinsightAllOAuthPluginProviderKey,
   isZaiProviderType,
-  resolveOpenClawProviderKey,
+  resolveinsightAllProviderKey,
 } from '@electron/utils/provider-keys';
 
 describe('provider-keys', () => {
   it('maps OpenAI browser OAuth accounts to the canonical openai runtime key', () => {
-    expect(resolveOpenClawProviderKey({
+    expect(resolveinsightAllProviderKey({
       vendorId: 'openai',
       id: 'openai-personal',
       authMode: 'oauth_browser',
     })).toBe(OPENAI_CODEX_RUNTIME_PROVIDER_KEY);
 
-    expect(resolveOpenClawProviderKey({
+    expect(resolveinsightAllProviderKey({
       vendorId: 'openai',
       id: 'openai-personal',
       authMode: 'api_key',
     })).toBe('openai');
   });
 
-  it('aliases Z.AI Global UI vendor to the OpenClaw zai runtime key', () => {
-    expect(getOpenClawProviderKeyForType('zai', 'zai-account')).toBe(OPENCLAW_PROVIDER_KEY_ZAI);
-    expect(getOpenClawProviderKeyForType('zai-global', 'zai-global-account')).toBe(OPENCLAW_PROVIDER_KEY_ZAI);
+  it('aliases Z.AI Global UI vendor to the insightAll zai runtime key', () => {
+    expect(getinsightAllProviderKeyForType('zai', 'zai-account')).toBe(OPENCLAW_PROVIDER_KEY_ZAI);
+    expect(getinsightAllProviderKeyForType('zai-global', 'zai-global-account')).toBe(OPENCLAW_PROVIDER_KEY_ZAI);
     expect(isZaiProviderType('zai')).toBe(true);
     expect(isZaiProviderType('zai-global')).toBe(true);
     expect(isZaiProviderType('moonshot')).toBe(false);
   });
 
   it('keeps custom multi-instance hashing behavior', () => {
-    expect(getOpenClawProviderKeyForType('custom', 'my-local')).toBe('custom-mylocal');
+    expect(getinsightAllProviderKeyForType('custom', 'my-local')).toBe('custom-mylocal');
   });
 
   it('does not treat legacy openai-codex as an OAuth plugin provider key', () => {
-    expect(isOpenClawOAuthPluginProviderKey('openai-codex')).toBe(false);
+    expect(isinsightAllOAuthPluginProviderKey('openai-codex')).toBe(false);
   });
 
   it('hides legacy openai-codex when canonical openai OAuth is active', () => {

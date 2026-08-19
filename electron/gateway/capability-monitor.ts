@@ -68,11 +68,11 @@ export class GatewayCapabilityMonitor {
   private memory: GatewayCapabilityProbe = UNKNOWN_CAPABILITY;
   private lastCoreProbe: GatewayCoreProbe | undefined;
 
-  recordOpenClawHealth(payload: GatewayRuntimePayload): void {
+  recordinsightAllHealth(payload: GatewayRuntimePayload): void {
     this.openclawHealth = capabilityFromPayload(payload);
   }
 
-  recordOpenClawStatus(payload: GatewayRuntimePayload): void {
+  recordinsightAllStatus(payload: GatewayRuntimePayload): void {
     this.openclawStatus = capabilityFromPayload(payload);
   }
 

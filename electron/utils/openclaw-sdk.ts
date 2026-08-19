@@ -18,7 +18,7 @@
  * in the extension bundles (dist/extensions/<channel>/api.js) which pull in
  * heavy optional dependencies (grammy, @buape/carbon, @slack/web-api …).
  *
- * Since ClawX only uses the lightweight normalize / directory helpers, we load
+ * Since insightAllX only uses the lightweight normalize / directory helpers, we load
  * these from the extension API files directly.  If the optional dependency is
  * missing (common in dev without full install), we fall back to no-op stubs so
  * the app can still start — the target picker will simply be empty for that
@@ -26,10 +26,10 @@
  */
 import { createRequire } from 'module';
 import { join } from 'node:path';
-import { getOpenClawDir, getOpenClawResolvedDir } from './paths';
+import { getinsightAllDir, getinsightAllResolvedDir } from './paths';
 
-const _openclawResolvedPath = getOpenClawResolvedDir();
-const _openclawPath = getOpenClawDir();
+const _openclawResolvedPath = getinsightAllResolvedDir();
+const _openclawPath = getinsightAllDir();
 const _openclawSdkRequire = createRequire(join(_openclawResolvedPath, 'package.json'));
 const _projectSdkRequire = createRequire(join(_openclawPath, 'package.json'));
 
@@ -37,7 +37,7 @@ const _projectSdkRequire = createRequire(join(_openclawPath, 'package.json'));
 // Helpers
 // ---------------------------------------------------------------------------
 
-function requireOpenClawSdk(subpath: string): Record<string, unknown> {
+function requireinsightAllSdk(subpath: string): Record<string, unknown> {
   try {
     return _openclawSdkRequire(subpath);
   } catch {
@@ -76,7 +76,7 @@ const noopNormalize = (_target: string): string | undefined => undefined;
 
 function tryLegacySdkImport(subpath: string): Record<string, unknown> | null {
   try {
-    return requireOpenClawSdk(subpath);
+    return requireinsightAllSdk(subpath);
   } catch {
     return null;
   }

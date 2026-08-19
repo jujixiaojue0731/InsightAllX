@@ -5,10 +5,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  mutateOpenClawConfig,
-  readOpenClawConfigSnapshot,
-  registerOpenClawConfigCoordinator,
-  resetOpenClawConfigCoordinatorForTests,
+  mutateinsightAllConfig,
+  readinsightAllConfigSnapshot,
+  registerinsightAllConfigCoordinator,
+  resetinsightAllConfigCoordinatorForTests,
 } from '@electron/gateway/config-delivery';
 
 const { renameMock } = vi.hoisted(() => ({
@@ -38,22 +38,22 @@ function createGatewayManager(state: 'running' | 'stopped' | 'starting' = 'runni
   };
 }
 
-describe('OpenClaw config delivery coordinator', () => {
+describe('insightAll config delivery coordinator', () => {
   let testDir: string;
   let configPath: string;
   let previousConfigPath: string | undefined;
 
   beforeEach(async () => {
     renameMock.mockClear();
-    resetOpenClawConfigCoordinatorForTests();
-    testDir = await mkdtemp(join(tmpdir(), 'clawx-config-delivery-'));
+    resetinsightAllConfigCoordinatorForTests();
+    testDir = await mkdtemp(join(tmpdir(), 'insightallx-config-delivery-'));
     configPath = join(testDir, 'configured-openclaw.json5');
     previousConfigPath = process.env.OPENCLAW_CONFIG_PATH;
     process.env.OPENCLAW_CONFIG_PATH = configPath;
   });
 
   afterEach(async () => {
-    resetOpenClawConfigCoordinatorForTests();
+    resetinsightAllConfigCoordinatorForTests();
     if (previousConfigPath === undefined) {
       delete process.env.OPENCLAW_CONFIG_PATH;
     } else {
@@ -72,10 +72,10 @@ describe('OpenClaw config delivery coordinator', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
     const killSpy = vi.spyOn(process, 'kill').mockReturnValue(true);
 
-    const changed = await mutateOpenClawConfig((config) => {
+    const changed = await mutateinsightAllConfig((config) => {
       (config.feature as Record<string, unknown>).enabled = true;
     });
 
@@ -98,9 +98,9 @@ describe('OpenClaw config delivery coordinator', () => {
       raw: '{ gatewayOnly: true }',
       hash: 'hash-1',
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await expect(readOpenClawConfigSnapshot()).resolves.toEqual({
+    await expect(readinsightAllConfigSnapshot()).resolves.toEqual({
       config: { gatewayOnly: true },
       exists: true,
     });
@@ -109,10 +109,10 @@ describe('OpenClaw config delivery coordinator', () => {
   });
 
   it('reads JSON5 from the resolved file while the Gateway is stopped', async () => {
-    await writeFile(configPath, '{\n  // OpenClaw accepts JSON5\n  value: 1,\n}\n', 'utf8');
-    registerOpenClawConfigCoordinator(createGatewayManager('stopped'));
+    await writeFile(configPath, '{\n  // insightAll accepts JSON5\n  value: 1,\n}\n', 'utf8');
+    registerinsightAllConfigCoordinator(createGatewayManager('stopped'));
 
-    await expect(readOpenClawConfigSnapshot()).resolves.toEqual({
+    await expect(readinsightAllConfigSnapshot()).resolves.toEqual({
       config: { value: 1 },
       exists: true,
     });
@@ -125,11 +125,11 @@ describe('OpenClaw config delivery coordinator', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    const mutation = mutateOpenClawConfig(async (config) => {
+    const mutation = mutateinsightAllConfig(async (config) => {
       config.outer = 'before';
-      const nestedChanged = await mutateOpenClawConfig((nestedConfig) => {
+      const nestedChanged = await mutateinsightAllConfig((nestedConfig) => {
         expect(nestedConfig).toBe(config);
         nestedConfig.inner = true;
       });
@@ -163,11 +163,11 @@ describe('OpenClaw config delivery coordinator', () => {
   it.each(['stopped', 'starting'] as const)(
     'uses the resolved file under the shared fallback when the Gateway is %s',
     async (state) => {
-      await writeFile(configPath, '{\n  // OpenClaw accepts JSON5\n  value: 1,\n}\n', 'utf8');
+      await writeFile(configPath, '{\n  // insightAll accepts JSON5\n  value: 1,\n}\n', 'utf8');
       const gatewayManager = createGatewayManager(state);
-      registerOpenClawConfigCoordinator(gatewayManager);
+      registerinsightAllConfigCoordinator(gatewayManager);
 
-      await mutateOpenClawConfig((config) => {
+      await mutateinsightAllConfig((config) => {
         config.value = Number(config.value) + 1;
       });
 
@@ -178,7 +178,7 @@ describe('OpenClaw config delivery coordinator', () => {
   );
 
   it('uses file fallback without starting a Gateway when no manager is registered', async () => {
-    await mutateOpenClawConfig((config) => {
+    await mutateinsightAllConfig((config) => {
       config.createdBeforeRegistration = true;
     });
 
@@ -200,9 +200,9 @@ describe('OpenClaw config delivery coordinator', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await mutateOpenClawConfig((config) => {
+    await mutateinsightAllConfig((config) => {
       config.value = Number(config.value) + 1;
     });
 
@@ -220,10 +220,10 @@ describe('OpenClaw config delivery coordinator', () => {
   it('retries from fresh file content when an external writer changes the fallback baseline', async () => {
     await writeFile(configPath, '{ cli: false, ours: false }\n', 'utf8');
     const gatewayManager = createGatewayManager('stopped');
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
     let mutatorCalls = 0;
 
-    await mutateOpenClawConfig(async (config) => {
+    await mutateinsightAllConfig(async (config) => {
       mutatorCalls += 1;
       if (mutatorCalls === 1) {
         await writeFile(configPath, '{ cli: true, ours: false }\n', 'utf8');
@@ -238,14 +238,14 @@ describe('OpenClaw config delivery coordinator', () => {
   it('fails after one external file conflict retry without overwriting the external write', async () => {
     await writeFile(configPath, '{ "external": 0 }\n', 'utf8');
     const gatewayManager = createGatewayManager('stopped');
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
     let mutatorCalls = 0;
 
-    await expect(mutateOpenClawConfig(async (config) => {
+    await expect(mutateinsightAllConfig(async (config) => {
       mutatorCalls += 1;
       await writeFile(configPath, `{ "external": ${mutatorCalls} }\n`, 'utf8');
       config.ours = true;
-    })).rejects.toThrow('OpenClaw config changed during file mutation');
+    })).rejects.toThrow('insightAll config changed during file mutation');
 
     expect(mutatorCalls).toBe(2);
     expect(JSON.parse(await readFile(configPath, 'utf8'))).toEqual({ external: 2 });
@@ -254,9 +254,9 @@ describe('OpenClaw config delivery coordinator', () => {
   it('atomically replaces the fallback file with a same-directory temporary file', async () => {
     await writeFile(configPath, '{ value: 1 }\n', 'utf8');
     const gatewayManager = createGatewayManager('stopped');
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await mutateOpenClawConfig((config) => {
+    await mutateinsightAllConfig((config) => {
       config.value = 2;
     });
 
@@ -290,12 +290,12 @@ describe('OpenClaw config delivery coordinator', () => {
       }
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    const first = mutateOpenClawConfig((config) => {
+    const first = mutateinsightAllConfig((config) => {
       config.first = true;
     });
-    const second = mutateOpenClawConfig((config) => {
+    const second = mutateinsightAllConfig((config) => {
       config.second = true;
     });
 
@@ -322,9 +322,9 @@ describe('OpenClaw config delivery coordinator', () => {
       .mockRejectedValueOnce(new Error('config changed since last load; re-run config.get and retry'))
       .mockResolvedValueOnce({ raw: '{ value: 4 }', hash: 'hash-2' })
       .mockResolvedValueOnce({ ok: true });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await mutateOpenClawConfig((config) => {
+    await mutateinsightAllConfig((config) => {
       config.value = Number(config.value) + 1;
     });
 
@@ -342,9 +342,9 @@ describe('OpenClaw config delivery coordinator', () => {
   it('does not commit a no-op mutation', async () => {
     const gatewayManager = createGatewayManager();
     gatewayManager.rpc.mockResolvedValueOnce({ raw: '{ value: 1 }', hash: 'hash-1' });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    const changed = await mutateOpenClawConfig((config) => {
+    const changed = await mutateinsightAllConfig((config) => {
       config.value = 1;
     });
 
@@ -362,9 +362,9 @@ describe('OpenClaw config delivery coordinator', () => {
     await writeFile(configPath, '{ "persisted": true }\n', 'utf8');
     const gatewayManager = createGatewayManager();
     gatewayManager.rpc.mockResolvedValueOnce(snapshot);
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await expect(mutateOpenClawConfig((config) => {
+    await expect(mutateinsightAllConfig((config) => {
       config.persisted = false;
     })).rejects.toThrow('Gateway config.get returned an incomplete config snapshot');
 
@@ -372,7 +372,7 @@ describe('OpenClaw config delivery coordinator', () => {
     expect(JSON.parse(await readFile(configPath, 'utf8'))).toEqual({ persisted: true });
   });
 
-  it('round-trips OpenClaw redacted placeholders when mutating an unrelated running field', async () => {
+  it('round-trips insightAll redacted placeholders when mutating an unrelated running field', async () => {
     const gatewayManager = createGatewayManager();
     gatewayManager.rpc.mockImplementation(async (method: string) => {
       if (method === 'config.get') {
@@ -384,9 +384,9 @@ describe('OpenClaw config delivery coordinator', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await mutateOpenClawConfig((config) => {
+    await mutateinsightAllConfig((config) => {
       config.enabled = true;
     });
 
@@ -396,7 +396,7 @@ describe('OpenClaw config delivery coordinator', () => {
     });
   });
 
-  it('uses the runtime-shaped config snapshot when OpenClaw also returns source-shaped raw', async () => {
+  it('uses the runtime-shaped config snapshot when insightAll also returns source-shaped raw', async () => {
     const gatewayManager = createGatewayManager();
     gatewayManager.rpc.mockImplementation(async (method: string) => {
       if (method === 'config.get') {
@@ -409,9 +409,9 @@ describe('OpenClaw config delivery coordinator', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await mutateOpenClawConfig((config) => {
+    await mutateinsightAllConfig((config) => {
       config.bindingOwner = 'coder';
     });
 
@@ -433,9 +433,9 @@ describe('OpenClaw config delivery coordinator', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await mutateOpenClawConfig((config) => {
+    await mutateinsightAllConfig((config) => {
       config.enabled = true;
     });
 
@@ -459,9 +459,9 @@ describe('OpenClaw config delivery coordinator', () => {
       }
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await expect(mutateOpenClawConfig((config) => {
+    await expect(mutateinsightAllConfig((config) => {
       (config.channels as Record<string, unknown>).feishu = { enabled: true };
     })).resolves.toBe(true);
 
@@ -481,9 +481,9 @@ describe('OpenClaw config delivery coordinator', () => {
         if (method === 'config.get') return { raw: '{ persisted: true }', hash: 'hash-1' };
         return { ok: true };
       });
-      registerOpenClawConfigCoordinator(gatewayManager);
+      registerinsightAllConfigCoordinator(gatewayManager);
 
-      await expect(mutateOpenClawConfig((config) => {
+      await expect(mutateinsightAllConfig((config) => {
         config.persisted = false;
       })).rejects.toThrow(`${failedMethod} unavailable`);
 

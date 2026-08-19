@@ -7,16 +7,16 @@
  * Port configuration
  */
 export const PORTS = {
-  /** ClawX GUI development server port */
-  CLAWX_DEV: 5173,
+  /** insightAllX GUI development server port */
+  INSIGHTALLX_DEV: 5173,
   
-  /** ClawX GUI production port (for reference) */
-  CLAWX_GUI: 23333,
+  /** insightAllX GUI production port (for reference) */
+  INSIGHTALLX_GUI: 23333,
 
   /** Local host API server port */
-  CLAWX_HOST_API: 13210,
+  INSIGHTALLX_HOST_API: 13210,
   
-  /** OpenClaw Gateway port */
+  /** insightAll Gateway port */
   OPENCLAW_GATEWAY: 18789,
 } as const;
 
@@ -24,7 +24,7 @@ export const PORTS = {
  * Get port from environment or default
  */
 export function getPort(key: keyof typeof PORTS): number {
-  const envKey = `CLAWX_PORT_${key}`;
+  const envKey = `INSIGHTALLX_PORT_${key}`;
   const envValue = process.env[envKey];
   return envValue ? parseInt(envValue, 10) : PORTS[key];
 }
@@ -33,14 +33,14 @@ export function getPort(key: keyof typeof PORTS): number {
  * Application paths
  */
 export const APP_PATHS = {
-  /** OpenClaw configuration directory */
+  /** insightAll configuration directory */
   OPENCLAW_CONFIG: '~/.openclaw',
   
-  /** ClawX configuration directory */
-  CLAWX_CONFIG: '~/.clawx',
+  /** insightAllX configuration directory */
+  INSIGHTALLX_CONFIG: '~/.insightallx',
   
   /** Log files directory */
-  LOGS: '~/.clawx/logs',
+  LOGS: '~/.insightallx/logs',
 } as const;
 
 /**

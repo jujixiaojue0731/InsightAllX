@@ -11,7 +11,7 @@ import {
 } from '@/lib/channel-status';
 import { useGatewayStore } from './gateway';
 import { CHANNEL_NAMES, type Channel, type ChannelType } from '../types/channel';
-import { toOpenClawChannelType, toUiChannelType } from '@/lib/channel-alias';
+import { toinsightAllChannelType, toUiChannelType } from '@/lib/channel-alias';
 
 interface AddChannelParams {
   type: ChannelType;
@@ -88,7 +88,7 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
         const channelOrder = data.channelOrder || Object.keys(data.channels || {});
         for (const channelId of channelOrder) {
           const uiChannelId = toUiChannelType(channelId) as ChannelType;
-          const gatewayChannelId = toOpenClawChannelType(channelId);
+          const gatewayChannelId = toinsightAllChannelType(channelId);
           const summary = (data.channels as Record<string, unknown> | undefined)?.[channelId] as Record<string, unknown> | undefined;
           const configured =
             typeof summary?.configured === 'boolean'
@@ -180,7 +180,7 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
   deleteChannel: async (channelId) => {
     // Extract channel type from the channelId (format: "channelType-accountId")
     const { channelType } = splitChannelId(channelId);
-    const gatewayChannelType = toOpenClawChannelType(channelType);
+    const gatewayChannelType = toinsightAllChannelType(channelType);
 
     try {
       // Delete the channel configuration from openclaw.json
@@ -209,7 +209,7 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
     try {
       const { channelType, accountId } = splitChannelId(channelId);
       await useGatewayStore.getState().rpc('channels.connect', {
-        channelId: `${toOpenClawChannelType(channelType)}${accountId ? `-${accountId}` : ''}`,
+        channelId: `${toinsightAllChannelType(channelType)}${accountId ? `-${accountId}` : ''}`,
       });
       updateChannel(channelId, { status: 'connected' });
     } catch (error) {
@@ -224,7 +224,7 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
     try {
       const { channelType, accountId } = splitChannelId(channelId);
       await useGatewayStore.getState().rpc('channels.disconnect', {
-        channelId: `${toOpenClawChannelType(channelType)}${accountId ? `-${accountId}` : ''}`,
+        channelId: `${toinsightAllChannelType(channelType)}${accountId ? `-${accountId}` : ''}`,
       });
     } catch (error) {
       console.error('Failed to disconnect channel:', error);
@@ -236,7 +236,7 @@ export const useChannelsStore = create<ChannelsState>((set, get) => ({
   requestQrCode: async (channelType) => {
     return await useGatewayStore.getState().rpc<{ qrCode: string; sessionId: string }>(
       'channels.requestQr',
-      { type: toOpenClawChannelType(channelType) },
+      { type: toinsightAllChannelType(channelType) },
     );
   },
 

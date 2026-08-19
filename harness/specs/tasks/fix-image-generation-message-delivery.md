@@ -3,7 +3,7 @@ id: fix-image-generation-message-delivery
 title: Surface async image-generation deliveries in ACP Chat
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Ensure trusted OpenClaw image-generation completion deliveries remain visible in ACP Chat through the bounded compatibility projection.
+intent: Ensure trusted insightAll image-generation completion deliveries remain visible in ACP Chat through the bounded compatibility projection.
 touchedAreas:
   - harness/specs/tasks/fix-image-generation-message-delivery.md
   - src/lib/acp/image-generation-compat.ts
@@ -31,10 +31,10 @@ requiredRules:
   - diagnostics-trace-safety
 requiredTests:
   - pnpm exec vitest run tests/unit/acp-image-generation-compat.test.ts tests/unit/acp-chat-store.test.ts
-  - pnpm exec playwright test tests/e2e/chat-run-state-events.spec.ts -g "projects OpenClaw image-generation"
+  - pnpm exec playwright test tests/e2e/chat-run-state-events.spec.ts -g "projects insightAll image-generation"
   - pnpm run typecheck
 acceptance:
-  - ClawX accepts only trusted ACP or Gateway completion evidence that matches the ACP session and recent image-generation context.
+  - insightAllX accepts only trusted ACP or Gateway completion evidence that matches the ACP session and recent image-generation context.
   - Internal-UI sourceReply text remains authoritative for successful media replies and text-only failure replies.
   - Existing safeguards still reject arbitrary image paths and generic tool output without approved image-generation context.
 docs:

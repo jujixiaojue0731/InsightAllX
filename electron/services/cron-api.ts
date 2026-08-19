@@ -4,9 +4,9 @@ import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { RawMessage } from '@shared/chat/types';
 import type { CronJob, CronJobDelivery, CronSchedule } from '@shared/types/cron';
 import type { GatewayManager } from '../gateway/manager';
-import { getOpenClawConfigDir } from '../utils/paths';
+import { getinsightAllConfigDir } from '../utils/paths';
 import { resolveAgentIdFromChannel } from '../utils/agent-config';
-import { toOpenClawChannelType, toUiChannelType } from '../utils/channel-alias';
+import { toinsightAllChannelType, toUiChannelType } from '../utils/channel-alias';
 import { resolveAccountIdFromSessionHistory } from '../utils/session-util';
 import { loadSessionTranscriptByKey } from './sessions-api';
 import { isRecord } from './payload-utils';
@@ -197,7 +197,7 @@ function buildCronRunMessage(
 }
 
 async function readLegacyCronRunLog(jobId: string): Promise<CronRunLogEntry[]> {
-  const logPath = join(getOpenClawConfigDir(), 'cron', 'runs', `${jobId}.jsonl`);
+  const logPath = join(getinsightAllConfigDir(), 'cron', 'runs', `${jobId}.jsonl`);
   const raw = await readFile(logPath, 'utf8').catch(() => '');
   if (!raw.trim()) return [];
 
@@ -230,7 +230,7 @@ async function readCronRunHistory(
     }, 8000);
     if (Array.isArray(result?.entries)) return result.entries;
   } catch {
-    // OpenClaw versions before SQLite cron history may not expose cron.runs.
+    // insightAll versions before SQLite cron history may not expose cron.runs.
   }
   return readLegacyCronRunLog(jobId);
 }
@@ -239,7 +239,7 @@ async function readSessionStoreEntry(
   agentId: string,
   sessionKey: string,
 ): Promise<Record<string, unknown> | undefined> {
-  const storePath = join(getOpenClawConfigDir(), 'agents', agentId, 'sessions', 'sessions.json');
+  const storePath = join(getinsightAllConfigDir(), 'agents', agentId, 'sessions', 'sessions.json');
   const raw = await readFile(storePath, 'utf8').catch(() => '');
   if (!raw.trim()) return undefined;
 
@@ -314,7 +314,7 @@ function buildCronSessionFallbackMessages(params: {
       messages.push({
         id: `cron-running-${parsed.jobId}`,
         role: 'assistant',
-        content: 'This scheduled task is still running in OpenClaw, but no chat transcript is available yet.',
+        content: 'This scheduled task is still running in insightAll, but no chat transcript is available yet.',
         timestamp: runningAt,
       });
     }
@@ -339,7 +339,7 @@ function normalizeCronDelivery(
   const delivery = rawDelivery as JsonRecord;
   const mode = delivery.mode === 'announce' ? 'announce' : fallbackMode;
   const channel = typeof delivery.channel === 'string' && delivery.channel.trim()
-    ? toOpenClawChannelType(delivery.channel.trim())
+    ? toinsightAllChannelType(delivery.channel.trim())
     : undefined;
   const to = typeof delivery.to === 'string' && delivery.to.trim() ? delivery.to.trim() : undefined;
   const accountId = typeof delivery.accountId === 'string' && delivery.accountId.trim()
@@ -413,7 +413,7 @@ function normalizeCronDeliveryPatch(rawDelivery: unknown): Record<string, unknow
   }
   if ('channel' in delivery) {
     patch.channel = typeof delivery.channel === 'string' && delivery.channel.trim()
-      ? toOpenClawChannelType(delivery.channel.trim())
+      ? toinsightAllChannelType(delivery.channel.trim())
       : '';
   }
   if ('to' in delivery) patch.to = typeof delivery.to === 'string' ? delivery.to : '';
@@ -485,7 +485,7 @@ async function listCronJobs(gatewayManager: GatewayManager): Promise<CronJob[]> 
     jobs = data?.jobs ?? (Array.isArray(result) ? result as GatewayCronJob[] : []);
   } catch {
     try {
-      const cronJsonPath = join(getOpenClawConfigDir(), 'cron', 'cron.json');
+      const cronJsonPath = join(getinsightAllConfigDir(), 'cron', 'cron.json');
       const raw = await readFile(cronJsonPath, 'utf-8');
       const parsed = JSON.parse(raw);
       jobs = (Array.isArray(parsed) ? parsed : (parsed?.jobs ?? [])) as GatewayCronJob[];
@@ -546,7 +546,7 @@ function repairCronJobsInBackground(gatewayManager: GatewayManager, jobs: Gatewa
     void (async () => {
       for (const job of jobsToRepairAgent) {
         try {
-          const channel = toOpenClawChannelType(job.delivery!.channel!);
+          const channel = toinsightAllChannelType(job.delivery!.channel!);
           const accountId = job.delivery!.accountId;
           const toAddress = job.delivery!.to;
           let correctAgentId = await resolveAgentIdFromChannel(channel, accountId);

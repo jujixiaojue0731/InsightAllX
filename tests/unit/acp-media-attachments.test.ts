@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { RawMessage } from '@shared/chat/types';
 import {
-  alignOpenClawMediaTurns,
-  extractOpenClawMediaTurns,
+  aligninsightAllMediaTurns,
+  extractinsightAllMediaTurns,
 } from '@/lib/acp/openclaw-media-compat';
 import {
   appendSyntheticAssistantMessage,
@@ -16,7 +16,7 @@ function transcript(...messages: RawMessage[]): RawMessage[] {
 }
 
 function extract(messages: RawMessage[], suppressedUris = new Set<string>()) {
-  return extractOpenClawMediaTurns(messages, {
+  return extractinsightAllMediaTurns(messages, {
     executionCwd: '/workspace/project',
     suppressedUris,
   });
@@ -82,7 +82,7 @@ function availableAttachment(id: string, identity: string): AttachmentRenderPart
   };
 }
 
-describe('OpenClaw MEDIA transcript extraction', () => {
+describe('insightAll MEDIA transcript extraction', () => {
   it('accepts the approved explicit reference forms and preserves directive order', () => {
     const [turn] = extract(transcript(
       { role: 'user', content: 'Create the exports' },
@@ -121,7 +121,7 @@ describe('OpenClaw MEDIA transcript extraction', () => {
     expect(turn?.candidates.every((candidate) => candidate.transcriptMessageId === 'assistant-files')).toBe(true);
   });
 
-  it('reads canonical persisted OpenClaw media facts without parsing ordinary prose paths', () => {
+  it('reads canonical persisted insightAll media facts without parsing ordinary prose paths', () => {
     const [turn] = extract(transcript(
       { role: 'user', content: 'Create the report' },
       {
@@ -393,8 +393,8 @@ describe('OpenClaw MEDIA transcript extraction', () => {
   });
 });
 
-describe('OpenClaw MEDIA transcript turn alignment', () => {
-  it('aligns a structured resource-link user turn with OpenClaw transcript projection', () => {
+describe('insightAll MEDIA transcript turn alignment', () => {
+  it('aligns a structured resource-link user turn with insightAll transcript projection', () => {
     const resourcePath = 'C:\\Users\\Administrator\\.openclaw\\media\\input.xlsx';
     const snapshot = timeline([{
       userId: 'user-with-resource',
@@ -412,13 +412,13 @@ describe('OpenClaw MEDIA transcript turn alignment', () => {
       { role: 'assistant', content: 'MEDIA:C:\\Users\\Administrator\\.openclaw\\media\\report.xlsx' },
     ));
 
-    expect(alignOpenClawMediaTurns(snapshot, turns, {})).toMatchObject([{
+    expect(aligninsightAllMediaTurns(snapshot, turns, {})).toMatchObject([{
       acpTurnId: 'user-with-resource',
       candidates: [{ uri: 'C:\\Users\\Administrator\\.openclaw\\media\\report.xlsx' }],
     }]);
   });
 
-  it('aligns attachment-only turns with empty OpenClaw prompt text by occurrence from the tail', () => {
+  it('aligns attachment-only turns with empty insightAll prompt text by occurrence from the tail', () => {
     const snapshot = timeline([
       { userId: 'image-first', userText: '', userPromptTextBlocks: [] },
       { userId: 'image-last', userText: '', userPromptTextBlocks: [] },
@@ -430,7 +430,7 @@ describe('OpenClaw MEDIA transcript turn alignment', () => {
       { role: 'assistant', content: 'MEDIA:/tmp/last.pdf' },
     ));
 
-    expect(alignOpenClawMediaTurns(snapshot, turns, {})).toMatchObject([
+    expect(aligninsightAllMediaTurns(snapshot, turns, {})).toMatchObject([
       { acpTurnId: 'image-first', candidates: [{ uri: '/tmp/first.pdf' }] },
       { acpTurnId: 'image-last', candidates: [{ uri: '/tmp/last.pdf' }] },
     ]);
@@ -448,7 +448,7 @@ describe('OpenClaw MEDIA transcript turn alignment', () => {
       { role: 'assistant', content: 'MEDIA:/tmp/explanation.pdf' },
     ));
 
-    expect(alignOpenClawMediaTurns(snapshot, turns, {})).toMatchObject([{
+    expect(aligninsightAllMediaTurns(snapshot, turns, {})).toMatchObject([{
       acpTurnId: 'literal-marker',
       candidates: [{ uri: '/tmp/explanation.pdf' }],
     }]);
@@ -467,7 +467,7 @@ describe('OpenClaw MEDIA transcript turn alignment', () => {
       { role: 'assistant', content: 'MEDIA:new.pdf' },
     ));
 
-    expect(alignOpenClawMediaTurns(snapshot, turns, {})).toMatchObject([
+    expect(aligninsightAllMediaTurns(snapshot, turns, {})).toMatchObject([
       { acpTurnId: 'user-middle', candidates: [{ uri: 'middle.pdf' }] },
       { acpTurnId: 'user-new', candidates: [{ uri: 'new.pdf' }] },
     ]);
@@ -488,7 +488,7 @@ describe('OpenClaw MEDIA transcript turn alignment', () => {
       { role: 'assistant', content: 'MEDIA:last.pdf' },
     ));
 
-    expect(alignOpenClawMediaTurns(snapshot, turns, {})).toMatchObject([
+    expect(aligninsightAllMediaTurns(snapshot, turns, {})).toMatchObject([
       { acpTurnId: 'user-first', candidates: [{ uri: 'first.pdf' }] },
       { acpTurnId: 'user-last', candidates: [{ uri: 'last.pdf' }] },
     ]);
@@ -506,8 +506,8 @@ describe('OpenClaw MEDIA transcript turn alignment', () => {
       { role: 'assistant', content: 'MEDIA:live.pdf' },
     ));
 
-    expect(alignOpenClawMediaTurns(snapshot, turns, { liveUserMessageId: 'user-first' })).toEqual([]);
-    expect(alignOpenClawMediaTurns(snapshot, turns, { liveUserMessageId: 'user-live' })).toMatchObject([
+    expect(aligninsightAllMediaTurns(snapshot, turns, { liveUserMessageId: 'user-first' })).toEqual([]);
+    expect(aligninsightAllMediaTurns(snapshot, turns, { liveUserMessageId: 'user-live' })).toMatchObject([
       { acpTurnId: 'user-live', candidates: [{ uri: 'live.pdf' }] },
     ]);
   });
@@ -519,13 +519,13 @@ describe('OpenClaw MEDIA transcript turn alignment', () => {
       { role: 'assistant', content: 'MEDIA:report.pdf' },
     ));
 
-    expect(alignOpenClawMediaTurns(snapshot, turns, {})).toMatchObject([
+    expect(aligninsightAllMediaTurns(snapshot, turns, {})).toMatchObject([
       { acpTurnId: 'user-only', candidates: [{ uri: 'report.pdf' }] },
     ]);
   });
 });
 
-describe('synthetic OpenClaw MEDIA projection', () => {
+describe('synthetic insightAll MEDIA projection', () => {
   it('anchors marked attachment-only segments inside the matching turn', () => {
     const snapshot = timeline([
       { userId: 'user-report', userText: 'Create report' },

@@ -8,7 +8,7 @@ requiredTests:
   - tests/unit/api-client.test.ts
 ---
 
-Gateway RPC transport is IPC-only. Renderer code must not enable WebSocket or HTTP transports to OpenClaw Gateway.
+Gateway RPC transport is IPC-only. Renderer code must not enable WebSocket or HTTP transports to insightAll Gateway.
 
 The renderer must call Main through typed host-api or legacy IPC wrappers only; Main owns the Gateway WebSocket.
 

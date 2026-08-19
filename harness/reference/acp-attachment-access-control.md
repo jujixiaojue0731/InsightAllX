@@ -28,10 +28,10 @@ Listing never grants a durable capability. Application-specific open freshly enu
 
 ## Local Resolution And Special Scopes
 
-An accepted absolute, home-relative, `file:`, or execution-cwd-relative reference may resolve to any existing regular local file or directory, including a target outside the active workspace or managed OpenClaw directories. The target is canonicalized before use, and Main returns an explicit `entryKind`. Directories are a narrow system-open-only case: Main overrides untrusted MIME and size hints with `application/x-directory` and zero, and does not permit scoped reads, Preview, Open With, reveal-as-file, outgoing-media resolution, or directory-content enumeration. The local `scope` returned to Renderer is classification metadata for existing UI behavior, not an authorization root:
+An accepted absolute, home-relative, `file:`, or execution-cwd-relative reference may resolve to any existing regular local file or directory, including a target outside the active workspace or managed insightAll directories. The target is canonicalized before use, and Main returns an explicit `entryKind`. Directories are a narrow system-open-only case: Main overrides untrusted MIME and size hints with `application/x-directory` and zero, and does not permit scoped reads, Preview, Open With, reveal-as-file, outgoing-media resolution, or directory-content enumeration. The local `scope` returned to Renderer is classification metadata for existing UI behavior, not an authorization root:
 
 - `workspace`: the canonical target is inside the active ACP workspace root. Relative references resolve from the registered execution cwd.
-- `openclaw-media`: the canonical target is outside the workspace. This legacy scope name does not imply containment under an OpenClaw media root.
+- `openclaw-media`: the canonical target is outside the workspace. This legacy scope name does not imply containment under an insightAll media root.
 - `staging`: when a staging id is supplied, it must match the exact canonical file or selected directory in the Main-owned staging record. The same target may also resolve from an explicit path without claiming staging identity.
 - `remote`: a normalized HTTP or HTTPS URL without embedded credentials. Remote references remain session/generation scoped and are revalidated immediately before external open.
 

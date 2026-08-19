@@ -118,7 +118,7 @@ export const hostEvents = {
   ) => onUpdateEvent('autoInstallCountdown', handler),
   onNavigate: (handler: HostEventHandler<'app', 'navigate'>) => onAppEvent('navigate', handler),
   onNewChat: (handler: HostEventHandler<'app', 'newChat'>) => onAppEvent('newChat', handler),
-  onOpenClawCliInstalled: (
+  oninsightAllCliInstalled: (
     handler: HostEventHandler<'app', 'openClawCliInstalled'>,
   ) => onAppEvent('openClawCliInstalled', handler),
 };

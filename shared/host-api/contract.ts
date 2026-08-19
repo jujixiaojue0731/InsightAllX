@@ -16,9 +16,9 @@ export type JsonRecord = Record<string, unknown>;
 export type HostSuccess = { success: boolean; error?: string };
 export type OptionalHostSuccess = { success?: boolean; error?: string };
 
-export type OpenClawDoctorMode = 'diagnose' | 'fix';
-export type OpenClawDoctorResult = HostSuccess & {
-  mode: OpenClawDoctorMode;
+export type insightAllDoctorMode = 'diagnose' | 'fix';
+export type insightAllDoctorResult = HostSuccess & {
+  mode: insightAllDoctorMode;
   exitCode: number | null;
   stdout: string;
   stderr: string;
@@ -27,16 +27,16 @@ export type OpenClawDoctorResult = HostSuccess & {
   durationMs: number;
   timedOut?: boolean;
 };
-export type OpenClawDoctorPayload = { mode: OpenClawDoctorMode };
+export type insightAllDoctorPayload = { mode: insightAllDoctorMode };
 
-export type OpenClawStatusResult = {
+export type insightAllStatusResult = {
   packageExists: boolean;
   isBuilt: boolean;
   entryPath: string;
   dir: string;
   version?: string;
 };
-export type OpenClawCliCommandResult = HostSuccess & { command?: string };
+export type insightAllCliCommandResult = HostSuccess & { command?: string };
 
 export type ShellPathPayload = { path: string };
 export type ShellOpenExternalPayload = { url: string };
@@ -809,12 +809,12 @@ export type DeliveryTargetsResult = HostSuccess & { targets: DeliveryChannelGrou
 
 export type HostApiContract = {
   app: {
-    openClawDoctor: (payload: OpenClawDoctorPayload) => Omit<OpenClawDoctorResult, 'mode'>;
+    openClawDoctor: (payload: insightAllDoctorPayload) => Omit<insightAllDoctorResult, 'mode'>;
   };
   openclaw: {
-    status: () => OpenClawStatusResult;
+    status: () => insightAllStatusResult;
     getSkillsDir: () => string;
-    getCliCommand: () => OpenClawCliCommandResult;
+    getCliCommand: () => insightAllCliCommandResult;
   };
   shell: {
     openExternal: (payload: ShellOpenExternalPayload) => void;

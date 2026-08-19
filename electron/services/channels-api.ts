@@ -11,7 +11,7 @@ import {
   listConfiguredChannelAccountsFromConfig,
   listConfiguredChannels,
   listConfiguredChannelsFromConfig,
-  readOpenClawConfig,
+  readinsightAllConfig,
   saveChannelConfig,
   setChannelDefaultAccount,
   setChannelEnabled,
@@ -46,11 +46,11 @@ import {
   OPENCLAW_WECHAT_CHANNEL_TYPE,
   UI_WECHAT_CHANNEL_TYPE,
   buildQrChannelEventName,
-  isCanonicalOpenClawAccountId,
-  toOpenClawChannelType,
+  isCanonicalinsightAllAccountId,
+  toinsightAllChannelType,
   toUiChannelType,
 } from '../utils/channel-alias';
-import { getOpenClawConfigDir } from '../utils/paths';
+import { getinsightAllConfigDir } from '../utils/paths';
 import {
   cancelWeChatLoginSession,
   saveWeChatAccountState,
@@ -167,7 +167,7 @@ function optionalString(payload: unknown, key: string): string | undefined {
 }
 
 function resolveStoredChannelType(channelType: string): string {
-  return toOpenClawChannelType(channelType);
+  return toinsightAllChannelType(channelType);
 }
 
 function buildQrLoginKey(channelType: string, accountId?: string): string {
@@ -175,7 +175,7 @@ function buildQrLoginKey(channelType: string, accountId?: string): string {
 }
 
 async function isLegacyConfiguredAccountId(channelType: string, accountId: string): Promise<boolean> {
-  const config = await readOpenClawConfig();
+  const config = await readinsightAllConfig();
   const configuredAccounts = listConfiguredChannelAccountsFromConfig(config) ?? {};
   const storedChannelType = resolveStoredChannelType(channelType);
   const knownAccountIds = configuredAccounts[storedChannelType]?.accountIds ?? [];
@@ -193,7 +193,7 @@ async function validateCanonicalAccountId(
   }
   const trimmed = accountId.trim();
   if (!trimmed) throw new Error('accountId cannot be empty');
-  if (isCanonicalOpenClawAccountId(trimmed)) return;
+  if (isCanonicalinsightAllAccountId(trimmed)) return;
   if (options?.allowLegacyConfiguredId && await isLegacyConfiguredAccountId(channelType, trimmed)) return;
   throw new Error('Invalid accountId format. Use lowercase letters, numbers, hyphens, or underscores only (max 64 chars, must start with a letter or number).');
 }
@@ -252,7 +252,7 @@ export async function buildChannelAccountsView(
 ): Promise<{ channels: ChannelAccountsView[]; gatewayHealth: GatewayHealthSummary }> {
   const startedAt = Date.now();
   const skipRuntime = options?.skipRuntime === true;
-  const openClawConfig = await readOpenClawConfig();
+  const openClawConfig = await readinsightAllConfig();
 
   const [configuredChannels, configuredAccounts, agentsSnapshot] = await Promise.all([
     listConfiguredChannelsFromConfig(openClawConfig),
@@ -539,7 +539,7 @@ async function listSessionDerivedTargetOptions(params: {
   query?: string;
 }): Promise<ChannelTargetOptionView[]> {
   const storedChannelType = resolveStoredChannelType(params.channelType);
-  const agentsDir = join(getOpenClawConfigDir(), 'agents');
+  const agentsDir = join(getinsightAllConfigDir(), 'agents');
   const agentDirs = await readdir(agentsDir, { withFileTypes: true }).catch(() => []);
   const q = params.query?.trim().toLowerCase() || '';
   const candidates: Array<ChannelTargetOptionView & { updatedAt: number }> = [];
@@ -610,7 +610,7 @@ async function listSessionDerivedTargetOptions(params: {
 }
 
 async function listWeComReqIdTargetOptions(accountId?: string, query?: string): Promise<ChannelTargetOptionView[]> {
-  const wecomDir = join(getOpenClawConfigDir(), 'wecom');
+  const wecomDir = join(getinsightAllConfigDir(), 'wecom');
   const files = await readdir(wecomDir, { withFileTypes: true }).catch(() => []);
   const q = query?.trim().toLowerCase() || '';
   const options: ChannelTargetOptionView[] = [];
@@ -647,7 +647,7 @@ async function listWeComReqIdTargetOptions(accountId?: string, query?: string): 
 }
 
 async function fetchFeishuTargetOptions(accountId?: string, query?: string): Promise<ChannelTargetOptionView[]> {
-  const config = await readOpenClawConfig() as JsonRecord;
+  const config = await readinsightAllConfig() as JsonRecord;
   const accountConfig = mergeChannelAccountConfig(config, 'feishu', accountId);
   const appId = typeof accountConfig.appId === 'string' ? accountConfig.appId.trim() : '';
   const appSecret = typeof accountConfig.appSecret === 'string' ? accountConfig.appSecret.trim() : '';
@@ -761,7 +761,7 @@ async function fetchFeishuTargetOptions(accountId?: string, query?: string): Pro
 }
 
 async function listQQBotKnownTargetOptions(accountId?: string, query?: string): Promise<ChannelTargetOptionView[]> {
-  const knownUsersPath = join(getOpenClawConfigDir(), 'qqbot', 'data', 'known-users.json');
+  const knownUsersPath = join(getinsightAllConfigDir(), 'qqbot', 'data', 'known-users.json');
   const raw = await readFile(knownUsersPath, 'utf8').catch(() => '');
   if (!raw.trim()) return [];
 
@@ -810,7 +810,7 @@ async function listConfigDirectoryTargetOptions(params: {
   accountId?: string;
   query?: string;
 }): Promise<ChannelTargetOptionView[]> {
-  const cfg = await readOpenClawConfig();
+  const cfg = await readinsightAllConfig();
   const commonParams = {
     cfg,
     accountId: params.accountId ?? null,
@@ -1146,7 +1146,7 @@ export function createChannelsApi(ctx: ChannelsApiContext): CompleteHostServiceR
       await ensureScopedChannelBinding(channelType, accountId);
       // A changed running config is delivered through config.set, whose native
       // reload activates the plugin. Scheduling another full restart here races
-      // that code-1012 reload and can trip OpenClaw's restart-loop breaker.
+      // that code-1012 reload and can trip insightAll's restart-loop breaker.
       // Keep the explicit restart above only for no-change retries, where no
       // config.set reload occurs but a newly copied plugin may still need discovery.
       return { success: true, ...(restartGateway ? { activationPending: true } : {}) };

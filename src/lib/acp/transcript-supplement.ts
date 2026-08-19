@@ -4,10 +4,10 @@ import type { ImageGenerationCompletionEvidence, ImageGenerationTranscriptSupple
 import { extractImageGenerationTranscriptSupplement } from './image-generation-compat';
 import { hostApi } from '../host-api';
 import {
-  alignOpenClawMediaTurns,
-  extractOpenClawMediaTurns,
-  selectOpenClawTranscriptTurn,
-  type OpenClawMediaTurnSupplement,
+  aligninsightAllMediaTurns,
+  extractinsightAllMediaTurns,
+  selectinsightAllTranscriptTurn,
+  type insightAllMediaTurnSupplement,
 } from './openclaw-media-compat';
 import type { AcpTimelineSnapshot } from './timeline-types';
 
@@ -21,7 +21,7 @@ export type CoordinatedImageGenerationSupplement = Omit<ImageGenerationTranscrip
 
 export type TranscriptSupplementResult = {
   imageGeneration: CoordinatedImageGenerationSupplement;
-  media: OpenClawMediaTurnSupplement[];
+  media: insightAllMediaTurnSupplement[];
   transcriptMediaTurnCount: number;
   turnTimings: SessionTurnTimingCandidate[];
 };
@@ -59,12 +59,12 @@ function transcriptMessageId(
     ?.id;
 }
 
-// OpenClaw ACP currently projects only assistant text/thought content and strips MEDIA
+// insightAll ACP currently projects only assistant text/thought content and strips MEDIA
 // directives from the visible reply. This bounded transcript read recovers only missing
 // resource blocks; it is not a second Chat history source. Remove it when distributed
-// OpenClaw ACP emits assistant resource_link/resource content. Architecture rationale:
+// insightAll ACP emits assistant resource_link/resource content. Architecture rationale:
 // harness/reference/acp-generated-media-and-diagnostics.md
-export async function fetchOpenClawTranscriptSupplement(
+export async function fetchinsightAllTranscriptSupplement(
   input: TranscriptSupplementInput,
 ): Promise<TranscriptSupplementResult | null> {
   recordTrace(input, 'openclaw-media:history-request-started', {
@@ -106,7 +106,7 @@ export async function fetchOpenClawTranscriptSupplement(
   const messages = response?.success && Array.isArray(response.messages) ? response.messages : [];
   const snapshot = typeof input.snapshot === 'function' ? input.snapshot() : input.snapshot;
   const imageMessages = input.liveUserMessageId
-    ? selectOpenClawTranscriptTurn(messages, snapshot, input.liveUserMessageId)
+    ? selectinsightAllTranscriptTurn(messages, snapshot, input.liveUserMessageId)
     : messages;
   const extractedImages = extractImageGenerationTranscriptSupplement(imageMessages, input.sessionKey);
   const imageGeneration: CoordinatedImageGenerationSupplement = {
@@ -119,11 +119,11 @@ export async function fetchOpenClawTranscriptSupplement(
   const suppressedUris = new Set(
     imageGeneration.completions.flatMap((completion) => completion.candidates.map((candidate) => candidate.key)),
   );
-  const transcriptMediaTurns = extractOpenClawMediaTurns(messages, {
+  const transcriptMediaTurns = extractinsightAllMediaTurns(messages, {
     executionCwd: input.executionCwd,
     suppressedUris,
   });
-  const media = alignOpenClawMediaTurns(snapshot, transcriptMediaTurns, {
+  const media = aligninsightAllMediaTurns(snapshot, transcriptMediaTurns, {
     ...(input.liveUserMessageId ? { liveUserMessageId: input.liveUserMessageId } : {}),
   });
   const transcriptMediaTurnCount = transcriptMediaTurns.filter((turn) => turn.candidates.length > 0).length;

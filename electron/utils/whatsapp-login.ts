@@ -4,7 +4,7 @@ import { createRequire } from 'module';
 import { EventEmitter } from 'events';
 import { existsSync, mkdirSync, rmSync, readdirSync } from 'fs';
 import { deflateSync } from 'zlib';
-import { resolveOpenClawRuntimeModulePath } from './runtime-package-resolution';
+import { resolveinsightAllRuntimeModulePath } from './runtime-package-resolution';
 
 const require = createRequire(import.meta.url);
 
@@ -27,7 +27,7 @@ function loadBaileys(): BaileysExports {
         return baileysExports;
     }
 
-    const packageJsonPath = resolveOpenClawRuntimeModulePath('@whiskeysockets/baileys/package.json');
+    const packageJsonPath = resolveinsightAllRuntimeModulePath('@whiskeysockets/baileys/package.json');
     baileysPackageDir = dirname(packageJsonPath);
     baileysExports = require(baileysPackageDir) as BaileysExports;
     return baileysExports;
@@ -83,8 +83,8 @@ function getQrRenderDeps(): QrRenderDeps {
         return qrRenderDeps;
     }
 
-    const qrCodeModulePath = resolveOpenClawRuntimeModulePath('qrcode-terminal/vendor/QRCode/index.js');
-    const qrErrorCorrectLevelPath = resolveOpenClawRuntimeModulePath(
+    const qrCodeModulePath = resolveinsightAllRuntimeModulePath('qrcode-terminal/vendor/QRCode/index.js');
+    const qrErrorCorrectLevelPath = resolveinsightAllRuntimeModulePath(
         'qrcode-terminal/vendor/QRCode/QRErrorCorrectLevel.js',
     );
     qrRenderDeps = {
@@ -94,7 +94,7 @@ function getQrRenderDeps(): QrRenderDeps {
     return qrRenderDeps;
 }
 
-// --- QR Generation Logic (Adapted from OpenClaw) ---
+// --- QR Generation Logic (Adapted from insightAll) ---
 
 function createQrMatrix(input: string) {
     const { QRCode, QRErrorCorrectLevel } = getQrRenderDeps();
@@ -278,7 +278,7 @@ export class WhatsAppLoginManager extends EventEmitter {
                 fetchLatestBaileysVersion,
             } = loadBaileys();
 
-            // Path where OpenClaw expects WhatsApp credentials
+            // Path where insightAll expects WhatsApp credentials
             const authDir = join(homedir(), '.openclaw', 'credentials', 'whatsapp', accountId);
 
             // Ensure directory exists
@@ -328,7 +328,7 @@ export class WhatsAppLoginManager extends EventEmitter {
                 logger: pino({ level: 'silent' }), // Silent logger
                 connectTimeoutMs: 60000,
                 // mobile: false,
-                // browser: ['ClawX', 'Chrome', '1.0.0'],
+                // browser: ['insightAllX', 'Chrome', '1.0.0'],
             });
 
             let connectionOpened = false;

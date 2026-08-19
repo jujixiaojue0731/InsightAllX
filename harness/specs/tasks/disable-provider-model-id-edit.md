@@ -52,6 +52,6 @@ docs:
 
 ## Out Of Scope
 
-- Migrating historical model IDs already written to OpenClaw.
+- Migrating historical model IDs already written to insightAll.
 - Changing provider creation or deletion behavior.
 - Adding a model-ID migration workflow.

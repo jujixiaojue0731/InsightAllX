@@ -12,7 +12,7 @@ import {
   updateAgentName,
 } from '../utils/agent-config';
 import { deleteChannelAccountConfig } from '../utils/channel-config';
-import { ensureClawXContext } from '../utils/openclaw-workspace';
+import { ensureinsightAllXContext } from '../utils/openclaw-workspace';
 import { isRecord } from './payload-utils';
 import { syncAgentModelOverrideToRuntime, syncAllProviderAuthToRuntime } from './providers/provider-runtime-sync';
 
@@ -37,8 +37,8 @@ export function createAgentsApi(_ctx: AgentsApiContext): CompleteHostServiceRegi
       syncAllProviderAuthToRuntime().catch((err) => {
         console.warn('[agents] Failed to sync provider auth after agent creation:', err);
       });
-      void ensureClawXContext({ waitForAllConfiguredWorkspaces: true }).catch((err) => {
-        console.warn('[agents] Failed to ensure ClawX context after agent creation:', err);
+      void ensureinsightAllXContext({ waitForAllConfiguredWorkspaces: true }).catch((err) => {
+        console.warn('[agents] Failed to ensure insightAllX context after agent creation:', err);
       });
       return { success: true, ...snapshot };
     },

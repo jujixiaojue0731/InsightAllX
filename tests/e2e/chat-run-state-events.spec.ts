@@ -159,7 +159,7 @@ async function openChat(app: ElectronApplication) {
   return page;
 }
 
-test.describe('ClawX chat run state events', () => {
+test.describe('insightAllX chat run state events', () => {
   test('renders ACP tool run-state updates inline', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -276,7 +276,7 @@ test.describe('ClawX chat run state events', () => {
     }
   });
 
-  test('projects OpenClaw image-generation structured media into ACP Chat previews', async ({ launchElectronApp }) => {
+  test('projects insightAll image-generation structured media into ACP Chat previews', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const generatedPath = '/tmp/openclaw-generated-sky.png';
     const secondGeneratedPath = '/tmp/openclaw-generated-dog.png';
@@ -386,7 +386,7 @@ test.describe('ClawX chat run state events', () => {
     }
   });
 
-  test('projects OpenClaw image-generation failures as ACP Chat replies', async ({ launchElectronApp }) => {
+  test('projects insightAll image-generation failures as ACP Chat replies', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
     try {
@@ -432,7 +432,7 @@ test.describe('ClawX chat run state events', () => {
     }
   });
 
-  test('replays OpenClaw image-generation previews from historical ACP tool output', async ({ launchElectronApp }) => {
+  test('replays insightAll image-generation previews from historical ACP tool output', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const generatedPath = '/tmp/openclaw-replayed-sky.png';
 
@@ -494,9 +494,9 @@ test.describe('ClawX chat run state events', () => {
     }
   });
 
-  test('replays OpenClaw image-generation previews from historical assistant MEDIA text', async ({ launchElectronApp }) => {
+  test('replays insightAll image-generation previews from historical assistant MEDIA text', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
-    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/clawx-image-1.png';
+    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png';
 
     try {
       await installAcpChatMocks(

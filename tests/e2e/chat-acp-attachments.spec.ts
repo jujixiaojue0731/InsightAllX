@@ -460,7 +460,7 @@ test.describe('ACP media attachments', () => {
             uri: userPath,
             name: 'User report.pdf',
             mimeType: 'application/pdf',
-            _meta: { clawx: { stagingId: 'stage-user-report' } },
+            _meta: { insightallx: { stagingId: 'stage-user-report' } },
           }],
         },
         {
@@ -523,14 +523,14 @@ test.describe('ACP media attachments', () => {
             uri: imagePath,
             data: Buffer.from(imageBytes).toString('base64'),
             mimeType: 'image/png',
-            _meta: { clawx: { stagingId: 'stage-photo', fileName: 'photo.png' } },
+            _meta: { insightallx: { stagingId: 'stage-photo', fileName: 'photo.png' } },
           },
           {
             type: 'resource_link',
             uri: notesPath,
             name: 'notes.txt',
             mimeType: 'text/plain',
-            _meta: { clawx: { stagingId: 'stage-notes' } },
+            _meta: { insightallx: { stagingId: 'stage-notes' } },
           },
         ],
       }]);
@@ -635,7 +635,7 @@ test.describe('ACP media attachments', () => {
     }
   });
 
-  test('renders canonical OpenClaw transcript media when assistant prose only names the path', async ({ launchElectronApp }) => {
+  test('renders canonical insightAll transcript media when assistant prose only names the path', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const prompt = 'Create the Markdown market report';
     const reply = 'Markdown 文件在这里：';
@@ -821,7 +821,7 @@ test.describe('ACP media attachments', () => {
       const fixture = await installAttachmentHostFixture(app, {
         sessions: [{ key: MAIN_SESSION_KEY, title: 'Main session' }],
       });
-      const zipPath = await fixture.createOpenClawMediaFile('exports/budget-archive.zip', Uint8Array.from([80, 75, 3, 4]));
+      const zipPath = await fixture.createinsightAllMediaFile('exports/budget-archive.zip', Uint8Array.from([80, 75, 3, 4]));
       await fixture.setSessionReplay(MAIN_SESSION_KEY, [
         userUpdate('open-user', 'Open the archives'),
         {

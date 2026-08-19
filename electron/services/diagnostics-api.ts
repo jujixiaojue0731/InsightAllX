@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import type { CompleteHostServiceRegistry } from '../main/ipc/host-contract';
 import type { GatewayManager } from '../gateway/manager';
 import { logger } from '../utils/logger';
-import { getOpenClawConfigDir } from '../utils/paths';
+import { getinsightAllConfigDir } from '../utils/paths';
 import { buildGatewayHealthSummary } from '../utils/gateway-health';
 import { buildChannelAccountsView, getChannelStatusDiagnostics } from './channels-api';
 import { getAcpTraceSnapshot, recordRendererAcpTrace } from './acp-trace';
@@ -69,13 +69,13 @@ export function createDiagnosticsApi(ctx: DiagnosticsApiContext): CompleteHostSe
           ? ctx.gatewayManager.getCapabilitySnapshot(gatewaySummary)
           : undefined,
       };
-      const openClawDir = getOpenClawConfigDir();
+      const openClawDir = getinsightAllConfigDir();
       return {
         capturedAt: Date.now(),
         platform: process.platform,
         gateway,
         channels,
-        clawxLogTail: await logger.readLogFile(DEFAULT_TAIL_LINES),
+        insightallxLogTail: await logger.readLogFile(DEFAULT_TAIL_LINES),
         gatewayLogTail: await readTail(join(openClawDir, 'logs', 'gateway.log')),
         gatewayErrLogTail: await readTail(join(openClawDir, 'logs', 'gateway.err.log')),
       };

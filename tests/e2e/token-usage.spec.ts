@@ -99,7 +99,7 @@ async function seedTokenUsageTranscripts(homeDir: string): Promise<void> {
   );
 }
 
-test.describe('ClawX token usage history', () => {
+test.describe('insightAllX token usage history', () => {
 
   async function validateUsageHistory(page: Page): Promise<void> {
     const usageHistory = await page.evaluate(async () => {
@@ -142,7 +142,7 @@ test.describe('ClawX token usage history', () => {
   });
 
   // TODO: This test needs a reliable way to inject mocked gateway status into
-  // the renderer's Zustand store in CI (where no real OpenClaw runtime exists).
+  // the renderer's Zustand store in CI (where no real insightAll runtime exists).
   // The IPC mock + page.reload approach fails because the reload
   // re-triggers setup flow. Skipping until we add an E2E-aware store hook.
   test.skip('hides gateway internal usage rows from the usage list overview', async ({ page, homeDir }) => {

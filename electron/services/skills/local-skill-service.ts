@@ -4,7 +4,7 @@ import { basename, join, relative, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import YAML from 'yaml';
 import { listAgentsSnapshot } from '../../utils/agent-config';
-import { expandPath, getOpenClawResolvedDir, getOpenClawSkillsDir } from '../../utils/paths';
+import { expandPath, getinsightAllResolvedDir, getinsightAllSkillsDir } from '../../utils/paths';
 import { getAllSkillConfigs } from '../../utils/skill-config';
 import type { SkillConfigUpdates } from '../../utils/skill-config';
 
@@ -225,7 +225,7 @@ async function readManifestMeta(skillDir: string): Promise<ManifestMeta | null> 
 }
 
 async function readPreinstalledMeta(skillDir: string): Promise<PreinstalledMeta | null> {
-  const parsed = await safeReadJson<Record<string, unknown>>(join(skillDir, '.clawx-preinstalled.json'));
+  const parsed = await safeReadJson<Record<string, unknown>>(join(skillDir, '.insightallx-preinstalled.json'));
   if (!parsed) return null;
   return {
     slug: toStringValue(parsed.slug),
@@ -378,12 +378,12 @@ async function buildDescriptors(): Promise<SourceDescriptor[]> {
       priority: 2,
     },
     {
-      root: getOpenClawSkillsDir(),
+      root: getinsightAllSkillsDir(),
       source: 'openclaw-managed',
       priority: 3,
     },
     {
-      root: join(getOpenClawResolvedDir(), 'skills'),
+      root: join(getinsightAllResolvedDir(), 'skills'),
       source: 'openclaw-bundled',
       priority: 4,
       allowedSkillSlugs: BUNDLED_OPENCLAW_SKILL_ALLOWLIST,

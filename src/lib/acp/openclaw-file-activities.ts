@@ -2,7 +2,7 @@ import { diffLines } from 'diff';
 import { groupAcpTimelineItems } from './timeline-groups';
 import type { AcpTimelineSnapshot, ToolCallItem } from './timeline-types';
 
-export type OpenClawFileToolName = 'write' | 'edit' | 'apply_patch';
+export type insightAllFileToolName = 'write' | 'edit' | 'apply_patch';
 
 export type AcpFileChangeFragment = {
   oldText: string;
@@ -13,7 +13,7 @@ export type AcpFileChangeFragment = {
 export type AcpFileActivity = {
   turnId: string;
   toolCallId: string;
-  toolName: OpenClawFileToolName;
+  toolName: insightAllFileToolName;
   relativePath: string;
   action: 'created' | 'modified' | 'deleted';
   fragments: AcpFileChangeFragment[];
@@ -90,7 +90,7 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return value as Record<string, unknown>;
 }
 
-function parseToolName(title: string): OpenClawFileToolName | null {
+function parseToolName(title: string): insightAllFileToolName | null {
   const colon = title.indexOf(':');
   if (colon < 0) return null;
   const name = title.slice(0, colon).trim().toLowerCase();
@@ -432,7 +432,7 @@ function parseApplyPatch(input: Record<string, unknown>, context: PathContext): 
   return activities;
 }
 
-function parseTool(item: ToolCallItem, toolName: OpenClawFileToolName, context: PathContext): ParsedActivity[] {
+function parseTool(item: ToolCallItem, toolName: insightAllFileToolName, context: PathContext): ParsedActivity[] {
   const input = asRecord(item.input);
   if (!input) return [];
   if (toolName === 'write') return parseWrite(input, context);
@@ -608,7 +608,7 @@ function buildFileGroups(activities: AcpFileActivity[]): AcpSessionFileGroup[] {
   return groups;
 }
 
-export function projectOpenClawFileActivities(input: {
+export function projectinsightAllFileActivities(input: {
   timeline: AcpTimelineSnapshot;
   workspaceRoot: string;
   executionCwd: string;

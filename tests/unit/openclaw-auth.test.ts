@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData, getSettingMock, setSettingMock } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/clawx-openclaw-auth-${suffix}`,
-    testUserData: `/tmp/clawx-openclaw-auth-user-data-${suffix}`,
+    testHome: `/tmp/insightallx-openclaw-auth-${suffix}`,
+    testUserData: `/tmp/insightallx-openclaw-auth-user-data-${suffix}`,
     getSettingMock: vi.fn(),
     setSettingMock: vi.fn(),
   };
@@ -44,12 +44,12 @@ vi.mock('@electron/utils/paths', async () => {
   const resolvedDir = join(testHome, '.openclaw-test-openclaw');
   return {
     ...actual,
-    getOpenClawResolvedDir: () => resolvedDir,
-    getOpenClawDir: () => resolvedDir,
+    getinsightAllResolvedDir: () => resolvedDir,
+    getinsightAllDir: () => resolvedDir,
   };
 });
 
-const CLAWX_DESKTOP_TOOL_DENY = [
+const INSIGHTALLX_DESKTOP_TOOL_DENY = [
   'skill_workshop',
   'web_search',
   'gateway',
@@ -59,13 +59,13 @@ const CLAWX_DESKTOP_TOOL_DENY = [
   'update_goal',
 ];
 
-async function writeOpenClawJson(config: unknown): Promise<void> {
+async function writeinsightAllJson(config: unknown): Promise<void> {
   const openclawDir = join(testHome, '.openclaw');
   await mkdir(openclawDir, { recursive: true });
   await writeFile(join(openclawDir, 'openclaw.json'), JSON.stringify(config, null, 2), 'utf8');
 }
 
-async function readOpenClawJson(): Promise<Record<string, unknown>> {
+async function readinsightAllJson(): Promise<Record<string, unknown>> {
   const content = await readFile(join(testHome, '.openclaw', 'openclaw.json'), 'utf8');
   return JSON.parse(content) as Record<string, unknown>;
 }
@@ -81,7 +81,7 @@ async function writeAgentAuthProfiles(agentId: string, store: Record<string, unk
   await writeFile(join(agentDir, 'auth-profiles.json'), JSON.stringify(store, null, 2), 'utf8');
 }
 
-describe('saveProviderKeyToOpenClaw', () => {
+describe('saveProviderKeyToinsightAll', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.restoreAllMocks();
@@ -90,7 +90,7 @@ describe('saveProviderKeyToOpenClaw', () => {
   });
 
   it('only syncs auth profiles for configured agents', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           {
@@ -127,9 +127,9 @@ describe('saveProviderKeyToOpenClaw', () => {
     );
 
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    const { saveProviderKeyToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { saveProviderKeyToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await saveProviderKeyToOpenClaw('openrouter', 'sk-test');
+    await saveProviderKeyToinsightAll('openrouter', 'sk-test');
 
     const mainProfiles = await readAuthProfiles('main');
     const test3Profiles = await readAuthProfiles('test3');
@@ -145,7 +145,7 @@ describe('saveProviderKeyToOpenClaw', () => {
       },
     });
     expect(logSpy).toHaveBeenCalledWith(
-      'Saved API key for provider "openrouter" to OpenClaw auth-profiles (agents: main, test3)',
+      'Saved API key for provider "openrouter" to insightAll auth-profiles (agents: main, test3)',
     );
 
     logSpy.mockRestore();
@@ -159,18 +159,18 @@ describe('saveProviderKeyToOpenClaw', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
-    const { saveProviderKeyToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
+    const { saveProviderKeyToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await saveProviderKeyToOpenClaw('openrouter', 'sk-test', 'main');
+    await saveProviderKeyToinsightAll('openrouter', 'sk-test', 'main');
 
     expect(manager.rpc).toHaveBeenCalledOnce();
     expect(manager.rpc).toHaveBeenCalledWith('secrets.reload', {});
   });
 });
 
-describe('removeProviderKeyFromOpenClaw', () => {
+describe('removeProviderKeyFrominsightAll', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.restoreAllMocks();
@@ -204,9 +204,9 @@ describe('removeProviderKeyFromOpenClaw', () => {
       },
     });
 
-    const { removeProviderKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { removeProviderKeyFrominsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await removeProviderKeyFromOpenClaw('custom-abc12345', 'main');
+    await removeProviderKeyFrominsightAll('custom-abc12345', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
     expect(mainProfiles.profiles).toEqual({
@@ -243,9 +243,9 @@ describe('removeProviderKeyFromOpenClaw', () => {
       },
     });
 
-    const { removeProviderKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { removeProviderKeyFrominsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await removeProviderKeyFromOpenClaw('custom-abc12345', 'main');
+    await removeProviderKeyFrominsightAll('custom-abc12345', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
     expect(mainProfiles.profiles).toEqual({
@@ -281,9 +281,9 @@ describe('removeProviderKeyFromOpenClaw', () => {
       },
     });
 
-    const { removeProviderKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { removeProviderKeyFrominsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await removeProviderKeyFromOpenClaw('openai-codex', 'main');
+    await removeProviderKeyFrominsightAll('openai-codex', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
     expect(mainProfiles.profiles).toEqual({
@@ -331,9 +331,9 @@ describe('removeProviderKeyFromOpenClaw', () => {
       },
     });
 
-    const { removeProviderKeyFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { removeProviderKeyFrominsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await removeProviderKeyFromOpenClaw('minimax-portal', 'main');
+    await removeProviderKeyFrominsightAll('minimax-portal', 'main');
 
     const mainProfiles = await readAuthProfiles('main');
     expect(mainProfiles.profiles).toEqual({
@@ -352,7 +352,7 @@ describe('removeProviderKeyFromOpenClaw', () => {
   });
 });
 
-describe('sanitizeOpenClawConfig', () => {
+describe('sanitizeinsightAllConfig', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.restoreAllMocks();
@@ -362,11 +362,11 @@ describe('sanitizeOpenClawConfig', () => {
 
   it('skips sanitization when openclaw.json does not exist', async () => {
     // Ensure the .openclaw dir doesn't exist at all
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     // Should not throw and should not create the file
-    await expect(sanitizeOpenClawConfig()).resolves.toBeUndefined();
+    await expect(sanitizeinsightAllConfig()).resolves.toBeUndefined();
 
     const configPath = join(testHome, '.openclaw', 'openclaw.json');
     await expect(readFile(configPath, 'utf8')).rejects.toThrow();
@@ -382,10 +382,10 @@ describe('sanitizeOpenClawConfig', () => {
     await writeFile(configPath, 'NOT VALID JSON {{{', 'utf8');
     const before = await readFile(configPath, 'utf8');
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    await sanitizeOpenClawConfig();
+    await sanitizeinsightAllConfig();
 
     const after = await readFile(configPath, 'utf8');
     // Corrupt file must not be overwritten
@@ -398,11 +398,11 @@ describe('sanitizeOpenClawConfig', () => {
     const openclawDir = join(testHome, '.openclaw');
     await mkdir(openclawDir, { recursive: true });
     const configPath = join(openclawDir, 'openclaw.json');
-    await writeFile(configPath, '{\n  // OpenClaw accepts comments\n  commands: { restart: false, },\n}\n', 'utf8');
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
+    await writeFile(configPath, '{\n  // insightAll accepts comments\n  commands: { restart: false, },\n}\n', 'utf8');
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    await sanitizeOpenClawConfig();
+    await sanitizeinsightAllConfig();
 
     const result = JSON.parse(await readFile(configPath, 'utf8')) as Record<string, unknown>;
     expect(result.commands).toEqual({ restart: false });
@@ -411,7 +411,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('sanitizes the running Gateway snapshot without replacing it from the fallback file', async () => {
-    await writeOpenClawJson({ fallbackOnly: true });
+    await writeinsightAllJson({ fallbackOnly: true });
     const rpc = vi.fn(async (method: string) => {
       if (method === 'config.get') {
         return {
@@ -422,42 +422,42 @@ describe('sanitizeOpenClawConfig', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator({
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator({
       getStatus: () => ({ state: 'running' }),
       rpc,
     } as never);
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
     expect(rpc.mock.calls.map(([method]) => method)).toEqual(['config.get', 'config.get', 'config.set']);
     const delivered = JSON.parse((rpc.mock.calls[2]?.[1] as { raw: string }).raw) as Record<string, unknown>;
     expect(delivered.gatewayOnly).toBe(true);
     expect(delivered).not.toHaveProperty('fallbackOnly');
     expect(delivered.commands).toEqual({ restart: false });
-    expect(await readOpenClawJson()).toEqual({ fallbackOnly: true });
+    expect(await readinsightAllJson()).toEqual({ fallbackOnly: true });
   });
 
   it('properly sanitizes a genuinely empty {} config (fresh install)', async () => {
     // A fresh install with {} is a valid config — sanitize should proceed
-    // and enforce the ClawX tool and skill defaults.
-    await writeOpenClawJson({});
+    // and enforce the insightAllX tool and skill defaults.
+    await writeinsightAllJson({});
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    await sanitizeOpenClawConfig();
+    await sanitizeinsightAllConfig();
 
     const configPath = join(testHome, '.openclaw', 'openclaw.json');
     const result = JSON.parse(await readFile(configPath, 'utf8')) as Record<string, unknown>;
     // Fresh install should get tools settings enforced
     const tools = result.tools as Record<string, unknown>;
     expect(tools.profile).toBe('full');
-    expect(tools.deny).toEqual(CLAWX_DESKTOP_TOOL_DENY);
+    expect(tools.deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
     const gateway = result.gateway as Record<string, unknown>;
     const gatewayTools = gateway.tools as Record<string, unknown>;
-    expect(gatewayTools.deny).toEqual(CLAWX_DESKTOP_TOOL_DENY);
+    expect(gatewayTools.deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
     const skills = result.skills as Record<string, unknown>;
     const workshop = skills.workshop as Record<string, unknown>;
     const autonomous = workshop.autonomous as Record<string, unknown>;
@@ -469,16 +469,16 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('preserves user config (memory, agents, channels) when enforcing tools settings', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: { defaults: { model: { primary: 'openai/gpt-4' } } },
       channels: { discord: { token: 'tok', enabled: true } },
       memory: { enabled: true, limit: 100 },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
-    await sanitizeOpenClawConfig();
+    await sanitizeinsightAllConfig();
 
     const configPath = join(testHome, '.openclaw', 'openclaw.json');
     const result = JSON.parse(await readFile(configPath, 'utf8')) as Record<string, unknown>;
@@ -492,9 +492,9 @@ describe('sanitizeOpenClawConfig', () => {
     // tools settings should now be enforced
     const tools = result.tools as Record<string, unknown>;
     expect(tools.profile).toBe('full');
-    expect(tools.deny).toEqual(CLAWX_DESKTOP_TOOL_DENY);
+    expect(tools.deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
     const gateway = result.gateway as Record<string, unknown>;
-    expect((gateway.tools as Record<string, unknown>).deny).toEqual(CLAWX_DESKTOP_TOOL_DENY);
+    expect((gateway.tools as Record<string, unknown>).deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
     const skills = result.skills as Record<string, unknown>;
     expect(((skills.workshop as Record<string, unknown>).autonomous as Record<string, unknown>).enabled).toBe(false);
     expect((skills.entries as Record<string, Record<string, unknown>>)['skill-creator'].enabled).toBe(true);
@@ -502,8 +502,8 @@ describe('sanitizeOpenClawConfig', () => {
     logSpy.mockRestore();
   });
 
-  it('preserves existing denied tools while adding ClawX-required deny entries', async () => {
-    await writeOpenClawJson({
+  it('preserves existing denied tools while adding insightAllX-required deny entries', async () => {
+    await writeinsightAllJson({
       tools: {
         deny: ['browser'],
       },
@@ -514,22 +514,22 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const tools = result.tools as Record<string, unknown>;
-    expect(tools.deny).toEqual(['browser', ...CLAWX_DESKTOP_TOOL_DENY]);
+    expect(tools.deny).toEqual(['browser', ...INSIGHTALLX_DESKTOP_TOOL_DENY]);
     const gateway = result.gateway as Record<string, unknown>;
     expect((gateway.tools as Record<string, unknown>).deny).toEqual([
       'custom_gateway_tool',
-      ...CLAWX_DESKTOP_TOOL_DENY,
+      ...INSIGHTALLX_DESKTOP_TOOL_DENY,
     ]);
   });
 
   it('migrates legacy tools.web.search.kimi into moonshot plugin config', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           moonshot: { baseUrl: 'https://api.moonshot.cn/v1', api: 'openai-completions' },
@@ -547,10 +547,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const tools = (result.tools as Record<string, unknown> | undefined) || {};
     const web = (tools.web as Record<string, unknown> | undefined) || {};
     const search = (web.search as Record<string, unknown> | undefined) || {};
@@ -562,7 +562,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('mirrors telegram default account credentials to top level during sanitize', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         telegram: {
           enabled: true,
@@ -578,10 +578,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const channels = result.channels as Record<string, Record<string, unknown>>;
     const telegram = channels.telegram;
     // telegram is NOT in the exclude set, so credentials are mirrored to top level
@@ -590,7 +590,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('migrates legacy plugin-only channel accounts before stripping credential mirrors', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         enabled: true,
         allow: ['discord', 'whatsapp', 'qqbot'],
@@ -620,10 +620,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const channels = result.channels as Record<string, Record<string, unknown>>;
     expect(channels.discord.defaultAccount).toBe('discord-agent');
     expect(channels.discord.accounts).toEqual({
@@ -647,7 +647,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('normalizes QQBot as an external plugin without credential mirrors', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         qqbot: {
           enabled: true,
@@ -674,10 +674,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
     expect(plugins.allow).toEqual(['qqbot']);
@@ -687,7 +687,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('recovers external plugin registrations for legacy channel-only configs', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         discord: { enabled: true, token: 'discord-token' },
         whatsapp: { enabled: true },
@@ -695,10 +695,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
     expect(plugins.allow).toEqual(expect.arrayContaining(['discord', 'whatsapp', 'qqbot']));
@@ -708,7 +708,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('normalizes legacy feishu plugin state to a single external plugin and removes built-in feishu', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         feishu: {
           enabled: true,
@@ -735,10 +735,10 @@ describe('sanitizeOpenClawConfig', () => {
       'utf8',
     );
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
@@ -753,7 +753,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('removes residual feishu plugin registrations when feishu channel is not configured', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         telegram: {
           enabled: true,
@@ -771,10 +771,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
@@ -788,7 +788,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('strips defaultAccount (but preserves accounts) from dingtalk during sanitize', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       channels: {
         dingtalk: {
           enabled: true,
@@ -806,10 +806,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const channels = result.channels as Record<string, Record<string, unknown>>;
     const dingtalk = channels.dingtalk;
     // dingtalk's schema accepts `accounts` but NOT `defaultAccount`
@@ -828,7 +828,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('removes stale minimax-portal-auth plugin entries when merged minimax plugin is installed', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['minimax-portal-auth', 'custom-plugin'],
         entries: {
@@ -862,14 +862,14 @@ describe('sanitizeOpenClawConfig', () => {
       const actual = await vi.importActual<typeof import('@electron/utils/paths')>('@electron/utils/paths');
       return {
         ...actual,
-        getOpenClawResolvedDir: () => openclawDir,
+        getinsightAllResolvedDir: () => openclawDir,
       };
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
@@ -879,7 +879,7 @@ describe('sanitizeOpenClawConfig', () => {
     expect(entries['custom-plugin']).toEqual({ enabled: true });
   });
 
-  it('removes stale bundled OpenClaw dist extension paths from plugins.load.paths', async () => {
+  it('removes stale bundled insightAll dist extension paths from plugins.load.paths', async () => {
     const staleAcpxPath = join(
       testHome,
       'old-workspace',
@@ -893,7 +893,7 @@ describe('sanitizeOpenClawConfig', () => {
       'acpx',
     );
     await mkdir(staleAcpxPath, { recursive: true });
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         load: {
           paths: [staleAcpxPath],
@@ -906,10 +906,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     expect(plugins.load).toBeUndefined();
     expect((plugins.entries as Record<string, unknown>).acpx).toEqual({ enabled: true });
@@ -923,7 +923,7 @@ describe('sanitizeOpenClawConfig', () => {
       JSON.stringify({ id: 'custom-installed' }, null, 2),
       'utf8',
     );
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['custom-installed', 'configured-plugin', 'missing-plugin'],
         entries: {
@@ -932,10 +932,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
 
@@ -951,7 +951,7 @@ describe('sanitizeOpenClawConfig', () => {
       JSON.stringify({ id: 'custom-loaded' }, null, 2),
       'utf8',
     );
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['custom-loaded', 'missing-plugin'],
         load: {
@@ -960,10 +960,10 @@ describe('sanitizeOpenClawConfig', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const load = plugins.load as Record<string, unknown>;
@@ -987,7 +987,7 @@ describe('sanitizeOpenClawConfig', () => {
       await mkdir(pluginDir, { recursive: true });
       await writeFile(join(pluginDir, 'openclaw.plugin.json'), JSON.stringify(manifest, null, 2), 'utf8');
     }
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['custom-plugin', 'browser', 'openrouter', 'anthropic'],
         entries: {
@@ -1007,15 +1007,15 @@ describe('sanitizeOpenClawConfig', () => {
       const actual = await vi.importActual<typeof import('@electron/utils/paths')>('@electron/utils/paths');
       return {
         ...actual,
-        getOpenClawResolvedDir: () => openclawDir,
-        getOpenClawDir: () => openclawDir,
+        getinsightAllResolvedDir: () => openclawDir,
+        getinsightAllDir: () => openclawDir,
       };
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
 
@@ -1029,7 +1029,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 
   it('preserves active bundled provider plugins discovered from per-agent auth profile stores', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           {
@@ -1077,14 +1077,14 @@ describe('sanitizeOpenClawConfig', () => {
       const actual = await vi.importActual<typeof import('@electron/utils/paths')>('@electron/utils/paths');
       return {
         ...actual,
-        getOpenClawResolvedDir: () => openclawDir,
+        getinsightAllResolvedDir: () => openclawDir,
       };
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
 
@@ -1093,7 +1093,7 @@ describe('sanitizeOpenClawConfig', () => {
   });
 });
 
-describe('syncProviderConfigToOpenClaw', () => {
+describe('syncProviderConfigToinsightAll', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.restoreAllMocks();
@@ -1102,7 +1102,7 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('mutates the running Gateway snapshot without replacing it from the fallback file', async () => {
-    await writeOpenClawJson({ fallbackOnly: true });
+    await writeinsightAllJson({ fallbackOnly: true });
     const rpc = vi.fn(async (method: string) => {
       if (method === 'config.get') {
         return {
@@ -1117,14 +1117,14 @@ describe('syncProviderConfigToOpenClaw', () => {
       if (method === 'config.set') return { ok: true };
       throw new Error(`Unexpected RPC method: ${method}`);
     });
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator({
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator({
       getStatus: () => ({ state: 'running' }),
       rpc,
     } as never);
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
-    await syncProviderConfigToOpenClaw('custom-example', 'model-a', {
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
+    await syncProviderConfigToinsightAll('custom-example', 'model-a', {
       baseUrl: 'https://example.com/v1',
       api: 'openai-completions',
     });
@@ -1135,11 +1135,11 @@ describe('syncProviderConfigToOpenClaw', () => {
     expect(delivered).not.toHaveProperty('fallbackOnly');
     expect(delivered.commands).toEqual({ restart: false });
     expect(((delivered.models as { providers: Record<string, unknown> }).providers)['custom-example']).toBeDefined();
-    expect(await readOpenClawJson()).toEqual({ fallbackOnly: true });
+    expect(await readinsightAllJson()).toEqual({ fallbackOnly: true });
   });
 
   it('preserves existing custom-provider model metadata during provider sync', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'custom-example': {
@@ -1160,13 +1160,13 @@ describe('syncProviderConfigToOpenClaw', () => {
       },
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
-    await syncProviderConfigToOpenClaw('custom-example', 'model-a', {
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
+    await syncProviderConfigToinsightAll('custom-example', 'model-a', {
       baseUrl: 'https://example.com/v1',
       api: 'openai-completions',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = providers['custom-example'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -1184,15 +1184,15 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('infers text-only input for a new unknown custom-provider model', async () => {
-    await writeOpenClawJson({ models: { providers: {} } });
+    await writeinsightAllJson({ models: { providers: {} } });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
-    await syncProviderConfigToOpenClaw('custom-example', 'private-model-x', {
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
+    await syncProviderConfigToinsightAll('custom-example', 'private-model-x', {
       baseUrl: 'https://example.com/v1',
       api: 'openai-completions',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = providers['custom-example'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -1206,15 +1206,15 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('writes an inferred contextWindow for new custom-provider model rows', async () => {
-    await writeOpenClawJson({ models: { providers: {} } });
+    await writeinsightAllJson({ models: { providers: {} } });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
-    await syncProviderConfigToOpenClaw('custom-example', 'gpt-5.5', {
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
+    await syncProviderConfigToinsightAll('custom-example', 'gpt-5.5', {
       baseUrl: 'https://example.com/v1',
       api: 'openai-completions',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = providers['custom-example'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -1228,7 +1228,7 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('does not overwrite an existing contextWindow on re-sync', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'custom-example': {
@@ -1242,13 +1242,13 @@ describe('syncProviderConfigToOpenClaw', () => {
       },
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
-    await syncProviderConfigToOpenClaw('custom-example', 'gpt-5.5', {
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
+    await syncProviderConfigToinsightAll('custom-example', 'gpt-5.5', {
       baseUrl: 'https://example.com/v1',
       api: 'openai-completions',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = providers['custom-example'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -1259,7 +1259,7 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('uses legacy minimax-portal-auth plugin registration when only the legacy plugin exists', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: { providers: {} },
     });
 
@@ -1278,19 +1278,19 @@ describe('syncProviderConfigToOpenClaw', () => {
       const actual = await vi.importActual<typeof import('@electron/utils/paths')>('@electron/utils/paths');
       return {
         ...actual,
-        getOpenClawResolvedDir: () => openclawDir,
+        getinsightAllResolvedDir: () => openclawDir,
       };
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('minimax-portal', 'MiniMax-M2.7', {
+    await syncProviderConfigToinsightAll('minimax-portal', 'MiniMax-M2.7', {
       baseUrl: 'https://api.minimax.io/anthropic',
       api: 'anthropic-messages',
       apiKeyEnv: 'minimax-oauth',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
@@ -1301,7 +1301,7 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('uses merged minimax plugin registration and removes stale legacy ids when minimax plugin is installed', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['minimax-portal-auth', 'custom-plugin'],
         entries: {
@@ -1328,19 +1328,19 @@ describe('syncProviderConfigToOpenClaw', () => {
       const actual = await vi.importActual<typeof import('@electron/utils/paths')>('@electron/utils/paths');
       return {
         ...actual,
-        getOpenClawResolvedDir: () => openclawDir,
+        getinsightAllResolvedDir: () => openclawDir,
       };
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('minimax-portal', 'MiniMax-M2.7', {
+    await syncProviderConfigToinsightAll('minimax-portal', 'MiniMax-M2.7', {
       baseUrl: 'https://api.minimax.io/anthropic',
       api: 'anthropic-messages',
       apiKeyEnv: 'minimax-oauth',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
@@ -1353,20 +1353,20 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('writes moonshot web search config to plugin config instead of tools.web.search.kimi', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {},
       },
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('moonshot', 'kimi-k2.6', {
+    await syncProviderConfigToinsightAll('moonshot', 'kimi-k2.6', {
       baseUrl: 'https://api.moonshot.cn/v1',
       api: 'openai-completions',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const tools = (result.tools as Record<string, unknown> | undefined) || {};
     const web = (tools.web as Record<string, unknown> | undefined) || {};
     const search = (web.search as Record<string, unknown> | undefined) || {};
@@ -1377,21 +1377,21 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 
   it('preserves legacy plugins array by converting it into plugins.load during moonshot sync', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: ['/tmp/custom-plugin.js'],
       models: {
         providers: {},
       },
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('moonshot', 'kimi-k2.6', {
+    await syncProviderConfigToinsightAll('moonshot', 'kimi-k2.6', {
       baseUrl: 'https://api.moonshot.cn/v1',
       api: 'openai-completions',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const load = plugins.load as string[];
     const moonshot = (((plugins.entries as Record<string, unknown>).moonshot as Record<string, unknown>).config as Record<string, unknown>).webSearch as Record<string, unknown>;
@@ -1401,7 +1401,7 @@ describe('syncProviderConfigToOpenClaw', () => {
   });
 });
 
-describe('setOpenClawDefaultModelWithOverride model metadata', () => {
+describe('setinsightAllDefaultModelWithOverride model metadata', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.restoreAllMocks();
@@ -1410,7 +1410,7 @@ describe('setOpenClawDefaultModelWithOverride model metadata', () => {
   });
 
   it('preserves old rows and infers image input for a newly selected vision model', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'custom-example': {
@@ -1429,8 +1429,8 @@ describe('setOpenClawDefaultModelWithOverride model metadata', () => {
       },
     });
 
-    const { setOpenClawDefaultModelWithOverride } = await import('@electron/utils/openclaw-auth');
-    await setOpenClawDefaultModelWithOverride(
+    const { setinsightAllDefaultModelWithOverride } = await import('@electron/utils/openclaw-auth');
+    await setinsightAllDefaultModelWithOverride(
       'custom-example',
       'custom-example/claude-opus-4-6',
       {
@@ -1439,7 +1439,7 @@ describe('setOpenClawDefaultModelWithOverride model metadata', () => {
       },
     );
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = providers['custom-example'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -1457,7 +1457,7 @@ describe('setOpenClawDefaultModelWithOverride model metadata', () => {
   });
 
   it('preserves model input metadata after switching to another provider and back', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'custom-a': {
@@ -1486,17 +1486,17 @@ describe('setOpenClawDefaultModelWithOverride model metadata', () => {
       },
     });
 
-    const { setOpenClawDefaultModelWithOverride } = await import('@electron/utils/openclaw-auth');
-    await setOpenClawDefaultModelWithOverride('custom-b', 'custom-b/model-b', {
+    const { setinsightAllDefaultModelWithOverride } = await import('@electron/utils/openclaw-auth');
+    await setinsightAllDefaultModelWithOverride('custom-b', 'custom-b/model-b', {
       baseUrl: 'https://b.example.com/v1',
       api: 'openai-completions',
     });
-    await setOpenClawDefaultModelWithOverride('custom-a', 'custom-a/model-a', {
+    await setinsightAllDefaultModelWithOverride('custom-a', 'custom-a/model-a', {
       baseUrl: 'https://a.example.com/v1',
       api: 'openai-completions',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const providerA = providers['custom-a'] as Record<string, unknown>;
     const models = providerA.models as Array<Record<string, unknown>>;
@@ -1516,7 +1516,7 @@ describe('auth-backed provider discovery', () => {
   });
 
   it('detects active providers from openclaw auth profiles and per-agent auth stores', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true, workspace: '~/.openclaw/workspace', agentDir: '~/.openclaw/agents/main/agent' },
@@ -1544,19 +1544,19 @@ describe('auth-backed provider discovery', () => {
       },
     });
 
-    const { getActiveOpenClawProviders } = await import('@electron/utils/openclaw-auth');
+    const { getActiveinsightAllProviders } = await import('@electron/utils/openclaw-auth');
 
     // Raw runtime keys (openai-codex / google-gemini-cli) are kept alongside
-    // their normalized UI aliases: newer OpenClaw versions no longer write
+    // their normalized UI aliases: newer insightAll versions no longer write
     // explicit models.providers / plugins entries for OAuth CLI providers, so
     // the auth profile is the only signal that the runtime provider is active.
-    await expect(getActiveOpenClawProviders()).resolves.toEqual(
+    await expect(getActiveinsightAllProviders()).resolves.toEqual(
       new Set(['openai', 'openai-codex', 'anthropic', 'google', 'google-gemini-cli']),
     );
   });
 
   it('seeds provider config entries from auth profiles when models.providers is empty', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true, workspace: '~/.openclaw/workspace', agentDir: '~/.openclaw/agents/main/agent' },
@@ -1586,8 +1586,8 @@ describe('auth-backed provider discovery', () => {
       },
     });
 
-    const { getOpenClawProvidersConfig } = await import('@electron/utils/openclaw-auth');
-    const result = await getOpenClawProvidersConfig();
+    const { getinsightAllProvidersConfig } = await import('@electron/utils/openclaw-auth');
+    const result = await getinsightAllProvidersConfig();
 
     expect(result.defaultModel).toBe('openai/gpt-5.5');
     expect(result.providers).toMatchObject({
@@ -1596,7 +1596,7 @@ describe('auth-backed provider discovery', () => {
     });
   });
 
-  it('reads provider config from the resolved OpenClaw config path', async () => {
+  it('reads provider config from the resolved insightAll config path', async () => {
     const configuredPath = join(testHome, 'custom-state', 'configured-openclaw.json');
     await mkdir(join(testHome, 'custom-state'), { recursive: true });
     await writeFile(configuredPath, JSON.stringify({
@@ -1607,8 +1607,8 @@ describe('auth-backed provider discovery', () => {
     process.env.OPENCLAW_CONFIG_PATH = configuredPath;
 
     try {
-      const { getOpenClawProvidersConfig } = await import('@electron/utils/openclaw-auth');
-      const result = await getOpenClawProvidersConfig();
+      const { getinsightAllProvidersConfig } = await import('@electron/utils/openclaw-auth');
+      const result = await getinsightAllProvidersConfig();
 
       expect(result.defaultModel).toBe('custom-resolved/model-a');
       expect(result.providers).toHaveProperty('custom-resolved');
@@ -1622,7 +1622,7 @@ describe('auth-backed provider discovery', () => {
   });
 
   it('removes all matching auth profiles for a deleted provider so it does not reappear', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true, workspace: '~/.openclaw/workspace', agentDir: '~/.openclaw/agents/main/agent' },
@@ -1681,18 +1681,18 @@ describe('auth-backed provider discovery', () => {
     });
 
     const {
-      getActiveOpenClawProviders,
-      getOpenClawProvidersConfig,
-      removeProviderFromOpenClaw,
+      getActiveinsightAllProviders,
+      getinsightAllProvidersConfig,
+      removeProviderFrominsightAll,
     } = await import('@electron/utils/openclaw-auth');
 
-    await expect(getActiveOpenClawProviders()).resolves.toEqual(new Set(['custom-abc12345']));
+    await expect(getActiveinsightAllProviders()).resolves.toEqual(new Set(['custom-abc12345']));
 
-    await removeProviderFromOpenClaw('custom-abc12345');
+    await removeProviderFrominsightAll('custom-abc12345');
 
     const mainProfiles = await readAuthProfiles('main');
-    const config = await readOpenClawJson();
-    const result = await getOpenClawProvidersConfig();
+    const config = await readinsightAllJson();
+    const result = await getinsightAllProvidersConfig();
 
     expect(mainProfiles.profiles).toEqual({});
     expect(mainProfiles.order).toEqual({});
@@ -1700,11 +1700,11 @@ describe('auth-backed provider discovery', () => {
     expect((config.auth as { profiles?: Record<string, unknown> }).profiles).toEqual({});
     expect((config.models as { providers?: Record<string, unknown> }).providers).toEqual({});
     expect(result.providers).toEqual({});
-    await expect(getActiveOpenClawProviders()).resolves.toEqual(new Set());
+    await expect(getActiveinsightAllProviders()).resolves.toEqual(new Set());
   });
 
   it('removes deleted provider refs from agent defaults and overrides', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'custom-abc12345': {
@@ -1730,10 +1730,10 @@ describe('auth-backed provider discovery', () => {
       },
     });
 
-    const { removeProviderFromOpenClaw } = await import('@electron/utils/openclaw-auth');
-    await removeProviderFromOpenClaw('custom-abc12345');
+    const { removeProviderFrominsightAll } = await import('@electron/utils/openclaw-auth');
+    await removeProviderFrominsightAll('custom-abc12345');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const agents = config.agents as {
       defaults?: { model?: { primary?: string; fallbacks?: string[] } };
       list?: Array<{ id: string; model?: { primary?: string } }>;
@@ -1768,15 +1768,15 @@ describe('auth-backed provider discovery', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
-    const { removeProviderFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
+    const { removeProviderFrominsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await expect(removeProviderFromOpenClaw('custom-abc12345')).rejects.toThrow('config.set unavailable');
+    await expect(removeProviderFrominsightAll('custom-abc12345')).rejects.toThrow('config.set unavailable');
   });
 
   it('removes merged and legacy minimax plugin registrations when deleting the provider', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['minimax', 'minimax-portal-auth', 'custom-plugin'],
         entries: {
@@ -1811,15 +1811,15 @@ describe('auth-backed provider discovery', () => {
       const actual = await vi.importActual<typeof import('@electron/utils/paths')>('@electron/utils/paths');
       return {
         ...actual,
-        getOpenClawResolvedDir: () => openclawDir,
+        getinsightAllResolvedDir: () => openclawDir,
       };
     });
 
-    const { removeProviderFromOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { removeProviderFrominsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await removeProviderFromOpenClaw('minimax-portal');
+    await removeProviderFrominsightAll('minimax-portal');
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
@@ -1831,7 +1831,7 @@ describe('auth-backed provider discovery', () => {
   });
 
   it('sanitizes stale minimax-portal-auth entries when merged minimax plugin is installed', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       plugins: {
         allow: ['minimax-portal-auth', 'custom-plugin'],
         entries: {
@@ -1857,15 +1857,15 @@ describe('auth-backed provider discovery', () => {
       const actual = await vi.importActual<typeof import('@electron/utils/paths')>('@electron/utils/paths');
       return {
         ...actual,
-        getOpenClawResolvedDir: () => openclawDir,
+        getinsightAllResolvedDir: () => openclawDir,
       };
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
 
-    await sanitizeOpenClawConfig();
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const plugins = result.plugins as Record<string, unknown>;
     const allow = plugins.allow as string[];
     const entries = plugins.entries as Record<string, Record<string, unknown>>;
@@ -1888,7 +1888,7 @@ describe('assertValidApiProtocol guard at write sites', () => {
     vi.doUnmock('@electron/utils/provider-registry');
   });
 
-  it('setOpenClawDefaultModel throws InvalidApiProtocolError and leaves openclaw.json untouched when registry api is invalid', async () => {
+  it('setinsightAllDefaultModel throws InvalidApiProtocolError and leaves openclaw.json untouched when registry api is invalid', async () => {
     const initialConfig = {
       agents: {
         list: [
@@ -1910,8 +1910,8 @@ describe('assertValidApiProtocol guard at write sites', () => {
         },
       },
     };
-    await writeOpenClawJson(initialConfig);
-    const before = await readOpenClawJson();
+    await writeinsightAllJson(initialConfig);
+    const before = await readinsightAllJson();
 
     vi.doMock('@electron/utils/provider-registry', async () => {
       const actual = await vi.importActual<typeof import('@electron/utils/provider-registry')>(
@@ -1928,12 +1928,12 @@ describe('assertValidApiProtocol guard at write sites', () => {
       };
     });
 
-    const { setOpenClawDefaultModel } = await import('@electron/utils/openclaw-auth');
+    const { setinsightAllDefaultModel } = await import('@electron/utils/openclaw-auth');
     const { InvalidApiProtocolError } = await import('@electron/shared/providers/types');
 
-    await expect(setOpenClawDefaultModel('bogus-provider')).rejects.toBeInstanceOf(InvalidApiProtocolError);
+    await expect(setinsightAllDefaultModel('bogus-provider')).rejects.toBeInstanceOf(InvalidApiProtocolError);
 
-    const after = await readOpenClawJson();
+    const after = await readinsightAllJson();
     expect(after).toEqual(before);
   });
 });
@@ -1946,18 +1946,18 @@ describe('anthropic-messages maxTokens', () => {
     await rm(testUserData, { recursive: true, force: true });
   });
 
-  it('adds maxTokens when syncProviderConfigToOpenClaw writes anthropic-messages providers', async () => {
-    await writeOpenClawJson({ models: { providers: {} } });
+  it('adds maxTokens when syncProviderConfigToinsightAll writes anthropic-messages providers', async () => {
+    await writeinsightAllJson({ models: { providers: {} } });
 
-    const { syncProviderConfigToOpenClaw, MINIMAX_M27_MAX_TOKENS } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll, MINIMAX_M27_MAX_TOKENS } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('minimax-portal', 'MiniMax-M2.7', {
+    await syncProviderConfigToinsightAll('minimax-portal', 'MiniMax-M2.7', {
       baseUrl: 'https://api.minimax.io/anthropic',
       api: 'anthropic-messages',
       apiKeyEnv: 'minimax-oauth',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const provider = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = provider['minimax-portal'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -1968,17 +1968,17 @@ describe('anthropic-messages maxTokens', () => {
   });
 
   it('adds maxTokens for custom providers using anthropic-messages', async () => {
-    await writeOpenClawJson({ models: { providers: {} } });
+    await writeinsightAllJson({ models: { providers: {} } });
 
-    const { syncProviderConfigToOpenClaw, ANTHROPIC_MESSAGES_DEFAULT_MAX_TOKENS } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll, ANTHROPIC_MESSAGES_DEFAULT_MAX_TOKENS } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('custom-a1b2c3d4', 'my-claude-proxy', {
+    await syncProviderConfigToinsightAll('custom-a1b2c3d4', 'my-claude-proxy', {
       baseUrl: 'https://example.com/anthropic',
       api: 'anthropic-messages',
       apiKeyEnv: 'CUSTOM_API_KEY',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const provider = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = provider['custom-a1b2c3d4'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -1988,17 +1988,17 @@ describe('anthropic-messages maxTokens', () => {
   });
 
   it('does not inject maxTokens for openai-completions providers', async () => {
-    await writeOpenClawJson({ models: { providers: {} } });
+    await writeinsightAllJson({ models: { providers: {} } });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('custom-a1b2c3d4', 'gpt-proxy', {
+    await syncProviderConfigToinsightAll('custom-a1b2c3d4', 'gpt-proxy', {
       baseUrl: 'https://example.com/v1',
       api: 'openai-completions',
       apiKeyEnv: 'CUSTOM_API_KEY',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const provider = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const entry = provider['custom-a1b2c3d4'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
@@ -2008,7 +2008,7 @@ describe('anthropic-messages maxTokens', () => {
   });
 
   it('heals legacy anthropic-messages entries missing maxTokens', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'minimax-portal': {
@@ -2025,7 +2025,7 @@ describe('anthropic-messages maxTokens', () => {
 
     expect(healed).toEqual(['minimax-portal']);
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const entry = ((result.models as Record<string, unknown>).providers as Record<string, unknown>)['minimax-portal'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
 
@@ -2034,7 +2034,7 @@ describe('anthropic-messages maxTokens', () => {
   });
 
   it('preserves a valid user-configured maxTokens value', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'custom-a1b2c3d4': {
@@ -2052,7 +2052,7 @@ describe('anthropic-messages maxTokens', () => {
 
     expect(healed).toEqual([]);
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const entry = ((result.models as Record<string, unknown>).providers as Record<string, unknown>)['custom-a1b2c3d4'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
 
@@ -2060,8 +2060,8 @@ describe('anthropic-messages maxTokens', () => {
     expect(models[0]?.maxTokens).toBe(12288);
   });
 
-  it('repairs invalid zero maxTokens during sanitizeOpenClawConfig', async () => {
-    await writeOpenClawJson({
+  it('repairs invalid zero maxTokens during sanitizeinsightAllConfig', async () => {
+    await writeinsightAllJson({
       models: {
         providers: {
           'minimax-portal': {
@@ -2073,10 +2073,10 @@ describe('anthropic-messages maxTokens', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig, MINIMAX_M27_MAX_TOKENS } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig, MINIMAX_M27_MAX_TOKENS } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const entry = ((result.models as Record<string, unknown>).providers as Record<string, unknown>)['minimax-portal'] as Record<string, unknown>;
     const models = entry.models as Array<Record<string, unknown>>;
 
@@ -2085,7 +2085,7 @@ describe('anthropic-messages maxTokens', () => {
   });
 
   it('adds maxTokens to agent models.json for anthropic-messages providers', async () => {
-    await writeOpenClawJson({ agents: { list: [{ id: 'main', name: 'Main' }] } });
+    await writeinsightAllJson({ agents: { list: [{ id: 'main', name: 'Main' }] } });
 
     const { updateAgentModelProvider, MINIMAX_M27_MAX_TOKENS } = await import('@electron/utils/openclaw-auth');
 
@@ -2109,7 +2109,7 @@ describe('anthropic-messages maxTokens', () => {
   });
 
   it('repairs legacy agent models.json anthropic-messages entries during update', async () => {
-    await writeOpenClawJson({ agents: { list: [{ id: 'main', name: 'Main' }] } });
+    await writeinsightAllJson({ agents: { list: [{ id: 'main', name: 'Main' }] } });
     const agentDir = join(testHome, '.openclaw', 'agents', 'main', 'agent');
     await mkdir(agentDir, { recursive: true });
     await writeFile(join(agentDir, 'models.json'), JSON.stringify({
@@ -2148,8 +2148,8 @@ describe('pruneInvalidApiProviderEntries', () => {
     await rm(testUserData, { recursive: true, force: true });
   });
 
-  it('removes only the entries whose api field is not in the OpenClaw allowlist', async () => {
-    await writeOpenClawJson({
+  it('removes only the entries whose api field is not in the insightAll allowlist', async () => {
+    await writeinsightAllJson({
       agents: { list: [{ id: 'main', name: 'Main', default: true, workspace: '~/.openclaw/workspace', agentDir: '~/.openclaw/agents/main/agent' }] },
       models: {
         providers: {
@@ -2179,7 +2179,7 @@ describe('pruneInvalidApiProviderEntries', () => {
     const removed = await pruneInvalidApiProviderEntries();
     expect(new Set(removed)).toEqual(new Set(['openrouter', 'someBroken']));
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     expect(Object.keys(providers).sort()).toEqual(['ark', 'minimax-portal']);
     expect((providers['minimax-portal'] as { api: string }).api).toBe('anthropic-messages');
@@ -2187,7 +2187,7 @@ describe('pruneInvalidApiProviderEntries', () => {
   });
 
   it('returns an empty array and leaves the file untouched when all entries are valid', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'minimax-portal': {
@@ -2197,18 +2197,18 @@ describe('pruneInvalidApiProviderEntries', () => {
         },
       },
     });
-    const before = await readOpenClawJson();
+    const before = await readinsightAllJson();
 
     const { pruneInvalidApiProviderEntries } = await import('@electron/utils/openclaw-auth');
     const removed = await pruneInvalidApiProviderEntries();
 
     expect(removed).toEqual([]);
-    const after = await readOpenClawJson();
+    const after = await readinsightAllJson();
     expect(after).toEqual(before);
   });
 
   it('migrates legacy openai-codex-responses api values instead of pruning them', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'openai-codex': {
@@ -2227,7 +2227,7 @@ describe('pruneInvalidApiProviderEntries', () => {
     const removed = await pruneInvalidApiProviderEntries();
 
     expect(removed).toEqual(['openrouter']);
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     expect(providers['openai-codex']).toBeUndefined();
     expect((providers.openai as { api: string }).api).toBe('openai-chatgpt-responses');
@@ -2243,20 +2243,20 @@ describe('openai agentRuntime pin', () => {
     await rm(testUserData, { recursive: true, force: true });
   });
 
-  it('pins agentRuntime to the embedded "pi" runtime when syncProviderConfigToOpenClaw writes the openai entry', async () => {
-    await writeOpenClawJson({
+  it('pins agentRuntime to the embedded "pi" runtime when syncProviderConfigToinsightAll writes the openai entry', async () => {
+    await writeinsightAllJson({
       models: { providers: {} },
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('openai', 'gpt-5.5', {
+    await syncProviderConfigToinsightAll('openai', 'gpt-5.5', {
       baseUrl: 'https://api.openai.com/v1',
       api: 'openai-responses',
       apiKeyEnv: 'OPENAI_API_KEY',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const openai = providers.openai as Record<string, unknown>;
 
@@ -2267,18 +2267,18 @@ describe('openai agentRuntime pin', () => {
   });
 
   it('pins agentRuntime to the embedded "pi" runtime for the OAuth openai-codex provider entry', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: { providers: {} },
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('openai-codex', 'gpt-5.5', {
+    await syncProviderConfigToinsightAll('openai-codex', 'gpt-5.5', {
       baseUrl: 'https://api.openai.com/v1',
       api: 'openai-chatgpt-responses',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const codex = providers['openai-codex'] as Record<string, unknown>;
 
@@ -2289,7 +2289,7 @@ describe('openai agentRuntime pin', () => {
   });
 
   it('preserves a user-provided agentRuntime override on the openai entry', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           openai: {
@@ -2303,15 +2303,15 @@ describe('openai agentRuntime pin', () => {
       },
     });
 
-    const { syncProviderConfigToOpenClaw } = await import('@electron/utils/openclaw-auth');
+    const { syncProviderConfigToinsightAll } = await import('@electron/utils/openclaw-auth');
 
-    await syncProviderConfigToOpenClaw('openai', 'gpt-5.5', {
+    await syncProviderConfigToinsightAll('openai', 'gpt-5.5', {
       baseUrl: 'https://api.openai.com/v1',
       api: 'openai-responses',
       apiKeyEnv: 'OPENAI_API_KEY',
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const openai = providers.openai as Record<string, unknown>;
 
@@ -2327,8 +2327,8 @@ describe('syncOpenAiCompatibleImageRelay', () => {
     await rm(testUserData, { recursive: true, force: true });
   });
 
-  it('writes a ClawX-owned provider with a custom image base URL without changing OpenAI chat config', async () => {
-    await writeOpenClawJson({
+  it('writes a insightAllX-owned provider with a custom image base URL without changing OpenAI chat config', async () => {
+    await writeinsightAllJson({
       models: {
         providers: {
           openai: { baseUrl: 'https://api.openai.com/v1', api: 'openai-responses', models: [] },
@@ -2344,10 +2344,10 @@ describe('syncOpenAiCompatibleImageRelay', () => {
       imageModelIds: ['gpt-image-2'],
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const openai = providers.openai as Record<string, unknown>;
-    const imageRelay = providers['clawx-openai-image'] as Record<string, unknown>;
+    const imageRelay = providers['insightallx-openai-image'] as Record<string, unknown>;
     expect(openai.baseUrl).toBe('https://api.openai.com/v1');
     expect(openai.api).toBe('openai-responses');
     expect(imageRelay.baseUrl).toBe('https://relay.example.com/v1');
@@ -2357,17 +2357,17 @@ describe('syncOpenAiCompatibleImageRelay', () => {
 
     const plugins = result.plugins as Record<string, unknown>;
     const entries = plugins.entries as Record<string, unknown>;
-    expect((entries['clawx-openai-image'] as Record<string, unknown>).enabled).toBe(true);
+    expect((entries['insightallx-openai-image'] as Record<string, unknown>).enabled).toBe(true);
 
     const auth = await readAuthProfiles('main');
-    expect((auth.profiles['clawx-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
+    expect((auth.profiles['insightallx-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
   });
 
   it('preserves metadata for retained relay models while dropping deselected models', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
-          'clawx-openai-image': {
+          'insightallx-openai-image': {
             baseUrl: 'https://old-relay.example.com/v1',
             api: 'openai-completions',
             models: [
@@ -2386,28 +2386,28 @@ describe('syncOpenAiCompatibleImageRelay', () => {
       imageModelIds: ['gpt-image-2'],
     });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
-    const imageRelay = providers['clawx-openai-image'] as Record<string, unknown>;
+    const imageRelay = providers['insightallx-openai-image'] as Record<string, unknown>;
     expect(imageRelay.models).toEqual([
       { id: 'gpt-image-2', name: 'GPT Image 2', contextWindow: 1234 },
     ]);
   });
 
-  it('removes only the ClawX image provider when relay is disabled', async () => {
-    await writeOpenClawJson({
+  it('removes only the insightAllX image provider when relay is disabled', async () => {
+    await writeinsightAllJson({
       models: {
         providers: {
           openai: { baseUrl: 'https://api.openai.com/v1', api: 'openai-responses', models: [] },
-          'clawx-openai-image': { baseUrl: 'https://relay.example.com/v1', api: 'openai-completions', models: [] },
+          'insightallx-openai-image': { baseUrl: 'https://relay.example.com/v1', api: 'openai-completions', models: [] },
         },
       },
       agents: {
         defaults: {
           imageGenerationModel: {
-            primary: 'clawx-openai-image/gpt-image-2',
+            primary: 'insightallx-openai-image/gpt-image-2',
             fallbacks: [
-              'clawx-openai-image/old-image',
+              'insightallx-openai-image/old-image',
               'google/gemini-3.1-flash-image-preview',
             ],
             timeoutMs: 180000,
@@ -2416,18 +2416,18 @@ describe('syncOpenAiCompatibleImageRelay', () => {
         },
       },
       plugins: {
-        allow: ['clawx-openai-image'],
-        entries: { 'clawx-openai-image': { enabled: true } },
+        allow: ['insightallx-openai-image'],
+        entries: { 'insightallx-openai-image': { enabled: true } },
       },
     });
 
     const { syncOpenAiCompatibleImageRelay } = await import('@electron/utils/openclaw-auth');
     await syncOpenAiCompatibleImageRelay({ enabled: false });
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     expect(providers.openai).toEqual({ baseUrl: 'https://api.openai.com/v1', api: 'openai-responses', models: [] });
-    expect(providers['clawx-openai-image']).toBeUndefined();
+    expect(providers['insightallx-openai-image']).toBeUndefined();
     const defaults = (result.agents as Record<string, unknown>).defaults as Record<string, unknown>;
     expect(defaults.imageGenerationModel).toEqual({
       primary: 'google/gemini-3.1-flash-image-preview',
@@ -2439,7 +2439,7 @@ describe('syncOpenAiCompatibleImageRelay', () => {
   });
 });
 
-describe('setOpenClawDefaultModel for OpenAI OAuth', () => {
+describe('setinsightAllDefaultModel for OpenAI OAuth', () => {
   beforeEach(async () => {
     vi.doUnmock('@electron/utils/provider-registry');
     vi.resetModules();
@@ -2449,14 +2449,14 @@ describe('setOpenClawDefaultModel for OpenAI OAuth', () => {
   });
 
   it('writes models.providers.openai with a pinned pi runtime for legacy openai-codex calls', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: { providers: {} },
     });
 
-    const { setOpenClawDefaultModel } = await import('@electron/utils/openclaw-auth');
-    await setOpenClawDefaultModel('openai-codex', 'openai-codex/gpt-5.5');
+    const { setinsightAllDefaultModel } = await import('@electron/utils/openclaw-auth');
+    await setinsightAllDefaultModel('openai-codex', 'openai-codex/gpt-5.5');
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const openai = providers.openai as Record<string, unknown>;
     const defaults = ((result.agents as Record<string, unknown>).defaults as Record<string, unknown>).model as Record<string, unknown>;
@@ -2469,7 +2469,7 @@ describe('setOpenClawDefaultModel for OpenAI OAuth', () => {
   });
 });
 
-describe('ensureOpenClawProviderAgentRuntimePins', () => {
+describe('ensureinsightAllProviderAgentRuntimePins', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.restoreAllMocks();
@@ -2478,7 +2478,7 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
   });
 
   it('pins agentRuntime:{id:"pi"} on legacy openai entries that lack it', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           openai: {
@@ -2491,11 +2491,11 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
       },
     });
 
-    const { ensureOpenClawProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
-    const pinned = await ensureOpenClawProviderAgentRuntimePins();
+    const { ensureinsightAllProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
+    const pinned = await ensureinsightAllProviderAgentRuntimePins();
 
     expect(pinned).toEqual(['openai']);
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const openai = providers.openai as Record<string, unknown>;
     expect(openai.agentRuntime).toEqual({ id: 'pi' });
@@ -2503,7 +2503,7 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
   });
 
   it('pins agentRuntime:{id:"pi"} on legacy openai-codex OAuth entries that lack it', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'openai-codex': {
@@ -2515,18 +2515,18 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
       },
     });
 
-    const { ensureOpenClawProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
-    const pinned = await ensureOpenClawProviderAgentRuntimePins();
+    const { ensureinsightAllProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
+    const pinned = await ensureinsightAllProviderAgentRuntimePins();
 
     expect(pinned).toEqual(['openai-codex']);
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const codex = providers['openai-codex'] as Record<string, unknown>;
     expect(codex.agentRuntime).toEqual({ id: 'pi' });
   });
 
-  it('pins legacy OpenAI entries during sanitizeOpenClawConfig before Gateway launch', async () => {
-    await writeOpenClawJson({
+  it('pins legacy OpenAI entries during sanitizeinsightAllConfig before Gateway launch', async () => {
+    await writeinsightAllJson({
       models: {
         providers: {
           openai: {
@@ -2543,17 +2543,17 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     expect((providers.openai as Record<string, unknown>).agentRuntime).toEqual({ id: 'pi' });
     expect(providers['openai-codex']).toBeUndefined();
   });
 
-  it('migrates legacy openai-codex-responses api values during sanitizeOpenClawConfig', async () => {
-    await writeOpenClawJson({
+  it('migrates legacy openai-codex-responses api values during sanitizeinsightAllConfig', async () => {
+    await writeinsightAllJson({
       models: {
         providers: {
           'openai-codex': {
@@ -2565,10 +2565,10 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
       },
     });
 
-    const { sanitizeOpenClawConfig } = await import('@electron/utils/openclaw-auth');
-    await sanitizeOpenClawConfig();
+    const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
+    await sanitizeinsightAllConfig();
 
-    const result = await readOpenClawJson();
+    const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     expect((providers.openai as { api: string }).api).toBe('openai-chatgpt-responses');
     expect((providers.openai as { baseUrl: string }).baseUrl).toBe('https://chatgpt.com/backend-api/codex');
@@ -2593,14 +2593,14 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
         },
       },
     };
-    await writeOpenClawJson(initial);
-    const before = await readOpenClawJson();
+    await writeinsightAllJson(initial);
+    const before = await readinsightAllJson();
 
-    const { ensureOpenClawProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
-    const pinned = await ensureOpenClawProviderAgentRuntimePins();
+    const { ensureinsightAllProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
+    const pinned = await ensureinsightAllProviderAgentRuntimePins();
 
     expect(pinned).toEqual([]);
-    const after = await readOpenClawJson();
+    const after = await readinsightAllJson();
     expect(after).toEqual(before);
   });
 
@@ -2615,14 +2615,14 @@ describe('ensureOpenClawProviderAgentRuntimePins', () => {
         },
       },
     };
-    await writeOpenClawJson(initial);
-    const before = await readOpenClawJson();
+    await writeinsightAllJson(initial);
+    const before = await readinsightAllJson();
 
-    const { ensureOpenClawProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
-    const pinned = await ensureOpenClawProviderAgentRuntimePins();
+    const { ensureinsightAllProviderAgentRuntimePins } = await import('@electron/utils/openclaw-auth');
+    const pinned = await ensureinsightAllProviderAgentRuntimePins();
 
     expect(pinned).toEqual([]);
-    const after = await readOpenClawJson();
+    const after = await readinsightAllJson();
     expect(after).toEqual(before);
   });
 });
@@ -2644,12 +2644,12 @@ describe('batchSyncConfigFields', () => {
   });
 
   it('seeds web_fetch SSRF policy for fake-IP proxy environments', async () => {
-    await writeOpenClawJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
+    await writeinsightAllJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
 
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const fetch = (config.tools as Record<string, unknown>).web as Record<string, unknown>;
     const ssrfPolicy = (fetch.fetch as Record<string, unknown>).ssrfPolicy as Record<string, unknown>;
     expect(ssrfPolicy.allowRfc2544BenchmarkRange).toBe(true);
@@ -2674,8 +2674,8 @@ describe('batchSyncConfigFields', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
 
     await batchSyncConfigFields('new-token');
@@ -2685,7 +2685,7 @@ describe('batchSyncConfigFields', () => {
   });
 
   it('does not override explicit web_fetch SSRF policy opt-outs', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       gateway: { auth: { mode: 'token', token: 'old' } },
       tools: {
         web: {
@@ -2702,7 +2702,7 @@ describe('batchSyncConfigFields', () => {
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const fetch = (config.tools as Record<string, unknown>).web as Record<string, unknown>;
     const ssrfPolicy = (fetch.fetch as Record<string, unknown>).ssrfPolicy as Record<string, unknown>;
     expect(ssrfPolicy.allowRfc2544BenchmarkRange).toBe(false);
@@ -2710,12 +2710,12 @@ describe('batchSyncConfigFields', () => {
   });
 
   it('seeds compaction safeguard default when compaction is unset', async () => {
-    await writeOpenClawJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
+    await writeinsightAllJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
 
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const defaults = ((config.agents as Record<string, unknown>).defaults as Record<string, unknown>);
     expect(defaults.compaction).toEqual({
       mode: 'safeguard',
@@ -2724,7 +2724,7 @@ describe('batchSyncConfigFields', () => {
   });
 
   it('backfills reserveTokensFloor on safeguard compaction seeded without a floor', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       gateway: { auth: { mode: 'token', token: 'old' } },
       agents: {
         defaults: {
@@ -2736,7 +2736,7 @@ describe('batchSyncConfigFields', () => {
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const defaults = ((config.agents as Record<string, unknown>).defaults as Record<string, unknown>);
     expect(defaults.compaction).toEqual({
       mode: 'safeguard',
@@ -2745,7 +2745,7 @@ describe('batchSyncConfigFields', () => {
   });
 
   it('does not touch an explicit compaction config', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       gateway: { auth: { mode: 'token', token: 'old' } },
       agents: {
         defaults: {
@@ -2757,25 +2757,25 @@ describe('batchSyncConfigFields', () => {
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const defaults = ((config.agents as Record<string, unknown>).defaults as Record<string, unknown>);
     expect(defaults.compaction).toEqual({ mode: 'default', reserveTokensFloor: 30000 });
   });
 
   it('seeds FTS-only memory search when no OpenAI embedding key exists', async () => {
-    await writeOpenClawJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
+    await writeinsightAllJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
 
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const defaults = ((config.agents as Record<string, unknown>).defaults as Record<string, unknown>);
     expect(defaults.memorySearch).toEqual({ enabled: true, provider: 'none' });
     expect(setSettingMock).toHaveBeenCalledWith('memorySearchFtsMigrationVersion', 1);
   });
 
-  it('keeps OpenClaw defaults when an OpenAI embedding key exists', async () => {
-    await writeOpenClawJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
+  it('keeps insightAll defaults when an OpenAI embedding key exists', async () => {
+    await writeinsightAllJson({ gateway: { auth: { mode: 'token', token: 'old' } } });
     await writeAgentAuthProfiles('main', {
       version: 1,
       profiles: {
@@ -2791,14 +2791,14 @@ describe('batchSyncConfigFields', () => {
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const defaults = ((config.agents as Record<string, unknown>).defaults as Record<string, unknown>);
     expect(defaults.memorySearch).toBeUndefined();
     expect(setSettingMock).toHaveBeenCalledWith('memorySearchFtsMigrationVersion', 1);
   });
 
   it('migrates the exact legacy disabled memory-search default once', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       gateway: { auth: { mode: 'token', token: 'old' } },
       agents: { defaults: { memorySearch: { enabled: false } } },
     });
@@ -2806,7 +2806,7 @@ describe('batchSyncConfigFields', () => {
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const defaults = ((config.agents as Record<string, unknown>).defaults as Record<string, unknown>);
     expect(defaults.memorySearch).toEqual({ enabled: true, provider: 'none' });
     expect(setSettingMock).toHaveBeenCalledWith('memorySearchFtsMigrationVersion', 1);
@@ -2818,7 +2818,7 @@ describe('batchSyncConfigFields', () => {
       if (key === 'memorySearchFtsMigrationVersion') return 1;
       return undefined;
     });
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       gateway: { auth: { mode: 'token', token: 'old' } },
       agents: { defaults: { memorySearch: { enabled: false } } },
     });
@@ -2826,14 +2826,14 @@ describe('batchSyncConfigFields', () => {
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const defaults = ((config.agents as Record<string, unknown>).defaults as Record<string, unknown>);
     expect(defaults.memorySearch).toEqual({ enabled: false });
     expect(setSettingMock).not.toHaveBeenCalled();
   });
 
   it('backfills contextWindow on custom provider model rows that lack one', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       gateway: { auth: { mode: 'token', token: 'old' } },
       models: {
         providers: {
@@ -2857,7 +2857,7 @@ describe('batchSyncConfigFields', () => {
     const { batchSyncConfigFields } = await import('@electron/utils/openclaw-auth');
     await batchSyncConfigFields('new-token');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const providers = (config.models as Record<string, unknown>).providers as Record<string, unknown>;
     const custom = (providers['custom-enterpri'] as Record<string, unknown>).models as Array<Record<string, unknown>>;
     const moonshot = (providers.moonshot as Record<string, unknown>).models as Array<Record<string, unknown>>;

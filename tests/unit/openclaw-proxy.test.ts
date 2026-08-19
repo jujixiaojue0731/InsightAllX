@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
-  mutateOpenClawConfigMock,
+  mutateinsightAllConfigMock,
 } = vi.hoisted(() => ({
-  mutateOpenClawConfigMock: vi.fn(),
+  mutateinsightAllConfigMock: vi.fn(),
 }));
 
 vi.mock('@electron/gateway/config-delivery', () => ({
-  mutateOpenClawConfig: mutateOpenClawConfigMock,
+  mutateinsightAllConfig: mutateinsightAllConfigMock,
 }));
 
 vi.mock('@electron/utils/logger', () => ({
@@ -19,13 +19,13 @@ vi.mock('@electron/utils/logger', () => ({
   },
 }));
 
-describe('syncProxyConfigToOpenClaw', () => {
+describe('syncProxyConfigToinsightAll', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   function useCoordinatorConfig(config: Record<string, unknown>): void {
-    mutateOpenClawConfigMock.mockImplementation(async (
+    mutateinsightAllConfigMock.mockImplementation(async (
       mutator: (snapshot: Record<string, unknown>) => void | Promise<void>,
     ) => {
       const before = JSON.stringify(config);
@@ -45,9 +45,9 @@ describe('syncProxyConfigToOpenClaw', () => {
     };
     useCoordinatorConfig(config);
 
-    const { syncProxyConfigToOpenClaw } = await import('@electron/utils/openclaw-proxy');
+    const { syncProxyConfigToinsightAll } = await import('@electron/utils/openclaw-proxy');
 
-    await syncProxyConfigToOpenClaw({
+    await syncProxyConfigToinsightAll({
       proxyEnabled: false,
       proxyServer: '',
       proxyHttpServer: '',
@@ -57,7 +57,7 @@ describe('syncProxyConfigToOpenClaw', () => {
     });
 
     expect(config.channels.telegram.proxy).toBe('socks5://127.0.0.1:7891');
-    expect(mutateOpenClawConfigMock).toHaveBeenCalledOnce();
+    expect(mutateinsightAllConfigMock).toHaveBeenCalledOnce();
   });
 
   it('clears telegram proxy when explicitly requested while proxy is disabled', async () => {
@@ -71,9 +71,9 @@ describe('syncProxyConfigToOpenClaw', () => {
     };
     useCoordinatorConfig(config);
 
-    const { syncProxyConfigToOpenClaw } = await import('@electron/utils/openclaw-proxy');
+    const { syncProxyConfigToinsightAll } = await import('@electron/utils/openclaw-proxy');
 
-    await syncProxyConfigToOpenClaw({
+    await syncProxyConfigToinsightAll({
       proxyEnabled: false,
       proxyServer: '',
       proxyHttpServer: '',
@@ -84,7 +84,7 @@ describe('syncProxyConfigToOpenClaw', () => {
       preserveExistingWhenDisabled: false,
     });
 
-    expect(mutateOpenClawConfigMock).toHaveBeenCalledOnce();
+    expect(mutateinsightAllConfigMock).toHaveBeenCalledOnce();
     expect(config.channels.telegram.proxy).toBeUndefined();
   });
 });

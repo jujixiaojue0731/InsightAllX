@@ -27,7 +27,7 @@ export type HostInvokeResponse<T = unknown> = HostResponse<T>;
 declare global {
   interface Window {
     electron: ElectronAPI;
-    clawx?: {
+    insightallx?: {
       hostInvoke: <T = unknown>(request: HostInvokeRequest) => Promise<HostInvokeResponse<T>>;
     };
   }

@@ -2,11 +2,11 @@ import { create, type StoreApi } from 'zustand';
 import { hostApi, type SessionLabelSummary } from '@/lib/host-api';
 import {
   isAcpWorkingDirectoryTruncatedTitle,
-  isOpenClawSessionIdFallbackTitle,
+  isinsightAllSessionIdFallbackTitle,
   stripAcpWorkingDirectoryPrefix,
 } from '@shared/chat/session-title';
 import {
-  isOpenClawHeartbeatPollText,
+  isinsightAllHeartbeatPollText,
   OPENCLAW_HEARTBEAT_POLL_SENTINEL,
 } from '@shared/chat/openclaw-internal';
 import { useGatewayStore } from './gateway';
@@ -17,9 +17,9 @@ import {
   type GatewaySessionsChangedPayload,
 } from './chat/session-catalog';
 import {
-  findHiddenOpenClawHeartbeatSession,
-  isClawXDesktopSessionKey,
-  isOpenClawHeartbeatOnlySession,
+  findHiddeninsightAllHeartbeatSession,
+  isinsightAllXDesktopSessionKey,
+  isinsightAllHeartbeatOnlySession,
   shouldIncludeSessionInSidebarList,
 } from './chat/session-key-utils';
 import {
@@ -120,7 +120,7 @@ function isSyntheticSessionFallbackLabel(
   session: ChatSession | undefined,
   label: string | null | undefined,
 ): boolean {
-  return Boolean(session && label && isOpenClawSessionIdFallbackTitle(label, session.sessionId));
+  return Boolean(session && label && isinsightAllSessionIdFallbackTitle(label, session.sessionId));
 }
 
 function hasExplicitSessionLabel(session: ChatSession | undefined): boolean {
@@ -154,7 +154,7 @@ function toSessionLabel(text: string, maxLength = 50): string {
 }
 
 function toAutomaticSessionLabel(text: string, maxLength = 50): string {
-  if (isOpenClawHeartbeatPollText(text) || isAcpWorkingDirectoryTruncatedTitle(text)) return '';
+  if (isinsightAllHeartbeatPollText(text) || isAcpWorkingDirectoryTruncatedTitle(text)) return '';
   const textAfterInitialPrefix = stripAcpWorkingDirectoryPrefix(text);
   const cleaned = cleanSessionLabelText(textAfterInitialPrefix);
   const stripCwdExposedByCleanup = !textAfterInitialPrefix.startsWith('[Working directory: ')
@@ -163,7 +163,7 @@ function toAutomaticSessionLabel(text: string, maxLength = 50): string {
     ? stripAcpWorkingDirectoryPrefix(cleaned)
     : cleaned;
   const title = normalized.trim();
-  if (!title || isOpenClawHeartbeatPollText(title)) return '';
+  if (!title || isinsightAllHeartbeatPollText(title)) return '';
   return title.length > maxLength ? `${title.slice(0, maxLength)}…` : title;
 }
 
@@ -209,9 +209,9 @@ function isHeartbeatOnlySummaryForSession(
   session: ChatSession | undefined,
   summary: SessionLabelSummary,
 ): boolean {
-  if (!session || !isClawXDesktopSessionKey(session.key)) return false;
-  if (!summary.heartbeatOnly && !isOpenClawHeartbeatPollText(summary.firstUserText)) return false;
-  return isOpenClawHeartbeatOnlySession({
+  if (!session || !isinsightAllXDesktopSessionKey(session.key)) return false;
+  if (!summary.heartbeatOnly && !isinsightAllHeartbeatPollText(summary.firstUserText)) return false;
+  return isinsightAllHeartbeatOnlySession({
     ...session,
     lastMessagePreview: summary.firstUserText || OPENCLAW_HEARTBEAT_POLL_SENTINEL,
   });
@@ -225,12 +225,12 @@ function getHeartbeatCachedLabelCleanup(
   const staleLabelKeys = new Set<string>();
 
   for (const session of sessions) {
-    if (!isOpenClawHeartbeatPollText(sessionLabels[session.key])) continue;
+    if (!isinsightAllHeartbeatPollText(sessionLabels[session.key])) continue;
     const heartbeatMarkedSession = {
       ...session,
       lastMessagePreview: OPENCLAW_HEARTBEAT_POLL_SENTINEL,
     };
-    if (isOpenClawHeartbeatOnlySession(heartbeatMarkedSession)) hiddenSessionKeys.add(session.key);
+    if (isinsightAllHeartbeatOnlySession(heartbeatMarkedSession)) hiddenSessionKeys.add(session.key);
     else staleLabelKeys.add(session.key);
   }
 
@@ -706,7 +706,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
             let nextSessionKey = currentSessionKey || DEFAULT_SESSION_KEY;
             let replacedHiddenHeartbeatSession = false;
-            const hiddenCurrentSession = findHiddenOpenClawHeartbeatSession(
+            const hiddenCurrentSession = findHiddeninsightAllHeartbeatSession(
               nextSessionKey,
               normalizedSessions,
             );
@@ -756,7 +756,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 };
             let sessionsWithCurrent = !visibleMergedSessions.some((session) => session.key === nextSessionKey)
               && nextSessionKey
-              && isClawXDesktopSessionKey(nextSessionKey)
+              && isinsightAllXDesktopSessionKey(nextSessionKey)
               ? [
                   ...visibleMergedSessions,
                   currentSessionToInsert,

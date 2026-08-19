@@ -3,7 +3,7 @@
 /**
  * bundle-openclaw-plugins.mjs
  *
- * Build a self-contained mirror of OpenClaw third-party plugins for packaging.
+ * Build a self-contained mirror of insightAll third-party plugins for packaging.
  * Current plugins:
  *   - @soimy/dingtalk -> build/openclaw-plugins/dingtalk
  *   - @wecom/wecom-openclaw-plugin -> build/openclaw-plugins/wecom
@@ -240,7 +240,7 @@ function patchPluginId(pluginDir, expectedId) {
   }
 }
 
-echo`📦 Bundling OpenClaw plugin mirrors...`;
+echo`📦 Bundling insightAll plugin mirrors...`;
 fs.mkdirSync(OUTPUT_ROOT, { recursive: true });
 
 for (const plugin of PLUGINS) {

@@ -45,7 +45,7 @@ acceptance:
   - Renderer restores the in-flight snapshot atomically when Main confirms prompt reactivation.
   - Completed prompts release their in-flight routing and timeline state so ACP replay remains the history authority.
   - Stale generations, unrelated ACP session ids, and failed loads remain ignored.
-  - No persistent timeline cache, second history ledger, or OpenClaw source change is introduced.
+  - No persistent timeline cache, second history ledger, or insightAll source change is introduced.
 docs:
   required: true
 ---

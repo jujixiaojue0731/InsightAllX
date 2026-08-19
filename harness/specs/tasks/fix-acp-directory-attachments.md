@@ -67,7 +67,7 @@ This task fixes the mismatch where Chat staging accepts a dragged directory but 
 
 - Reading, enumerating, previewing, archiving, uploading, or copying directory contents.
 - Open With application discovery or reveal-as-file actions for directories.
-- Changing ordinary file, remote URL, or OpenClaw outgoing-media behavior.
+- Changing ordinary file, remote URL, or insightAll outgoing-media behavior.
 
 ## Acceptance Traceability
 

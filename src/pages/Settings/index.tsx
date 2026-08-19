@@ -25,7 +25,7 @@ import {
 } from '@/lib/telemetry';
 import { useTranslation } from 'react-i18next';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
-import { hostApi, type OpenClawDoctorResult } from '@/lib/host-api';
+import { hostApi, type insightAllDoctorResult } from '@/lib/host-api';
 import { hostEvents } from '@/lib/host-events';
 import { cn } from '@/lib/utils';
 type ControlUiInfo = {
@@ -85,7 +85,7 @@ export function Settings() {
   const [showLogs, setShowLogs] = useState(false);
   const [logContent, setLogContent] = useState('');
   const [doctorRunningMode, setDoctorRunningMode] = useState<'diagnose' | 'fix' | null>(null);
-  const [doctorResult, setDoctorResult] = useState<OpenClawDoctorResult | null>(null);
+  const [doctorResult, setDoctorResult] = useState<insightAllDoctorResult | null>(null);
 
   const handleShowLogs = async () => {
     try {
@@ -109,7 +109,7 @@ export function Settings() {
     }
   };
 
-  const handleRunOpenClawDoctor = async (mode: 'diagnose' | 'fix') => {
+  const handleRuninsightAllDoctor = async (mode: 'diagnose' | 'fix') => {
     setDoctorRunningMode(mode);
     try {
       const result = await hostApi.app.openClawDoctor(mode);
@@ -196,7 +196,7 @@ export function Settings() {
           setOpenclawCliError(null);
         } else {
           setOpenclawCliCommand('');
-          setOpenclawCliError(result.error || 'OpenClaw CLI unavailable');
+          setOpenclawCliError(result.error || 'insightAll CLI unavailable');
         }
       } catch (error) {
         if (cancelled) return;
@@ -221,7 +221,7 @@ export function Settings() {
   };
 
   useEffect(() => {
-    const unsubscribe = hostEvents.onOpenClawCliInstalled((installedPath) => {
+    const unsubscribe = hostEvents.oninsightAllCliInstalled((installedPath) => {
       toast.success(`openclaw CLI installed at ${installedPath}`);
     });
     return () => {
@@ -819,7 +819,7 @@ export function Settings() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => void handleRunOpenClawDoctor('diagnose')}
+                          onClick={() => void handleRuninsightAllDoctor('diagnose')}
                           disabled={doctorRunningMode !== null}
                           className="rounded-xl h-10 px-4 bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
                         >
@@ -831,7 +831,7 @@ export function Settings() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => void handleRunOpenClawDoctor('fix')}
+                          onClick={() => void handleRuninsightAllDoctor('fix')}
                           disabled={doctorRunningMode !== null}
                           className="rounded-xl h-10 px-4 bg-transparent border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5"
                         >
@@ -1075,7 +1075,7 @@ export function Settings() {
                 <Button
                   variant="link"
                   className="h-auto p-0 text-sm text-blue-500 hover:text-blue-600 font-medium"
-                  onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/ClawX')}
+                  onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/insightAllX')}
                 >
                   {t('about.github')}
                 </Button>

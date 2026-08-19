@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { request } from 'https';
 import path from 'path';
 import { logger } from './logger';
-import { getOpenClawConfigDir } from './paths';
+import { getinsightAllConfigDir } from './paths';
 
 const UV_PYTHON_INSTALL_MIRROR_URL = 'https://registry.npmmirror.com/-/binary/python-build-standalone/';
 const UV_INDEX_URL = 'https://pypi.tuna.tsinghua.edu.cn/simple/';
@@ -17,23 +17,23 @@ function quoteTomlString(value: string): string {
   return JSON.stringify(value);
 }
 
-function buildClawXUvConfigToml(): string {
+function buildinsightAllXUvConfigToml(): string {
   return [
-    '# This file is managed by ClawX.',
-    '# It lets uv use ClawX-selected mirrors even when host exec filters UV_INDEX_URL.',
+    '# This file is managed by insightAllX.',
+    '# It lets uv use insightAllX-selected mirrors even when host exec filters UV_INDEX_URL.',
     `index-url = ${quoteTomlString(UV_INDEX_URL)}`,
     `python-install-mirror = ${quoteTomlString(UV_PYTHON_INSTALL_MIRROR_URL)}`,
     '',
   ].join('\n');
 }
 
-export function getClawXUvConfigFilePath(): string {
-  return path.join(getOpenClawConfigDir(), 'clawx', 'uv.toml');
+export function getinsightAllXUvConfigFilePath(): string {
+  return path.join(getinsightAllConfigDir(), 'insightallx', 'uv.toml');
 }
 
-function ensureClawXUvConfigFile(): string | null {
-  const filePath = getClawXUvConfigFilePath();
-  const content = buildClawXUvConfigToml();
+function ensureinsightAllXUvConfigFile(): string | null {
+  const filePath = getinsightAllXUvConfigFilePath();
+  const content = buildinsightAllXUvConfigToml();
 
   try {
     mkdirSync(path.dirname(filePath), { recursive: true });
@@ -42,7 +42,7 @@ function ensureClawXUvConfigFile(): string | null {
     }
     return filePath;
   } catch (err) {
-    logger.warn('Failed to write ClawX uv config file:', err);
+    logger.warn('Failed to write insightAllX uv config file:', err);
     return null;
   }
 }
@@ -150,7 +150,7 @@ export async function getUvMirrorEnv(): Promise<Record<string, string>> {
   const isOptimized = await shouldOptimizeNetwork();
   if (!isOptimized) return {};
 
-  const uvConfigFile = ensureClawXUvConfigFile();
+  const uvConfigFile = ensureinsightAllXUvConfigFile();
   return uvConfigFile
     ? { ...UV_MIRROR_ENV, UV_CONFIG_FILE: uvConfigFile }
     : { ...UV_MIRROR_ENV };

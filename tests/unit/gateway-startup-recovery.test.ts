@@ -53,7 +53,7 @@ describe('gateway startup recovery heuristics', () => {
     expect(isInvalidConfigSignal('skills: Unrecognized key: "enabled"')).toBe(true);
     expect(isInvalidConfigSignal('Startup migration blocked by legacy state')).toBe(true);
     expect(isInvalidConfigSignal(
-      'OpenClaw startup migrations did not complete cleanly; refusing to report the gateway ready.',
+      'insightAll startup migrations did not complete cleanly; refusing to report the gateway ready.',
     )).toBe(true);
     expect(isInvalidConfigSignal('Run: openclaw doctor --fix')).toBe(true);
     expect(isInvalidConfigSignal('Gateway ready after 3 attempts')).toBe(false);
@@ -61,7 +61,7 @@ describe('gateway startup recovery heuristics', () => {
 
   it('detects an active startup-migration lease that must not be restart-looped', () => {
     expect(hasStartupMigrationLockSignal(undefined, [
-      'OpenClaw startup migrations are already running for this state directory; retry after the other gateway finishes or after 2026-07-21T03:02:57.489Z.',
+      'insightAll startup migrations are already running for this state directory; retry after the other gateway finishes or after 2026-07-21T03:02:57.489Z.',
     ])).toBe(true);
     expect(hasStartupMigrationLockSignal(new Error('gateway start failed'), [])).toBe(false);
   });
@@ -137,11 +137,11 @@ describe('getGatewayStartupRecoveryAction', () => {
     expect(action).toBe('fail');
   });
 
-  it('does not retry while an OpenClaw startup-migration lease is active', () => {
+  it('does not retry while an insightAll startup-migration lease is active', () => {
     const action = getGatewayStartupRecoveryAction({
       startupError: transientError,
       startupStderrLines: [
-        'OpenClaw startup migrations are already running; retry after the other gateway finishes.',
+        'insightAll startup migrations are already running; retry after the other gateway finishes.',
       ],
       configRepairAttempted: false,
       attempt: 1,

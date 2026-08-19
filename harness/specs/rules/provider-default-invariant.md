@@ -9,7 +9,7 @@ requiredProfiles:
   - comms
 ---
 
-Provider account deletion must keep the ClawX account store and OpenClaw runtime default model aligned.
+Provider account deletion must keep the insightAllX account store and insightAll runtime default model aligned.
 
 Rules:
 
@@ -17,6 +17,6 @@ Rules:
 - deleting the current default account must select a remaining enabled account before any disabled account
 - replacement selection must be deterministic, preferring the most recently updated account within the same enabled state
 - deleting a non-default account must not change the current default
-- deleting the last account may leave the default account and OpenClaw default model unset
-- replacement defaults must be persisted through the provider service and synchronized to OpenClaw before the deleted provider runtime config is removed
+- deleting the last account may leave the default account and insightAll default model unset
+- replacement defaults must be persisted through the provider service and synchronized to insightAll before the deleted provider runtime config is removed
 - tests must cover deleting the default account, a non-default account, and the last account

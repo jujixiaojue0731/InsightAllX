@@ -260,7 +260,7 @@ describe('chat session management', () => {
     await expect(useChatStore.getState().deleteSession(deletedKey)).resolves.toEqual({ success: true });
 
     expect(useSessionAttentionStore.getState().bySessionKey[deletedKey]).toBeUndefined();
-    expect(window.localStorage.getItem('clawx.session-attention')).not.toContain(deletedKey);
+    expect(window.localStorage.getItem('insightallx.session-attention')).not.toContain(deletedKey);
   });
 
   it('retains session state when a single hard delete reports failure', async () => {

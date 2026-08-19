@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const electronState = vi.hoisted(() => ({
   isPackaged: false,
-  appPath: '/workspace/clawx',
+  appPath: '/workspace/insightallx',
   getFileIcon: vi.fn(),
 }));
 
@@ -93,13 +93,13 @@ function json(records: unknown[]): string {
 describe('attachment open-with platform service', () => {
   beforeEach(() => {
     electronState.isPackaged = false;
-    electronState.appPath = '/workspace/clawx';
+    electronState.appPath = '/workspace/insightallx';
     electronState.getFileIcon.mockReset();
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    delete process.env.CLAWX_RENDERER_SENTINEL;
+    delete process.env.INSIGHTALLX_RENDERER_SENTINEL;
   });
 
   it('normalizes macOS Unicode records, rejects malformed siblings, deduplicates, and keeps OS order after the default', async () => {
@@ -156,7 +156,7 @@ describe('attachment open-with platform service', () => {
     const service = createAttachmentOpenWithService({
       platform: 'win32',
       execFile,
-      resolveHelperPath: () => 'C:\\ClawX\\resources\\scripts\\attachment-open-with.ps1',
+      resolveHelperPath: () => 'C:\\insightAllX\\resources\\scripts\\attachment-open-with.ps1',
       loadIcon: async () => ({ isEmpty: () => true, toPNG: () => Buffer.alloc(0) }),
     });
 
@@ -329,7 +329,7 @@ describe('attachment open-with platform service', () => {
   });
 
   it('uses bounded shell-free exec options and a fixed allowlisted Main environment', async () => {
-    process.env.CLAWX_RENDERER_SENTINEL = 'must-not-cross';
+    process.env.INSIGHTALLX_RENDERER_SENTINEL = 'must-not-cross';
     const execFile = execResult(json([macRecord()]));
     const service = createAttachmentOpenWithService({
       platform: 'darwin',
@@ -354,7 +354,7 @@ describe('attachment open-with platform service', () => {
       windowsHide: true,
       shell: false,
     });
-    expect(options.env).not.toHaveProperty('CLAWX_RENDERER_SENTINEL');
+    expect(options.env).not.toHaveProperty('INSIGHTALLX_RENDERER_SENTINEL');
     expect(Object.keys(options.env as object)).toEqual(expect.arrayContaining(['PATH']));
     expect(Object.keys(options.env as object)).not.toEqual(expect.arrayContaining(['NODE_OPTIONS']));
   });
@@ -466,7 +466,7 @@ describe('attachment open-with platform service', () => {
   });
 
   it('passes Windows prepare-open separate Main path and opaque ID, then sends only the post-ready path', async () => {
-    process.env.CLAWX_RENDERER_SENTINEL = 'must-not-cross';
+    process.env.INSIGHTALLX_RENDERER_SENTINEL = 'must-not-cross';
     const child = new FakeChildProcess();
     const spawn = spawnResult(child);
     const opaqueId = createHash('sha256').update('win32\0native').digest('hex');
@@ -480,7 +480,7 @@ describe('attachment open-with platform service', () => {
     const service = createAttachmentOpenWithService({
       platform: 'win32',
       spawn,
-      resolveHelperPath: () => 'C:\\ClawX\\resources\\scripts\\attachment-open-with.ps1',
+      resolveHelperPath: () => 'C:\\insightAllX\\resources\\scripts\\attachment-open-with.ps1',
     });
     const revalidateFile = vi.fn(async () => {
       events.push('revalidate');
@@ -509,13 +509,13 @@ describe('attachment open-with platform service', () => {
       '-ExecutionPolicy',
       'Bypass',
       '-File',
-      'C:\\ClawX\\resources\\scripts\\attachment-open-with.ps1',
+      'C:\\insightAllX\\resources\\scripts\\attachment-open-with.ps1',
       'prepare-open',
       'C:\\Users\\Me\\initial report.txt',
       opaqueId,
     ]);
     expect(options).toMatchObject({ windowsHide: true, shell: false });
-    expect(options.env).not.toHaveProperty('CLAWX_RENDERER_SENTINEL');
+    expect(options.env).not.toHaveProperty('INSIGHTALLX_RENDERER_SENTINEL');
   });
 
   it('rejects a Windows handler that the fresh helper does not retain without revalidating or invoking', async () => {
@@ -644,7 +644,7 @@ describe('attachment open-with platform service', () => {
     const dev = createAttachmentOpenWithService({ platform: 'win32', execFile: devExec });
     await dev.list('C:\\report.txt');
     expect((vi.mocked(devExec).mock.calls[0]?.[1] as string[])[6]).toBe(
-      join('/workspace/clawx', 'resources', 'scripts', 'attachment-open-with.ps1'),
+      join('/workspace/insightallx', 'resources', 'scripts', 'attachment-open-with.ps1'),
     );
 
     const originalResourcesPath = process.resourcesPath;
@@ -652,13 +652,13 @@ describe('attachment open-with platform service', () => {
       electronState.isPackaged = true;
       Object.defineProperty(process, 'resourcesPath', {
         configurable: true,
-        value: 'C:\\Program Files\\ClawX\\resources',
+        value: 'C:\\Program Files\\insightAllX\\resources',
       });
       const packagedExec = execResult('[]');
       const packaged = createAttachmentOpenWithService({ platform: 'win32', execFile: packagedExec });
       await packaged.list('C:\\report.txt');
       expect((vi.mocked(packagedExec).mock.calls[0]?.[1] as string[])[6]).toBe(
-        join('C:\\Program Files\\ClawX\\resources', 'resources', 'scripts', 'attachment-open-with.ps1'),
+        join('C:\\Program Files\\insightAllX\\resources', 'resources', 'scripts', 'attachment-open-with.ps1'),
       );
     } finally {
       Object.defineProperty(process, 'resourcesPath', {

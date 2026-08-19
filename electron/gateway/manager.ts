@@ -1,6 +1,6 @@
 /**
  * Gateway Process Manager
- * Manages the OpenClaw Gateway process lifecycle
+ * Manages the insightAll Gateway process lifecycle
  */
 import { app } from 'electron';
 import path from 'path';
@@ -24,9 +24,9 @@ import {
   type GatewayLifecycleState,
   getReconnectScheduleDecision,
   getReconnectSkipReason,
-  isOpenClawFatalConfigExitCode,
+  isinsightAllFatalConfigExitCode,
 } from './process-policy';
-import { removeOpenClaw2026_7_1UpgradeSnapshot } from '../utils/openclaw-upgrade-snapshot';
+import { removeinsightAll2026_7_1UpgradeSnapshot } from '../utils/openclaw-upgrade-snapshot';
 import {
   clearPendingGatewayRequests,
   rejectPendingGatewayRequest,
@@ -39,7 +39,7 @@ import { prepareGatewayLaunchContext } from './config-sync';
 import { connectGatewaySocket, waitForGatewayReady } from './ws-client';
 import {
   findExistingGatewayProcess,
-  runOpenClawDoctorRepair,
+  runinsightAllDoctorRepair,
   terminateOwnedGatewayProcess,
   unloadLaunchctlGatewayService,
   waitForPortFree,
@@ -166,7 +166,7 @@ export interface GatewayManagerEvents {
 
 /**
  * Gateway Manager
- * Handles starting, stopping, and communicating with the OpenClaw Gateway
+ * Handles starting, stopping, and communicating with the insightAll Gateway
  */
 export class GatewayManager extends EventEmitter {
   private process: Electron.UtilityProcess | null = null;
@@ -246,10 +246,10 @@ export class GatewayManager extends EventEmitter {
         logger.info('Gateway subsystems ready (event received)');
         this.setStatus({ gatewayReady: true });
       }
-      void this.cleanupOpenClawUpgradeSnapshot();
+      void this.cleanupinsightAllUpgradeSnapshot();
     });
     this.on('gateway:health', (payload) => {
-      this.capabilityMonitor.recordOpenClawHealth(payload);
+      this.capabilityMonitor.recordinsightAllHealth(payload);
     });
     this.on('gateway:presence', (payload) => {
       this.capabilityMonitor.recordPresence(payload);
@@ -259,7 +259,7 @@ export class GatewayManager extends EventEmitter {
   private async initDeviceIdentity(): Promise<void> {
     if (this.deviceIdentity) return; // already loaded
     try {
-      const identityPath = path.join(app.getPath('userData'), 'clawx-device-identity.json');
+      const identityPath = path.join(app.getPath('userData'), 'insightallx-device-identity.json');
       this.deviceIdentity = await loadOrCreateDeviceIdentity(identityPath);
       logger.debug(`Device identity loaded (deviceId=${this.deviceIdentity.deviceId})`);
     } catch (err) {
@@ -454,7 +454,7 @@ export class GatewayManager extends EventEmitter {
             });
           }
         },
-        runDoctorRepair: async () => await runOpenClawDoctorRepair(),
+        runDoctorRepair: async () => await runinsightAllDoctorRepair(),
         onDoctorRepairSuccess: () => {
           this.setStatus({ state: 'starting', error: undefined, reconnectAttempts: 0 });
         },
@@ -472,12 +472,12 @@ export class GatewayManager extends EventEmitter {
         error
       );
       this.setStatus({ state: 'error', error: String(error) });
-      const fatalStartupFailure = isOpenClawFatalConfigExitCode(this.processExitCode)
+      const fatalStartupFailure = isinsightAllFatalConfigExitCode(this.processExitCode)
         || hasFatalRuntimeFailureSignal(error, this.recentStartupStderrLines)
         || hasStartupMigrationLockSignal(error, this.recentStartupStderrLines)
         || hasInvalidConfigFailureSignal(error, this.recentStartupStderrLines);
       if (fatalStartupFailure) {
-        // OpenClaw 2026.7.1 uses EX_CONFIG for fatal configuration failures.
+        // insightAll 2026.7.1 uses EX_CONFIG for fatal configuration failures.
         // Runtime and SQLite compatibility failures are likewise not repaired
         // by restarting the same binary, so leave recovery to a manual start.
         this.shouldReconnect = false;
@@ -754,7 +754,7 @@ export class GatewayManager extends EventEmitter {
         // A fast Gateway can emit gateway.ready before the WebSocket client is
         // attached. A successful router probe is equivalent readiness, so it
         // must also complete the one-time migration snapshot lifecycle.
-        void this.cleanupOpenClawUpgradeSnapshot();
+        void this.cleanupinsightAllUpgradeSnapshot();
       }
     } catch (error) {
       this.capabilityMonitor.recordCoreProbe({
@@ -772,7 +772,7 @@ export class GatewayManager extends EventEmitter {
 
   /**
    * Make an RPC call to the Gateway
-   * Uses OpenClaw protocol format: { type: "req", id: "...", method: "...", params: {...} }
+   * Uses insightAll protocol format: { type: "req", id: "...", method: "...", params: {...} }
    */
   async rpc<T>(method: string, params?: unknown, timeoutMs = 30000): Promise<T> {
     const startedAt = Date.now();
@@ -796,7 +796,7 @@ export class GatewayManager extends EventEmitter {
         timeout,
       });
 
-      // Send request using OpenClaw protocol format
+      // Send request using insightAll protocol format
       const request = {
         type: 'req',
         id,
@@ -869,7 +869,7 @@ export class GatewayManager extends EventEmitter {
 
   /**
    * Check Gateway health via WebSocket ping
-   * OpenClaw Gateway doesn't have an HTTP /health endpoint
+   * insightAll Gateway doesn't have an HTTP /health endpoint
    */
   private async checkTransportHealth(): Promise<{ ok: boolean; error?: string; uptime?: number }> {
     try {
@@ -895,10 +895,10 @@ export class GatewayManager extends EventEmitter {
       ]);
 
       if (healthResult.status === 'fulfilled') {
-        this.capabilityMonitor.recordOpenClawHealth(healthResult.value as GatewayRuntimePayload);
+        this.capabilityMonitor.recordinsightAllHealth(healthResult.value as GatewayRuntimePayload);
       }
       if (statusResult.status === 'fulfilled') {
-        this.capabilityMonitor.recordOpenClawStatus(statusResult.value as GatewayRuntimePayload);
+        this.capabilityMonitor.recordinsightAllStatus(statusResult.value as GatewayRuntimePayload);
       }
     }
 
@@ -936,7 +936,7 @@ export class GatewayManager extends EventEmitter {
 
   /**
    * Start Gateway process
-   * Uses OpenClaw npm package from node_modules (dev) or resources (production)
+   * Uses insightAll npm package from node_modules (dev) or resources (production)
    */
   private async startProcess(): Promise<void> {
     const launchContext = await prepareGatewayLaunchContext(this.status.port);
@@ -1007,7 +1007,7 @@ export class GatewayManager extends EventEmitter {
           this.setStatus({ state: 'stopped' });
         }
 
-        const orchestratedStartupFailure = isOpenClawFatalConfigExitCode(code)
+        const orchestratedStartupFailure = isinsightAllFatalConfigExitCode(code)
           || hasFatalRuntimeFailureSignal(undefined, this.recentStartupStderrLines)
           || hasStartupMigrationLockSignal(undefined, this.recentStartupStderrLines)
           || hasInvalidConfigFailureSignal(undefined, this.recentStartupStderrLines);
@@ -1113,7 +1113,7 @@ export class GatewayManager extends EventEmitter {
 
     const msg = message as Record<string, unknown>;
 
-    // Handle OpenClaw protocol response format: { type: "res", id: "...", ok: true/false, ... }
+    // Handle insightAll protocol response format: { type: "res", id: "...", ok: true/false, ... }
     if (msg.type === 'res' && typeof msg.id === 'string') {
       if (msg.ok === false || msg.error) {
         const errorObj = msg.error as { message?: string; code?: number } | undefined;
@@ -1126,7 +1126,7 @@ export class GatewayManager extends EventEmitter {
       }
     }
 
-    // Handle OpenClaw protocol event format: { type: "event", event: "...", payload: {...} }
+    // Handle insightAll protocol event format: { type: "event", event: "...", payload: {...} }
     if (msg.type === 'event' && typeof msg.event === 'string') {
       dispatchProtocolEvent(this, msg.event, msg.payload);
       return;
@@ -1187,17 +1187,17 @@ export class GatewayManager extends EventEmitter {
     });
   }
 
-  private async cleanupOpenClawUpgradeSnapshot(): Promise<void> {
+  private async cleanupinsightAllUpgradeSnapshot(): Promise<void> {
     if (this.upgradeSnapshotCleanupAttempted) return;
     this.upgradeSnapshotCleanupAttempted = true;
 
     try {
-      const result = await removeOpenClaw2026_7_1UpgradeSnapshot();
+      const result = await removeinsightAll2026_7_1UpgradeSnapshot();
       if (result.status === 'removed') {
-        logger.info(`[upgrade] Removed OpenClaw 2026.7.1 pre-migration snapshot: ${result.snapshotDir}`);
+        logger.info(`[upgrade] Removed insightAll 2026.7.1 pre-migration snapshot: ${result.snapshotDir}`);
       }
     } catch (error) {
-      logger.warn('[upgrade] Failed to remove OpenClaw 2026.7.1 pre-migration snapshot:', error);
+      logger.warn('[upgrade] Failed to remove insightAll 2026.7.1 pre-migration snapshot:', error);
     }
   }
 

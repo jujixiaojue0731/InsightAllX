@@ -68,7 +68,7 @@ requiredTests:
   - pnpm run harness:ci
 acceptance:
   - ACP session/load replay remains the sole authority for historical turn existence, content, and ordering.
-  - Main parses bounded OpenClaw transcript records and returns only timing candidates with normalized user anchors; Renderer never reads JSONL directly.
+  - Main parses bounded insightAll transcript records and returns only timing candidates with normalized user anchors; Renderer never reads JSONL directly.
   - A code comment at the transcript timing entry point explains that ACP loadSession does not expose enough timestamps to calculate whole-turn duration, requiring transcript supplementation.
   - Historical timing uses the real user record as its start and the latest assistant or tool-result record before the next real user as its end, excluding internal inter-session user records.
   - Renderer aligns timing by normalized ACP prompt text and duplicate occurrence from the tail, and rejects missing or ambiguous matches.
@@ -86,5 +86,5 @@ This task adds metadata-only whole-turn timing to ACP Chat. Transcript records m
 ## Out Of Scope
 
 - Provider-side model latency, time-to-first-token, reasoning duration, and individual tool duration.
-- Modifying OpenClaw or relying on its private ACP SQLite replay schema.
+- Modifying insightAll or relying on its private ACP SQLite replay schema.
 - Reconstructing missing ACP messages or process items from transcript content.

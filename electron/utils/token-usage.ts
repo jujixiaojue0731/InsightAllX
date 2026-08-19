@@ -1,6 +1,6 @@
 import { readdir, readFile, stat } from 'fs/promises';
 import { join } from 'path';
-import { getOpenClawConfigDir } from './paths';
+import { getinsightAllConfigDir } from './paths';
 import { logger } from './logger';
 import {
   extractSessionIdFromTranscriptFileName,
@@ -16,7 +16,7 @@ export {
 } from './token-usage-core';
 
 async function listAgentIdsWithSessionDirs(): Promise<string[]> {
-  const openclawDir = getOpenClawConfigDir();
+  const openclawDir = getinsightAllConfigDir();
   const agentsDir = join(openclawDir, 'agents');
   const agentIds = new Set<string>();
 
@@ -49,7 +49,7 @@ async function listAgentIdsWithSessionDirs(): Promise<string[]> {
 }
 
 async function listRecentSessionFiles(): Promise<Array<{ filePath: string; sessionId: string; agentId: string; mtimeMs: number }>> {
-  const openclawDir = getOpenClawConfigDir();
+  const openclawDir = getinsightAllConfigDir();
   const agentsDir = join(openclawDir, 'agents');
 
   try {

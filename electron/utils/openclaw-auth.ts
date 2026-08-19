@@ -1,6 +1,6 @@
 /**
- * OpenClaw Auth Profiles Utility
- * Writes API keys to OpenClaw agent auth storage (SQLite primary since 2026.6+,
+ * insightAll Auth Profiles Utility
+ * Writes API keys to insightAll agent auth storage (SQLite primary since 2026.6+,
  * with auth-profiles.json kept for migration compatibility) so the Gateway can
  * load them for AI provider calls.
  *
@@ -14,7 +14,7 @@ import { constants, readdirSync, readFileSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { homedir } from 'os';
 import { listConfiguredAgentIds } from './agent-config';
-import { getOpenClawResolvedDir } from './paths';
+import { getinsightAllResolvedDir } from './paths';
 import {
   getProviderEnvVar,
   getProviderDefaultModel,
@@ -25,13 +25,13 @@ import {
   OPENCLAW_PROVIDER_KEY_MOONSHOT,
   OPENCLAW_PROVIDER_KEY_MOONSHOT_GLOBAL,
   isOAuthProviderType,
-  isOpenClawOAuthPluginProviderKey,
+  isinsightAllOAuthPluginProviderKey,
 } from './provider-keys';
 import { normalizePiAiModelCost, type PiAiModelCostRates } from '../shared/pi-ai-model-cost';
 import {
-  mutateOpenClawConfig,
-  readOpenClawConfigSnapshot,
-  reloadOpenClawSecretsIfRunning,
+  mutateinsightAllConfig,
+  readinsightAllConfigSnapshot,
+  reloadinsightAllSecretsIfRunning,
 } from '../gateway/config-delivery';
 import {
   ensureMemorySearchFtsDefault,
@@ -42,12 +42,12 @@ import { PORTS } from './config';
 import { getSetting, setSetting } from './store';
 import {
   assertValidApiProtocol,
-  normalizeOpenClawApiProtocol,
+  normalizeinsightAllApiProtocol,
 } from '../shared/providers/types';
 import { inferCustomModelContextWindow, inferCustomModelInputModalities } from '../shared/providers/model-capabilities';
 import {
-  CLAWX_OPENAI_IMAGE_DEFAULT_MODEL,
-  CLAWX_OPENAI_IMAGE_PROVIDER_KEY,
+  INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL,
+  INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY,
 } from './openclaw-image-relay-constants';
 import {
   migrateAuthProfilesJsonToSqliteIfNeeded,
@@ -86,14 +86,14 @@ let _bundledPluginCache: {
 } | null = null;
 let _miniMaxPluginRegistrationCache: MiniMaxPluginRegistration | null = null;
 
-export function resetOpenClawPluginDiscoveryCaches(): void {
+export function resetinsightAllPluginDiscoveryCaches(): void {
   _bundledPluginManifestCache = null;
   _bundledPluginCache = null;
   _miniMaxPluginRegistrationCache = null;
 }
 
-function getOpenClawExtensionsRoots(): string[] {
-  const openClawDir = getOpenClawResolvedDir();
+function getinsightAllExtensionsRoots(): string[] {
+  const openClawDir = getinsightAllResolvedDir();
   return [
     join(openClawDir, 'dist', 'extensions'),
     join(openClawDir, 'extensions'),
@@ -105,7 +105,7 @@ function discoverBundledPluginManifests(): BundledPluginManifest[] {
 
   const manifests = new Map<string, BundledPluginManifest>();
 
-  for (const extensionsDir of getOpenClawExtensionsRoots()) {
+  for (const extensionsDir of getinsightAllExtensionsRoots()) {
     try {
       if (!existsSync(extensionsDir)) {
         continue;
@@ -461,7 +461,7 @@ export async function migrateAllAgentAuthProfilesToSqlite(): Promise<void> {
     }
   }
   if (migrated) {
-    await reloadOpenClawSecretsIfRunning();
+    await reloadinsightAllSecretsIfRunning();
   }
 }
 
@@ -492,13 +492,13 @@ function getApiKeyFromAuthProfilesStore(
 }
 
 /**
- * Read the API key OpenClaw will use for a runtime provider key.
+ * Read the API key insightAll will use for a runtime provider key.
  *
- * This intentionally reads auth-profiles.json rather than ClawX's provider
+ * This intentionally reads auth-profiles.json rather than insightAllX's provider
  * cache, so UI status can reflect providers imported or preserved by the
- * OpenClaw runtime across overwrite installs.
+ * insightAll runtime across overwrite installs.
  */
-export async function getProviderApiKeyFromOpenClaw(
+export async function getProviderApiKeyFrominsightAll(
   provider: string,
   agentId?: string,
 ): Promise<string | null> {
@@ -528,13 +528,13 @@ async function discoverAgentIds(): Promise<string[]> {
   }
 }
 
-// ── OpenClaw Config Helpers ──────────────────────────────────────
+// ── insightAll Config Helpers ──────────────────────────────────────
 
 const FEISHU_PLUGIN_ID_CANDIDATES = ['openclaw-lark', 'feishu-openclaw-plugin'] as const;
 const VALID_COMPACTION_MODES = new Set(['default', 'safeguard']);
-/** Matches OpenClaw's 200k+ context-window recommendation (see computeContextAwareReserveTokensFloor). */
+/** Matches insightAll's 200k+ context-window recommendation (see computeContextAwareReserveTokensFloor). */
 const DEFAULT_COMPACTION_RESERVE_TOKENS_FLOOR = 50_000;
-// OpenClaw 2026.7.1 bundles these channel extensions. Discord, WhatsApp,
+// insightAll 2026.7.1 bundles these channel extensions. Discord, WhatsApp,
 // QQBot, and the remaining catalog channels are external plugins and their
 // explicit allowlist registrations must be preserved.
 const BUILTIN_CHANNEL_IDS = new Set(['telegram', 'imessage']);
@@ -585,13 +585,13 @@ function normalizePluginPathForCompare(pluginPath: string): string {
   return pluginPath.replace(/\\/g, '/').replace(/\/+$/, '');
 }
 
-function isBundledOpenClawPluginPath(pluginPath: string): boolean {
+function isBundledinsightAllPluginPath(pluginPath: string): boolean {
   const normalized = normalizePluginPathForCompare(pluginPath);
   const currentDistExtensions = normalizePluginPathForCompare(
-    join(getOpenClawResolvedDir(), 'dist', 'extensions'),
+    join(getinsightAllResolvedDir(), 'dist', 'extensions'),
   );
   const currentLegacyExtensions = normalizePluginPathForCompare(
-    join(getOpenClawResolvedDir(), 'extensions'),
+    join(getinsightAllResolvedDir(), 'extensions'),
   );
 
   if (
@@ -607,11 +607,11 @@ function isBundledOpenClawPluginPath(pluginPath: string): boolean {
 }
 
 /**
- * Scan OpenClaw's bundled extensions directory to find all plugins that have
+ * Scan insightAll's bundled extensions directory to find all plugins that have
  * `enabledByDefault: true` in their `openclaw.plugin.json` manifest.
  *
  * When `plugins.allow` is explicitly set (e.g. for third-party channel
- * plugins), OpenClaw blocks ALL plugins not in the allowlist — even bundled
+ * plugins), insightAll blocks ALL plugins not in the allowlist — even bundled
  * ones with `enabledByDefault: true`.  This function discovers those plugins
  * so they can be preserved in the allowlist.
  *
@@ -663,7 +663,7 @@ function addProvidersFromProfileEntries(
     target.add(normalized);
     // The raw runtime key (e.g. "openai-codex") matters for active-provider
     // checks: filterActiveProviderKeysForUi() and the OAuth account matching
-    // in ProviderService.listAccounts() both key off it. Newer OpenClaw
+    // in ProviderService.listAccounts() both key off it. Newer insightAll
     // versions no longer keep explicit models.providers/plugins entries for
     // these providers, so the auth profile is the only remaining signal.
     if (options?.includeRawKeys && provider !== normalized) {
@@ -729,8 +729,8 @@ function collectActiveProviderIdsFromConfig(
   return activeProviders;
 }
 
-async function readOpenClawJson(): Promise<Record<string, unknown>> {
-  return (await readOpenClawConfigSnapshot()).config;
+async function readinsightAllJson(): Promise<Record<string, unknown>> {
+  return (await readinsightAllConfigSnapshot()).config;
 }
 
 async function resolveInstalledFeishuPluginId(): Promise<string | null> {
@@ -871,8 +871,8 @@ function ensureCompactionSafeguardDefault(config: Record<string, unknown>): bool
 }
 
 /**
- * Backfill `reserveTokensFloor` on compaction configs that ClawX or OpenClaw
- * seeded without one. OpenClaw's built-in default (20k) is too low once
+ * Backfill `reserveTokensFloor` on compaction configs that insightAllX or insightAll
+ * seeded without one. insightAll's built-in default (20k) is too low once
  * contextWindow backfill activates safeguard compaction on 200k+ models.
  */
 function backfillCompactionReserveTokensFloor(config: Record<string, unknown>): boolean {
@@ -901,8 +901,8 @@ function backfillCompactionReserveTokensFloor(config: Record<string, unknown>): 
 /**
  * Self-heal helper: walk `models.providers.custom-*` entries and fill in an
  * inferred `contextWindow` on model rows that have neither `contextWindow`
- * nor `contextTokens`. Rows written by older ClawX versions only carried
- * `{ id, name, input }`, which disables OpenClaw's preemptive compaction and
+ * nor `contextTokens`. Rows written by older insightAllX versions only carried
+ * `{ id, name, input }`, which disables insightAll's preemptive compaction and
  * context-window guard for custom providers.
  *
  * Deliberately scoped to `custom-` keys: registry providers own their
@@ -933,9 +933,9 @@ function backfillCustomProviderModelContextWindows(config: Record<string, unknow
 // ── Exported Functions (all async) ───────────────────────────────
 
 /**
- * Save an OAuth token to OpenClaw's auth-profiles.json.
+ * Save an OAuth token to insightAll's auth-profiles.json.
  */
-export async function saveOAuthTokenToOpenClaw(
+export async function saveOAuthTokenToinsightAll(
   provider: string,
   token: {
     access: string;
@@ -976,19 +976,19 @@ export async function saveOAuthTokenToOpenClaw(
 
     await writeAuthProfiles(store, id);
   }
-  await reloadOpenClawSecretsIfRunning();
-  console.log(`Saved OAuth token for provider "${provider}" to OpenClaw auth-profiles (agents: ${agentIds.join(', ')})`);
+  await reloadinsightAllSecretsIfRunning();
+  console.log(`Saved OAuth token for provider "${provider}" to insightAll auth-profiles (agents: ${agentIds.join(', ')})`);
 }
 
 /**
- * Retrieve an OAuth token from OpenClaw's auth-profiles.json.
+ * Retrieve an OAuth token from insightAll's auth-profiles.json.
  * Useful when the Gateway does not natively inject the Authorization header.
  * 
  * @param provider - Provider type (e.g., 'minimax-portal')
  * @param agentId - Optional single agent ID to read from, defaults to 'main'
  * @returns The OAuth token access string or null if not found
  */
-export async function getOAuthTokenFromOpenClaw(
+export async function getOAuthTokenFrominsightAll(
   provider: string,
   agentId = 'main'
 ): Promise<string | null> {
@@ -1007,9 +1007,9 @@ export async function getOAuthTokenFromOpenClaw(
 }
 
 /**
- * Save a provider API key to OpenClaw's auth-profiles.json
+ * Save a provider API key to insightAll's auth-profiles.json
  */
-export async function saveProviderKeyToOpenClaw(
+export async function saveProviderKeyToinsightAll(
   provider: string,
   apiKey: string,
   agentId?: string
@@ -1038,14 +1038,14 @@ export async function saveProviderKeyToOpenClaw(
 
     await writeAuthProfiles(store, id);
   }
-  await reloadOpenClawSecretsIfRunning();
-  console.log(`Saved API key for provider "${provider}" to OpenClaw auth-profiles (agents: ${agentIds.join(', ')})`);
+  await reloadinsightAllSecretsIfRunning();
+  console.log(`Saved API key for provider "${provider}" to insightAll auth-profiles (agents: ${agentIds.join(', ')})`);
 }
 
 /**
- * Remove a provider API key from OpenClaw auth-profiles.json
+ * Remove a provider API key from insightAll auth-profiles.json
  */
-export async function removeProviderKeyFromOpenClaw(
+export async function removeProviderKeyFrominsightAll(
   provider: string,
   agentId?: string
 ): Promise<void> {
@@ -1061,13 +1061,13 @@ export async function removeProviderKeyFromOpenClaw(
     }
   }
   if (modified) {
-    await reloadOpenClawSecretsIfRunning();
+    await reloadinsightAllSecretsIfRunning();
   }
-  console.log(`Removed API key for provider "${provider}" from OpenClaw auth-profiles (agents: ${agentIds.join(', ')})`);
+  console.log(`Removed API key for provider "${provider}" from insightAll auth-profiles (agents: ${agentIds.join(', ')})`);
 }
 
 /**
- * Remove a provider completely from OpenClaw (delete config, disable plugins, delete keys)
+ * Remove a provider completely from insightAll (delete config, disable plugins, delete keys)
  */
 
 function getModelRefProviderKey(modelRef: string): string | null {
@@ -1161,7 +1161,7 @@ export async function pruneStaleRuntimeAgentModelRefs(
 ): Promise<boolean> {
   const activeProviders = authProfileProviders
     ? collectActiveProviderIdsFromConfig(config, authProfileProviders)
-    : await getActiveOpenClawProviders();
+    : await getActiveinsightAllProviders();
   const agents = config.agents;
   if (!isPlainRecord(agents)) return false;
 
@@ -1188,18 +1188,18 @@ export async function pruneStaleRuntimeAgentModelRefs(
   return modified;
 }
 
-export async function removeProviderFromOpenClaw(provider: string): Promise<void> {
+export async function removeProviderFrominsightAll(provider: string): Promise<void> {
   const providerKeysToRemove = expandProviderKeysForDeletion(provider);
   const agentIds = await discoverAgentIds();
   if (agentIds.length === 0) agentIds.push('main');
   let authProfilesModified = false;
   // Commit the authoritative config first. If this fails, sidecar credentials
   // and model registries remain untouched and the caller can safely retry.
-  await mutateOpenClawConfig(async (config) => {
+  await mutateinsightAllConfig(async (config) => {
       let modified = false;
 
       // Remove plugin registrations for OAuth providers (e.g. MiniMax).
-      if (isOpenClawOAuthPluginProviderKey(provider)) {
+      if (isinsightAllOAuthPluginProviderKey(provider)) {
         const { canonicalPluginId, stalePluginIds } = getOAuthPluginRegistration(provider);
         if (removePluginRegistrations(config, [canonicalPluginId, ...stalePluginIds])) {
           modified = true;
@@ -1304,12 +1304,12 @@ export async function removeProviderFromOpenClaw(provider: string): Promise<void
   }
   if (authProfilesModified) {
     try {
-      await reloadOpenClawSecretsIfRunning();
+      await reloadinsightAllSecretsIfRunning();
     } catch (reloadError) {
       if (authWriteError) {
         throw new AggregateError(
           [authWriteError, reloadError],
-          `Failed to remove provider "${provider}" auth profiles and refresh OpenClaw secrets`,
+          `Failed to remove provider "${provider}" auth profiles and refresh insightAll secrets`,
           { cause: reloadError },
         );
       }
@@ -1323,7 +1323,7 @@ export async function removeProviderFromOpenClaw(provider: string): Promise<void
 
 /**
  * Self-heal helper: walk `models.providers.*` in openclaw.json and remove
- * any entry whose `api` field is not in the OpenClaw allow-list.
+ * any entry whose `api` field is not in the insightAll allow-list.
  *
  * Used opportunistically when the user switches default provider, so that
  * a legacy invalid entry (e.g. the historical `models.providers.openrouter
@@ -1341,7 +1341,7 @@ function repairLegacyApiProtocolEntriesInConfig(config: Record<string, unknown>)
     if (!isPlainRecord(entry)) continue;
     const entryObj = entry as Record<string, unknown>;
     const api = entryObj.api;
-    const normalized = normalizeOpenClawApiProtocol(api);
+    const normalized = normalizeinsightAllApiProtocol(api);
     if (normalized && normalized !== api) {
       entryObj.api = normalized;
       migrated.push(key);
@@ -1360,7 +1360,7 @@ function isOpenAiPlatformBaseUrl(baseUrl: unknown): boolean {
 }
 
 function resolveOpenAiCodexOAuthBaseUrl(baseUrl: string, api: string): string {
-  if (normalizeOpenClawApiProtocol(api) !== 'openai-chatgpt-responses') {
+  if (normalizeinsightAllApiProtocol(api) !== 'openai-chatgpt-responses') {
     return baseUrl;
   }
   if (isOpenAiPlatformBaseUrl(baseUrl)) {
@@ -1377,7 +1377,7 @@ function repairOpenAiCodexOAuthProviderEntriesInConfig(config: Record<string, un
   for (const [key, entry] of Object.entries(providers)) {
     if (!isPlainRecord(entry)) continue;
     const entryObj = entry as Record<string, unknown>;
-    const api = normalizeOpenClawApiProtocol(entryObj.api);
+    const api = normalizeinsightAllApiProtocol(entryObj.api);
     if (api !== 'openai-chatgpt-responses') continue;
     if (!isOpenAiPlatformBaseUrl(entryObj.baseUrl)) continue;
     entryObj.baseUrl = OPENAI_CODEX_OAUTH_BASE_URL;
@@ -1400,7 +1400,7 @@ function migrateOpenAiCodexOAuthRuntimeToOpenAiInConfig(config: Record<string, u
   const codexEntry = providers['openai-codex'];
 
   if (isPlainRecord(codexEntry)) {
-    const codexApi = normalizeOpenClawApiProtocol(codexEntry.api);
+    const codexApi = normalizeinsightAllApiProtocol(codexEntry.api);
     if (codexApi === 'openai-chatgpt-responses') {
       const existingOpenAi = isPlainRecord(providers.openai) ? providers.openai as Record<string, unknown> : {};
       providers.openai = {
@@ -1446,7 +1446,7 @@ function migrateOpenAiCodexOAuthRuntimeToOpenAiInConfig(config: Record<string, u
 
 export async function pruneInvalidApiProviderEntries(): Promise<string[]> {
   const removed: string[] = [];
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     removed.length = 0;
     const models = (config.models || {}) as Record<string, unknown>;
     const providers = (models.providers || {}) as Record<string, unknown>;
@@ -1469,7 +1469,7 @@ export async function pruneInvalidApiProviderEntries(): Promise<string[]> {
 
     for (const [key, entry] of Object.entries(providers)) {
       const api = isPlainRecord(entry) ? (entry as Record<string, unknown>).api : undefined;
-      if (!normalizeOpenClawApiProtocol(api)) {
+      if (!normalizeinsightAllApiProtocol(api)) {
         delete providers[key];
         removed.push(key);
         modified = true;
@@ -1501,15 +1501,15 @@ export function buildProviderEnvVars(providers: Array<{ type: string; apiKey: st
 }
 
 /**
- * Update the OpenClaw config to use the given provider and model
+ * Update the insightAll config to use the given provider and model
  * Writes to ~/.openclaw/openclaw.json
  */
-export async function setOpenClawDefaultModel(
+export async function setinsightAllDefaultModel(
   provider: string,
   modelOverride?: string,
   fallbackModels: string[] = []
 ): Promise<void> {
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     ensureMoonshotKimiWebSearchCnBaseUrl(config, provider);
 
     const model = normalizeModelRef(provider, modelOverride);
@@ -1535,7 +1535,7 @@ export async function setOpenClawDefaultModel(
     const providerCfg = getProviderConfig(provider);
     if (providerCfg) {
       assertValidApiProtocol(providerCfg.api, provider);
-      upsertOpenClawProviderEntry(config, provider, {
+      upsertinsightAllProviderEntry(config, provider, {
         baseUrl: providerCfg.baseUrl,
         api: providerCfg.api,
         apiKeyEnv: providerCfg.apiKeyEnv,
@@ -1546,7 +1546,7 @@ export async function setOpenClawDefaultModel(
       });
       console.log(`Configured models.providers.${provider} with baseUrl=${providerCfg.baseUrl}, model=${modelId}`);
     } else if (provider === 'openai-codex') {
-      // Legacy runtime key: OpenClaw Codex hooks only apply to canonical `openai`.
+      // Legacy runtime key: insightAll Codex hooks only apply to canonical `openai`.
       const oauthModel = model.replace(/^openai-codex\//, 'openai/');
       const oauthFallbacks = fallbackModels.map((fallback) => fallback.replace(/^openai-codex\//, 'openai/'));
       defaults.model = {
@@ -1556,7 +1556,7 @@ export async function setOpenClawDefaultModel(
       agents.defaults = defaults;
       config.agents = agents;
 
-      upsertOpenClawProviderEntry(config, 'openai', {
+      upsertinsightAllProviderEntry(config, 'openai', {
         baseUrl: OPENAI_CODEX_OAUTH_PROVIDER_CONFIG.baseUrl,
         api: OPENAI_CODEX_OAUTH_PROVIDER_CONFIG.api,
         modelIds: [modelId, ...fallbackModelIds],
@@ -1590,7 +1590,7 @@ export async function setOpenClawDefaultModel(
     config.gateway = gateway;
 
     normalizeAgentsDefaultsCompactionMode(config);
-    console.log(`Set OpenClaw default model to "${model}" for provider "${provider}"`);
+    console.log(`Set insightAll default model to "${model}" for provider "${provider}"`);
   });
 }
 
@@ -1649,12 +1649,12 @@ function mergeProviderModels(
 }
 
 /**
- * OpenClaw 2026.5+ requires a positive `maxTokens` on each model (and can
+ * insightAll 2026.5+ requires a positive `maxTokens` on each model (and can
  * fall back to provider-level `maxTokens`) when `api` is `anthropic-messages`.
- * ClawX-written entries historically only included `{ id, name }`.
+ * insightAllX-written entries historically only included `{ id, name }`.
  *
  * Generic Anthropic-compatible providers should not be capped at 8k by
- * default: OpenClaw's native Anthropic transport caps default requests at 32k
+ * default: insightAll's native Anthropic transport caps default requests at 32k
  * (`min(model.maxTokens, 32000)`), while high-output providers such as MiniMax
  * M2.7 advertise a larger catalog limit.
  */
@@ -1731,7 +1731,7 @@ function resolveAnthropicMessagesProviderDefaultMaxTokens(
 
 /**
  * Ensure `models.providers.*` entries using `anthropic-messages` include the
- * token limits OpenClaw's transport layer requires. Returns whether `entry`
+ * token limits insightAll's transport layer requires. Returns whether `entry`
  * was modified.
  */
 function ensureAnthropicMessagesProviderDefaults(
@@ -1798,7 +1798,7 @@ function healAnthropicMessagesMaxTokensInConfig(config: Record<string, unknown>)
  */
 export async function ensureAnthropicMessagesModelMaxTokens(): Promise<string[]> {
   const healed: string[] = [];
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     healed.length = 0;
     const models = (config.models || {}) as Record<string, unknown>;
     const providers = (models.providers || {}) as Record<string, unknown>;
@@ -1825,14 +1825,14 @@ export async function ensureAnthropicMessagesModelMaxTokens(): Promise<string[]>
 }
 
 /**
- * Map of OpenClaw `models.providers.*` keys that must be pinned to a specific
- * embedded agent harness so that OpenClaw's auto-routing policy does not
+ * Map of insightAll `models.providers.*` keys that must be pinned to a specific
+ * embedded agent harness so that insightAll's auto-routing policy does not
  * dispatch the chat to an externally-bundled harness plugin that may not be
  * installed.
  *
- * OpenClaw 2026.5+ auto-routes OpenAI providers (`openai`, `openai-codex`) to the
+ * insightAll 2026.5+ auto-routes OpenAI providers (`openai`, `openai-codex`) to the
  * external `codex` agent harness, which expects a separate codex plugin install.
- * The bundled OpenClaw distribution ClawX ships does not register that harness,
+ * The bundled insightAll distribution insightAllX ships does not register that harness,
  * so without pinning both keys chat fails with
  * `Requested agent harness "codex" is not registered.`
  */
@@ -1861,7 +1861,7 @@ function applyPinnedAgentRuntime(
   nextProvider.agentRuntime = { id: pinnedRuntimeId };
 }
 
-function applyOpenClawProviderAgentRuntimePinsToConfig(config: Record<string, unknown>): string[] {
+function applyinsightAllProviderAgentRuntimePinsToConfig(config: Record<string, unknown>): string[] {
   const models = (config.models || {}) as Record<string, unknown>;
   const providers = (models.providers || {}) as Record<string, unknown>;
   const pinned: string[] = [];
@@ -1886,7 +1886,7 @@ function applyOpenClawProviderAgentRuntimePinsToConfig(config: Record<string, un
   return pinned;
 }
 
-function upsertOpenClawProviderEntry(
+function upsertinsightAllProviderEntry(
   config: Record<string, unknown>,
   provider: string,
   options: ProviderEntryBuildOptions,
@@ -1913,7 +1913,7 @@ function upsertOpenClawProviderEntry(
     ...(options.inferRuntimeModelInputs
       ? {
         input: inferCustomModelInputModalities(id),
-        // Without an explicit contextWindow OpenClaw cannot budget compaction
+        // Without an explicit contextWindow insightAll cannot budget compaction
         // for custom providers and long sessions die with context overflow.
         contextWindow: inferCustomModelContextWindow(id, {
           providerKey: provider,
@@ -1974,18 +1974,18 @@ function upsertOpenClawProviderEntry(
  *
  * Mirrors {@link pruneInvalidApiProviderEntries} — invoked opportunistically
  * before a default-provider switch so that pre-existing on-disk entries
- * (written by earlier ClawX builds that did not pin the runtime) get
+ * (written by earlier insightAllX builds that did not pin the runtime) get
  * repaired before the next Gateway reload picks them up. Without this, users
- * who upgrade ClawX while still pointing at an OpenAI provider would keep
+ * who upgrade insightAllX while still pointing at an OpenAI provider would keep
  * hitting `Requested agent harness "codex" is not registered.` until they
  * re-saved the provider manually.
  *
  * Returns the list of provider keys that received a runtime pin, for logging.
  */
-export async function ensureOpenClawProviderAgentRuntimePins(): Promise<string[]> {
+export async function ensureinsightAllProviderAgentRuntimePins(): Promise<string[]> {
   let pinned: string[] = [];
-  await mutateOpenClawConfig((config) => {
-    pinned = applyOpenClawProviderAgentRuntimePinsToConfig(config);
+  await mutateinsightAllConfig((config) => {
+    pinned = applyinsightAllProviderAgentRuntimePinsToConfig(config);
 
     if (pinned.length > 0) {
       normalizeAgentsDefaultsCompactionMode(config);
@@ -2074,17 +2074,17 @@ function ensureMoonshotKimiWebSearchCnBaseUrl(config: Record<string, unknown>, p
  * Register or update a provider's configuration in openclaw.json
  * without changing the current default model.
  */
-export async function syncProviderConfigToOpenClaw(
+export async function syncProviderConfigToinsightAll(
   provider: string,
   modelId: string | undefined,
   override: RuntimeProviderConfigOverride
 ): Promise<void> {
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     ensureMoonshotKimiWebSearchCnBaseUrl(config, provider);
 
     if (override.baseUrl && override.api) {
       assertValidApiProtocol(override.api, provider);
-      upsertOpenClawProviderEntry(config, provider, {
+      upsertinsightAllProviderEntry(config, provider, {
         baseUrl: override.baseUrl,
         api: override.api,
         apiKeyEnv: override.apiKeyEnv,
@@ -2096,7 +2096,7 @@ export async function syncProviderConfigToOpenClaw(
     }
 
     // Ensure extension is enabled for oauth providers to prevent gateway wiping config
-    if (isOpenClawOAuthPluginProviderKey(provider)) {
+    if (isinsightAllOAuthPluginProviderKey(provider)) {
       ensureOAuthPluginEnabled(config, provider);
     }
 
@@ -2158,7 +2158,7 @@ function ensurePluginRegistrationEnabled(config: Record<string, unknown>, plugin
 }
 
 /**
- * Configure a ClawX-owned OpenAI-compatible image provider.
+ * Configure a insightAllX-owned OpenAI-compatible image provider.
  * This intentionally uses a separate provider key from `openai` so chat model
  * routing and OpenAI API/OAuth credentials remain untouched.
  */
@@ -2168,12 +2168,12 @@ export async function syncOpenAiCompatibleImageRelay(params: {
   apiKey?: string;
   imageModelIds?: string[];
 }): Promise<void> {
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     if (!params.enabled) {
       const models = (config.models || {}) as Record<string, unknown>;
       const providers = (models.providers || {}) as Record<string, unknown>;
-      if (providers[CLAWX_OPENAI_IMAGE_PROVIDER_KEY]) {
-        delete providers[CLAWX_OPENAI_IMAGE_PROVIDER_KEY];
+      if (providers[INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]) {
+        delete providers[INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY];
         models.providers = providers;
         config.models = models;
       }
@@ -2185,11 +2185,11 @@ export async function syncOpenAiCompatibleImageRelay(params: {
       const primary = typeof imageGenerationModel?.primary === 'string'
         ? imageGenerationModel.primary.trim().toLowerCase()
         : '';
-      if (defaults && imageGenerationModel && primary.startsWith(`${CLAWX_OPENAI_IMAGE_PROVIDER_KEY}/`)) {
+      if (defaults && imageGenerationModel && primary.startsWith(`${INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY}/`)) {
         const remainingFallbacks = Array.isArray(imageGenerationModel.fallbacks)
           ? imageGenerationModel.fallbacks.filter((fallback): fallback is string => (
             typeof fallback === 'string'
-              && !fallback.trim().toLowerCase().startsWith(`${CLAWX_OPENAI_IMAGE_PROVIDER_KEY}/`)
+              && !fallback.trim().toLowerCase().startsWith(`${INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY}/`)
           ))
           : [];
         if (remainingFallbacks.length > 0) {
@@ -2201,7 +2201,7 @@ export async function syncOpenAiCompatibleImageRelay(params: {
           imageGenerationModel.fallbacks = remainingFallbacks;
         }
       }
-      removePluginRegistrations(config, [CLAWX_OPENAI_IMAGE_PROVIDER_KEY]);
+      removePluginRegistrations(config, [INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]);
       normalizeAgentsDefaultsCompactionMode(config);
       return;
     }
@@ -2211,22 +2211,22 @@ export async function syncOpenAiCompatibleImageRelay(params: {
       .map((id) => id.trim())
       .filter(Boolean))];
     if (modelIds.length === 0) {
-      modelIds.push(CLAWX_OPENAI_IMAGE_DEFAULT_MODEL);
+      modelIds.push(INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL);
     }
-    const existingModels = readModelsProvider(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY)?.models;
+    const existingModels = readModelsProvider(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY)?.models;
     const existingModelsById = new Map(
       (Array.isArray(existingModels) ? existingModels : [])
         .filter((model): model is Record<string, unknown> => isPlainRecord(model) && typeof model.id === 'string')
         .map((model) => [model.id as string, model]),
     );
-    upsertOpenClawProviderEntry(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY, {
+    upsertinsightAllProviderEntry(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY, {
       baseUrl,
       api: 'openai-completions',
       modelIds,
       mergeExistingModels: false,
       request: { allowPrivateNetwork: true },
     });
-    const relayProvider = readModelsProvider(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+    const relayProvider = readModelsProvider(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
     if (relayProvider && Array.isArray(relayProvider.models)) {
       relayProvider.models = relayProvider.models.map((model) => {
         if (!isPlainRecord(model) || typeof model.id !== 'string') return model;
@@ -2234,29 +2234,29 @@ export async function syncOpenAiCompatibleImageRelay(params: {
         return existing ? { ...model, ...existing, id: model.id } : model;
       });
     }
-    ensurePluginRegistrationEnabled(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+    ensurePluginRegistrationEnabled(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
     normalizeAgentsDefaultsCompactionMode(config);
   });
 
   if (!params.enabled) {
-    await removeProviderKeyFromOpenClaw(CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
+    await removeProviderKeyFrominsightAll(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
   }
   if (params.apiKey?.trim()) {
-    await saveProviderKeyToOpenClaw(CLAWX_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
+    await saveProviderKeyToinsightAll(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
   }
 }
 
 export function readOpenAiCompatibleImageRelayState(
   config: Record<string, unknown>,
 ): { enabled: boolean; baseUrl: string; providerKey?: string } {
-  const clawxRelay = readModelsProvider(config, CLAWX_OPENAI_IMAGE_PROVIDER_KEY);
-  const relayBaseUrl = typeof clawxRelay?.baseUrl === 'string' ? clawxRelay.baseUrl.trim() : '';
+  const insightallxRelay = readModelsProvider(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
+  const relayBaseUrl = typeof insightallxRelay?.baseUrl === 'string' ? insightallxRelay.baseUrl.trim() : '';
   if (relayBaseUrl) {
-    return { enabled: true, baseUrl: relayBaseUrl, providerKey: CLAWX_OPENAI_IMAGE_PROVIDER_KEY };
+    return { enabled: true, baseUrl: relayBaseUrl, providerKey: INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY };
   }
 
-  // Backward compatibility for ClawX builds that used models.providers.openai
-  // for image relay. New saves move to the ClawX-owned provider above.
+  // Backward compatibility for insightAllX builds that used models.providers.openai
+  // for image relay. New saves move to the insightAllX-owned provider above.
   const openai = readModelsProvidersOpenAi(config);
   const baseUrl = typeof openai?.baseUrl === 'string' ? openai.baseUrl.trim() : '';
   if (!baseUrl || baseUrl === OFFICIAL_OPENAI_API_BASE_URL) {
@@ -2266,15 +2266,15 @@ export function readOpenAiCompatibleImageRelayState(
 }
 
 /**
- * Update OpenClaw model + provider config using runtime config values.
+ * Update insightAll model + provider config using runtime config values.
  */
-export async function setOpenClawDefaultModelWithOverride(
+export async function setinsightAllDefaultModelWithOverride(
   provider: string,
   modelOverride: string | undefined,
   override: RuntimeProviderConfigOverride,
   fallbackModels: string[] = []
 ): Promise<void> {
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     ensureMoonshotKimiWebSearchCnBaseUrl(config, provider);
 
     const model = normalizeModelRef(provider, modelOverride);
@@ -2297,7 +2297,7 @@ export async function setOpenClawDefaultModelWithOverride(
 
     if (override.baseUrl && override.api) {
       assertValidApiProtocol(override.api, provider);
-      upsertOpenClawProviderEntry(config, provider, {
+      upsertinsightAllProviderEntry(config, provider, {
         baseUrl: override.baseUrl,
         api: override.api,
         apiKeyEnv: override.apiKeyEnv,
@@ -2314,13 +2314,13 @@ export async function setOpenClawDefaultModelWithOverride(
     config.gateway = gateway;
 
     // Ensure the extension plugin is marked as enabled in openclaw.json
-    if (isOpenClawOAuthPluginProviderKey(provider)) {
+    if (isinsightAllOAuthPluginProviderKey(provider)) {
       ensureOAuthPluginEnabled(config, provider);
     }
 
     normalizeAgentsDefaultsCompactionMode(config);
     console.log(
-      `Set OpenClaw default model to "${model}" for provider "${provider}" (runtime override)`
+      `Set insightAll default model to "${model}" for provider "${provider}" (runtime override)`
     );
   });
 }
@@ -2337,10 +2337,10 @@ export async function getActiveAuthProfileProviders(): Promise<Set<string>> {
   return await getProvidersFromAuthProfileStores({ includeRawKeys: true });
 }
 
-export async function getActiveOpenClawProviders(): Promise<Set<string>> {
+export async function getActiveinsightAllProviders(): Promise<Set<string>> {
   try {
     const [config, authProfileProviders] = await Promise.all([
-      readOpenClawJson(),
+      readinsightAllJson(),
       getActiveAuthProfileProviders(),
     ]);
     return collectActiveProviderIdsFromConfig(
@@ -2355,15 +2355,15 @@ export async function getActiveOpenClawProviders(): Promise<Set<string>> {
 
 /**
  * Read models.providers entries and agents.defaults.model from openclaw.json.
- * Used by ClawX to seed the provider store when it's empty but providers are
+ * Used by insightAllX to seed the provider store when it's empty but providers are
  * configured externally (e.g. via CLI or by editing openclaw.json directly).
  */
-export async function getOpenClawProvidersConfig(): Promise<{
+export async function getinsightAllProvidersConfig(): Promise<{
   providers: Record<string, Record<string, unknown>>;
   defaultModel: string | undefined;
 }> {
   try {
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
 
     const models = config.models as Record<string, unknown> | undefined;
     const providers =
@@ -2416,11 +2416,11 @@ function applyControlUiAllowedOrigins(controlUi: Record<string, unknown>, port: 
 }
 
 /**
- * Write the ClawX gateway token into ~/.openclaw/openclaw.json.
+ * Write the insightAllX gateway token into ~/.openclaw/openclaw.json.
  */
 export async function syncGatewayTokenToConfig(token: string): Promise<void> {
   const gatewayPort = (await getSetting('gatewayPort')) || PORTS.OPENCLAW_GATEWAY;
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     const gateway = (
       config.gateway && typeof config.gateway === 'object'
         ? { ...(config.gateway as Record<string, unknown>) }
@@ -2455,7 +2455,7 @@ export async function syncGatewayTokenToConfig(token: string): Promise<void> {
 
 /**
  * Default web_fetch SSRF policy for fake-IP / transparent-proxy environments
- * (e.g. Clash/Surge resolving public hostnames into 198.18.0.0/15). OpenClaw's
+ * (e.g. Clash/Surge resolving public hostnames into 198.18.0.0/15). insightAll's
  * web_fetch tool does not read browser.ssrfPolicy — it uses tools.web.fetch only.
  */
 function ensureWebFetchSsrfPolicyInConfig(config: Record<string, unknown>): boolean {
@@ -2503,8 +2503,8 @@ function ensureWebFetchSsrfPolicyInConfig(config: Record<string, unknown>): bool
 /**
  * Ensure browser automation is enabled in ~/.openclaw/openclaw.json.
  */
-export async function syncBrowserConfigToOpenClaw(): Promise<void> {
-  await mutateOpenClawConfig((config) => {
+export async function syncBrowserConfigToinsightAll(): Promise<void> {
+  await mutateinsightAllConfig((config) => {
     const browser = (
       config.browser && typeof config.browser === 'object'
         ? { ...(config.browser as Record<string, unknown>) }
@@ -2548,17 +2548,17 @@ export async function syncBrowserConfigToOpenClaw(): Promise<void> {
 /**
  * Ensure session idle-reset is configured in ~/.openclaw/openclaw.json.
  *
- * By default OpenClaw resets the "main" session daily at 04:00 local time,
- * which means conversations disappear after roughly one day.  ClawX sets
+ * By default insightAll resets the "main" session daily at 04:00 local time,
+ * which means conversations disappear after roughly one day.  insightAllX sets
  * `session.idleMinutes` to 10 080 (7 days) so that conversations are
  * preserved for a week unless the user has explicitly configured their own
  * value.  When `idleMinutes` is set without `session.reset` /
- * `session.resetByType`, OpenClaw stays in idle-only mode (no daily reset).
+ * `session.resetByType`, insightAll stays in idle-only mode (no daily reset).
  */
-export async function syncSessionIdleMinutesToOpenClaw(): Promise<void> {
+export async function syncSessionIdleMinutesToinsightAll(): Promise<void> {
   const DEFAULT_IDLE_MINUTES = 10_080; // 7 days
 
-  await mutateOpenClawConfig((config) => {
+  await mutateinsightAllConfig((config) => {
     const session = (
       config.session && typeof config.session === 'object'
         ? { ...(config.session as Record<string, unknown>) }
@@ -2595,13 +2595,13 @@ export async function batchSyncConfigFields(token: string): Promise<void> {
   ) || 0;
   const shouldMigrateLegacyMemorySearch =
     memorySearchMigrationVersion < MEMORY_SEARCH_FTS_MIGRATION_VERSION;
-  const hasOpenAiEmbeddingKey = Boolean(await getProviderApiKeyFromOpenClaw('openai'));
+  const hasOpenAiEmbeddingKey = Boolean(await getProviderApiKeyFrominsightAll('openai'));
   let pinnedProviderRuntimes: string[] = [];
   let compactionLog: string | undefined;
   let memorySearchDefaultResult: 'migrated' | 'seeded' | 'unchanged' = 'unchanged';
   let backfilledContextWindows: string[] = [];
 
-  const changed = await mutateOpenClawConfig((config) => {
+  const changed = await mutateinsightAllConfig((config) => {
     let modified = true;
     pinnedProviderRuntimes = [];
     compactionLog = undefined;
@@ -2669,7 +2669,7 @@ export async function batchSyncConfigFields(token: string): Promise<void> {
       modified = true;
     }
 
-    pinnedProviderRuntimes = applyOpenClawProviderAgentRuntimePinsToConfig(config);
+    pinnedProviderRuntimes = applyinsightAllProviderAgentRuntimePinsToConfig(config);
     if (pinnedProviderRuntimes.length > 0) {
       modified = true;
     }
@@ -2700,8 +2700,8 @@ export async function batchSyncConfigFields(token: string): Promise<void> {
     }
 
     // ── Memory search default ──
-    // OpenClaw 2026.7.1 supports provider=none as an explicit FTS-only mode.
-    // Migrate ClawX's exact legacy disabled default once, and otherwise seed
+    // insightAll 2026.7.1 supports provider=none as an explicit FTS-only mode.
+    // Migrate insightAllX's exact legacy disabled default once, and otherwise seed
     // FTS only when the user has no memorySearch config or OpenAI embedding key.
     memorySearchDefaultResult = shouldMigrateLegacyMemorySearch
       && hasUserMemorySearchConfig(config)
@@ -2862,20 +2862,20 @@ export async function updateSingleAgentModelProvider(
 /**
  * Sanitize ~/.openclaw/openclaw.json before Gateway start.
  *
- * Removes known-invalid keys that cause OpenClaw's strict Zod validation
+ * Removes known-invalid keys that cause insightAll's strict Zod validation
  * to reject the entire config on startup.  Uses a conservative **blocklist**
  * approach: only strips keys that are KNOWN to be misplaced by older
- * OpenClaw/ClawX versions or external tools.
+ * insightAll/insightAllX versions or external tools.
  *
  * Why blocklist instead of allowlist?
  *   • Allowlist (e.g. `VALID_SKILLS_KEYS`) would strip any NEW valid keys
- *     added by future OpenClaw releases — a forward-compatibility hazard.
+ *     added by future insightAll releases — a forward-compatibility hazard.
  *   • Blocklist only removes keys we positively know are wrong, so new
  *     valid keys are never touched.
  *
  * This is a fast, file-based pre-check.  For comprehensive repair of
  * unknown or future config issues, the reactive auto-repair mechanism
- * (`runOpenClawDoctorRepair`) runs `openclaw doctor --fix` as a fallback.
+ * (`runinsightAllDoctorRepair`) runs `openclaw doctor --fix` as a fallback.
  */
 const SKILL_WORKSHOP_TOOL_DENY_ENTRY = 'skill_workshop';
 const WEB_SEARCH_TOOL_DENY_ENTRY = 'web_search';
@@ -2918,12 +2918,12 @@ function ensureToolDenyIncludesAll(
   return { deny: current, modified };
 }
 
-export async function sanitizeOpenClawConfig(): Promise<void> {
+export async function sanitizeinsightAllConfig(): Promise<void> {
   // The prelaunch file fallback must not turn a missing or corrupt config into
   // a valid-looking skeleton. The coordinator performs the successful mutation.
   let sourceExists: boolean;
   try {
-    sourceExists = (await readOpenClawConfigSnapshot()).exists;
+    sourceExists = (await readinsightAllConfigSnapshot()).exists;
   } catch {
     console.log('[sanitize] openclaw.json could not be parsed, skipping sanitization to preserve data');
     return;
@@ -2934,11 +2934,11 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
   }
   const authProfileProviders = await getActiveAuthProfileProviders();
 
-  await mutateOpenClawConfig(async (config) => {
+  await mutateinsightAllConfig(async (config) => {
     let modified = false;
 
     // ── skills section ──────────────────────────────────────────────
-    // OpenClaw's Zod schema uses .strict() on the skills object, accepting
+    // insightAll's Zod schema uses .strict() on the skills object, accepting
     // only: allowBundled, load, install, limits, entries.
     // The key "enabled" belongs inside skills.entries[key].enabled, NOT at
     // the skills root level.  Older versions may have placed it there.
@@ -2957,7 +2957,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     }
 
     // ── plugins section ──────────────────────────────────────────────
-    // OpenClaw 2026.7.1 moved these formerly bundled channels to external
+    // insightAll 2026.7.1 moved these formerly bundled channels to external
     // plugins. Recover old channel-only configs before plugin sanitization.
     let plugins = config.plugins;
     if (!plugins && isPlainRecord(config.channels)) {
@@ -2983,7 +2983,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
         const validPlugins: unknown[] = [];
         for (const p of plugins) {
           if (typeof p === 'string' && p.startsWith('/')) {
-            if (isBundledOpenClawPluginPath(p) || !(await fileExists(p))) {
+            if (isBundledinsightAllPluginPath(p) || !(await fileExists(p))) {
               console.log(`[sanitize] Removing stale/bundled plugin path "${p}" from openclaw.json`);
               modified = true;
             } else {
@@ -3000,7 +3000,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
           const validLoad: unknown[] = [];
           for (const p of pluginsObj.load) {
             if (typeof p === 'string' && p.startsWith('/')) {
-              if (isBundledOpenClawPluginPath(p) || !(await fileExists(p))) {
+              if (isBundledinsightAllPluginPath(p) || !(await fileExists(p))) {
                 console.log(`[sanitize] Removing stale/bundled plugin path "${p}" from openclaw.json`);
                 modified = true;
               } else {
@@ -3019,7 +3019,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
             const countBefore = loadObj.paths.length;
             for (const p of loadObj.paths) {
               if (typeof p === 'string' && p.startsWith('/')) {
-                if (isBundledOpenClawPluginPath(p) || !(await fileExists(p))) {
+                if (isBundledinsightAllPluginPath(p) || !(await fileExists(p))) {
                   console.log(`[sanitize] Removing stale/bundled plugin path "${p}" from plugins.load.paths`);
                   modified = true;
                 } else {
@@ -3045,7 +3045,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     }
 
     // ── tools.web.search.kimi ─────────────────────────────────────
-    // OpenClaw moved moonshot web search config under
+    // insightAll moved moonshot web search config under
     // plugins.entries.moonshot.config.webSearch. Migrate the old key and strip
     // any inline apiKey so auth-profiles/env remain the single source of truth.
     const providers = ((config.models as Record<string, unknown> | undefined)?.providers as Record<string, unknown> | undefined) || {};
@@ -3086,8 +3086,8 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     }
 
     // ── tools.profile & sessions.visibility ───────────────────────
-    // OpenClaw 3.8+ requires tools.profile = 'full' and tools.sessions.visibility = 'all'
-    // for ClawX to properly integrate with its updated tool system.
+    // insightAll 3.8+ requires tools.profile = 'full' and tools.sessions.visibility = 'all'
+    // for insightAllX to properly integrate with its updated tool system.
     const toolsConfig = (config.tools as Record<string, unknown> | undefined) || {};
     let toolsModified = false;
 
@@ -3103,8 +3103,8 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       toolsModified = true;
     }
 
-    // OpenClaw 6.5+ routes durable skill edits through the Skill Workshop tool.
-    // ClawX keeps direct skill-creator authoring instead, so deny the workshop
+    // insightAll 6.5+ routes durable skill edits through the Skill Workshop tool.
+    // insightAllX keeps direct skill-creator authoring instead, so deny the workshop
     // tool even under tools.profile="full".
     const denyResult = ensureToolDenyIncludes(
       normalizeToolDenyList(toolsConfig.deny),
@@ -3113,13 +3113,13 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     if (denyResult.modified) {
       toolsConfig.deny = denyResult.deny;
       toolsModified = true;
-      console.log('[sanitize] Added "skill_workshop" to tools.deny for ClawX desktop');
+      console.log('[sanitize] Added "skill_workshop" to tools.deny for insightAllX desktop');
     } else if (!Array.isArray(toolsConfig.deny) || toolsConfig.deny.length !== denyResult.deny.length) {
       toolsConfig.deny = denyResult.deny;
       toolsModified = true;
     }
 
-    // ClawX uses the managed browser and web_fetch for explicit navigation,
+    // insightAllX uses the managed browser and web_fetch for explicit navigation,
     // but does not expose general-purpose internet search to agents.
     const webSearchDenyResult = ensureToolDenyIncludes(
       normalizeToolDenyList(toolsConfig.deny),
@@ -3128,7 +3128,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     if (webSearchDenyResult.modified) {
       toolsConfig.deny = webSearchDenyResult.deny;
       toolsModified = true;
-      console.log('[sanitize] Added "web_search" to tools.deny for ClawX desktop');
+      console.log('[sanitize] Added "web_search" to tools.deny for insightAllX desktop');
     } else if (
       !Array.isArray(toolsConfig.deny)
       || toolsConfig.deny.length !== webSearchDenyResult.deny.length
@@ -3144,7 +3144,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     if (controlPlaneToolDenyResult.modified) {
       toolsConfig.deny = controlPlaneToolDenyResult.deny;
       toolsModified = true;
-      console.log('[sanitize] Added control-plane tools to tools.deny for ClawX desktop');
+      console.log('[sanitize] Added control-plane tools to tools.deny for insightAllX desktop');
     } else if (
       !Array.isArray(toolsConfig.deny)
       || toolsConfig.deny.length !== controlPlaneToolDenyResult.deny.length
@@ -3153,19 +3153,19 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       toolsModified = true;
     }
 
-    // ── tools.exec approvals (OpenClaw 3.28+) ──────────────────────
-    // ClawX is a local desktop app where the user is the trusted operator.
+    // ── tools.exec approvals (insightAll 3.28+) ──────────────────────
+    // insightAllX is a local desktop app where the user is the trusted operator.
     // Exec approval prompts add unnecessary friction in this context, so we
     // set security="full" (allow all commands) and ask="off" (never prompt).
     // If a user has manually configured a stricter ~/.openclaw/exec-approvals.json,
-    // OpenClaw's minSecurity/maxAsk merge will still respect their intent.
+    // insightAll's minSecurity/maxAsk merge will still respect their intent.
     const execConfig = (toolsConfig.exec as Record<string, unknown> | undefined) || {};
     if (execConfig.security !== 'full' || execConfig.ask !== 'off') {
       execConfig.security = 'full';
       execConfig.ask = 'off';
       toolsConfig.exec = execConfig;
       toolsModified = true;
-      console.log('[sanitize] Set tools.exec.security="full" and tools.exec.ask="off" to disable exec approvals for ClawX desktop');
+      console.log('[sanitize] Set tools.exec.security="full" and tools.exec.ask="off" to disable exec approvals for insightAllX desktop');
     }
 
     if (toolsModified) {
@@ -3174,8 +3174,8 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     }
 
     // ── session.dmScope ─────────────────────────────────────────────
-    // OpenClaw defaults DM session routing to "main" (all channels share
-    // agent:main:main), which makes ClawX sidebar conflate feishu, dingtalk,
+    // insightAll defaults DM session routing to "main" (all channels share
+    // agent:main:main), which makes insightAllX sidebar conflate feishu, dingtalk,
     // and other channel DMs into one entry. Set "per-channel-peer" so each
     // channel+peer gets its own session key (agent:main:feishu:direct:ou_xxx),
     // letting the sidebar show them as separate conversations with channel badges.
@@ -3188,10 +3188,10 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       sessionConfig.dmScope = 'per-channel-peer';
       config.session = sessionConfig;
       modified = true;
-      console.log('[sanitize] Set session.dmScope="per-channel-peer" so channel DMs appear as separate sessions in ClawX');
+      console.log('[sanitize] Set session.dmScope="per-channel-peer" so channel DMs appear as separate sessions in insightAllX');
     }
 
-    // ── Skill Workshop hard-disable (OpenClaw 6.10+) ─────────────────
+    // ── Skill Workshop hard-disable (insightAll 6.10+) ─────────────────
     const gateway = (
       config.gateway && typeof config.gateway === 'object'
         ? { ...(config.gateway as Record<string, unknown>) }
@@ -3209,7 +3209,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     let gatewayModified = gatewayDenyResult.modified;
     if (gatewayDenyResult.modified) {
       gatewayTools.deny = gatewayDenyResult.deny;
-      console.log('[sanitize] Added "skill_workshop" to gateway.tools.deny for ClawX desktop');
+      console.log('[sanitize] Added "skill_workshop" to gateway.tools.deny for insightAllX desktop');
     } else if (!Array.isArray(gatewayTools.deny) || gatewayTools.deny.length !== gatewayDenyResult.deny.length) {
       gatewayTools.deny = gatewayDenyResult.deny;
       gatewayModified = true;
@@ -3221,7 +3221,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     if (gatewayWebSearchDenyResult.modified) {
       gatewayTools.deny = gatewayWebSearchDenyResult.deny;
       gatewayModified = true;
-      console.log('[sanitize] Added "web_search" to gateway.tools.deny for ClawX desktop');
+      console.log('[sanitize] Added "web_search" to gateway.tools.deny for insightAllX desktop');
     } else if (
       !Array.isArray(gatewayTools.deny)
       || gatewayTools.deny.length !== gatewayWebSearchDenyResult.deny.length
@@ -3237,7 +3237,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     if (gatewayControlPlaneToolDenyResult.modified) {
       gatewayTools.deny = gatewayControlPlaneToolDenyResult.deny;
       gatewayModified = true;
-      console.log('[sanitize] Added control-plane tools to gateway.tools.deny for ClawX desktop');
+      console.log('[sanitize] Added control-plane tools to gateway.tools.deny for insightAllX desktop');
     } else if (
       !Array.isArray(gatewayTools.deny)
       || gatewayTools.deny.length !== gatewayControlPlaneToolDenyResult.deny.length
@@ -3274,7 +3274,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       workshop.autonomous = autonomous;
       skillsObj.workshop = workshop;
       skillsModified = true;
-      console.log('[sanitize] Disabled skills.workshop.autonomous for ClawX desktop');
+      console.log('[sanitize] Disabled skills.workshop.autonomous for insightAllX desktop');
     }
 
     const skillEntries = (
@@ -3290,7 +3290,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       };
       skillsObj.entries = skillEntries;
       skillsModified = true;
-      console.log('[sanitize] Enabled bundled skill-creator for direct skill authoring in ClawX desktop');
+      console.log('[sanitize] Enabled bundled skill-creator for direct skill authoring in insightAllX desktop');
     }
 
     if (skillsModified) {
@@ -3319,7 +3319,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       }
 
       // ── MiniMax merged-plugin compatibility cleanup ─────────────
-      // Newer OpenClaw releases merged the legacy minimax-portal-auth plugin
+      // Newer insightAll releases merged the legacy minimax-portal-auth plugin
       // into the canonical "minimax" plugin. Legacy ids may still be accepted
       // in some allowlist paths, but explicit plugins.entries map keys are not
       // consistently normalized upstream, which causes "plugin not found"
@@ -3347,11 +3347,11 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       }
 
       // ── acpx legacy config/install cleanup ─────────────────────
-      // Older OpenClaw releases allowed plugins.entries.acpx.config.command
+      // Older insightAll releases allowed plugins.entries.acpx.config.command
       // and expectedVersion overrides. Current bundled acpx schema rejects
       // them, which causes the Gateway to fail validation before startup.
       // Strip those keys and drop stale installs metadata that still points
-      // at an older bundled OpenClaw tree so the current bundled plugin can
+      // at an older bundled insightAll tree so the current bundled plugin can
       // be re-registered cleanly.
       const acpxEntry = isPlainRecord(pEntries.acpx) ? pEntries.acpx as Record<string, unknown> : null;
       const acpxConfig = acpxEntry && isPlainRecord(acpxEntry.config)
@@ -3370,7 +3370,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       if (isPlainRecord(pluginsObj.installs) && isPlainRecord(pluginsObj.installs.acpx)) {
         const installs = pluginsObj.installs;
         const acpxInstall = installs.acpx as Record<string, unknown>;
-        const currentBundledAcpxDir = join(getOpenClawResolvedDir(), 'dist', 'extensions', 'acpx').replace(/\\/g, '/');
+        const currentBundledAcpxDir = join(getinsightAllResolvedDir(), 'dist', 'extensions', 'acpx').replace(/\\/g, '/');
         const sourcePath = typeof acpxInstall.sourcePath === 'string' ? acpxInstall.sourcePath : '';
         const installPath = typeof acpxInstall.installPath === 'string' ? acpxInstall.installPath : '';
         const normalizedSourcePath = sourcePath.replace(/\\/g, '/');
@@ -3480,8 +3480,8 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       }
 
       // ── external channel plugin registration cleanup ────────────
-      // Channel account configuration belongs under channels.<id>. OpenClaw's
-      // PluginEntryConfig rejects ClawX's legacy accounts/defaultAccount mirror.
+      // Channel account configuration belongs under channels.<id>. insightAll's
+      // PluginEntryConfig rejects insightAllX's legacy accounts/defaultAccount mirror.
       // Migrate first: some older configs have no channels.<id> copy, and
       // deleting the plugin account map directly would lose their credentials.
       for (const pluginId of ['discord', 'whatsapp', 'qqbot'] as const) {
@@ -3544,7 +3544,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
         }
       }
 
-      // QQBot is an external @openclaw/qqbot plugin in OpenClaw 2026.7.1.
+      // QQBot is an external @openclaw/qqbot plugin in insightAll 2026.7.1.
       // Migrate the legacy manifest id and keep one canonical active entry.
       const legacyQQBotId = 'openclaw-qqbot';
       const legacyQQBotAllowIndex = allowArr.indexOf(legacyQQBotId);
@@ -3574,7 +3574,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       }
 
       // ── qwen-portal → modelstudio migration ────────────────────
-      // OpenClaw 2026.3.28 deprecated qwen-portal OAuth (portal.qwen.ai)
+      // insightAll 2026.3.28 deprecated qwen-portal OAuth (portal.qwen.ai)
       // in favor of Model Studio (DashScope API key).  Clean up legacy
       // qwen-portal-auth plugin entries and qwen-portal provider config.
       const LEGACY_QWEN_PLUGIN_ID = 'qwen-portal-auth';
@@ -3612,10 +3612,10 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
 
 
       // ── Remove legacy built-in 'feishu' registration ───────────────
-      // ClawX bundles Feishu via the official @larksuite/openclaw-lark
+      // insightAllX bundles Feishu via the official @larksuite/openclaw-lark
       // plugin and removes the old built-in dist/extensions/feishu tree.
       // Keeping plugins.entries.feishu={enabled:false} looks harmless, but
-      // OpenClaw's channel startup planner treats it as an explicit blocker
+      // insightAll's channel startup planner treats it as an explicit blocker
       // for the feishu channel owner and skips openclaw-lark at runtime.
       const allowArr2 = Array.isArray(pluginsObj.allow) ? pluginsObj.allow as string[] : [];
       if (isFeishuConfigured) {
@@ -3652,8 +3652,8 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       }
 
       // Discover all bundled extension IDs so we can clean stale bundled
-      // allowlist entries from older OpenClaw versions. Re-add only the
-      // ClawX-critical bundled plugins, active provider plugins, and explicitly
+      // allowlist entries from older insightAll versions. Re-add only the
+      // insightAllX-critical bundled plugins, active provider plugins, and explicitly
       // enabled bundled plugins — not every enabledByDefault provider plugin.
       const bundled = discoverBundledPlugins();
       const installedExtensionIds = await discoverInstalledExtensionPluginIds();
@@ -3752,7 +3752,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
     }
 
     // ── channels default-account migration and cleanup ─────────────
-    // Most OpenClaw channel plugins/built-ins read the default account's
+    // Most insightAll channel plugins/built-ins read the default account's
     // credentials from the top level of `channels.<type>`.  Mirror them
     // there so the runtime can discover them.
     //
@@ -3856,7 +3856,7 @@ export async function sanitizeOpenClawConfig(): Promise<void> {
       console.log(`[sanitize] Migrated legacy OpenAI Codex OAuth runtime: ${migratedCodexRuntime.join(', ')}`);
     }
 
-    const pinnedProviderRuntimes = applyOpenClawProviderAgentRuntimePinsToConfig(config);
+    const pinnedProviderRuntimes = applyinsightAllProviderAgentRuntimePinsToConfig(config);
     if (pinnedProviderRuntimes.length > 0) {
       modified = true;
       console.log(`[sanitize] Pinned embedded agent runtime for models.providers entries: ${pinnedProviderRuntimes.join(', ')}`);

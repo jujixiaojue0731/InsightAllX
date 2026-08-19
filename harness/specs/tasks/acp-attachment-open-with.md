@@ -97,7 +97,7 @@ The authoritative durable requirements are `harness/reference/acp-attachment-acc
 - Changing preview format classification or the behavior of user, remote, unavailable, or system-open-only attachments.
 - Sending native paths or commands to Renderer or persisting operating-system application associations.
 - Claiming that normalization inserts a default handler omitted by operating-system enumeration; current code only orders and deduplicates valid enumerated rows, and guarded insertion remains follow-up work.
-- Modifying legacy Chat or OpenClaw.
+- Modifying legacy Chat or insightAll.
 
 ## Acceptance Traceability
 

@@ -92,7 +92,7 @@ test.describe('Markdown file preview', { tag: E2E_EXCLUSIVE_TAG }, () => {
       await expect(workspaceTree).toBeVisible();
       await workspaceTree.getByTitle(FILE_NAME, { exact: true }).click();
 
-      const preview = panel.locator('.clawx-markdown-preview');
+      const preview = panel.locator('.insightallx-markdown-preview');
       await expect(preview).toBeVisible();
       await expect(preview.getByRole('heading', { name: 'Static Streamdown Preview' })).toBeVisible();
       await expect(preview.getByText('Visible Markdown body.')).toBeVisible();

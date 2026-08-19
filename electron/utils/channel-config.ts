@@ -1,6 +1,6 @@
 /**
  * Channel Configuration Utilities
- * Manages channel configuration in OpenClaw config files.
+ * Manages channel configuration in insightAll config files.
  *
  * All file I/O uses async fs/promises to avoid blocking the main thread.
  */
@@ -8,15 +8,15 @@ import { access, mkdir, readFile, writeFile, readdir, stat, rm } from 'fs/promis
 import { constants } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { mutateOpenClawConfig, readOpenClawConfigSnapshot } from '../gateway/config-delivery';
-import { getOpenClawResolvedDir, resolveOpenClawConfigPath } from './paths';
+import { mutateinsightAllConfig, readinsightAllConfigSnapshot } from '../gateway/config-delivery';
+import { getinsightAllResolvedDir, resolveinsightAllConfigPath } from './paths';
 import * as logger from './logger';
 import { proxyAwareFetch } from './proxy-fetch';
 import {
     OPENCLAW_WECHAT_CHANNEL_TYPE,
     isWechatChannelType,
-    normalizeOpenClawAccountId,
-    toOpenClawChannelType,
+    normalizeinsightAllAccountId,
+    toinsightAllChannelType,
 } from './channel-alias';
 
 const OPENCLAW_DIR = join(homedir(), '.openclaw');
@@ -27,15 +27,15 @@ const DEFAULT_ACCOUNT_ID = 'default';
 // Channels whose top-level schema (additionalProperties:false) does NOT
 // include `defaultAccount`.  We still use the multi-account `accounts`
 // map, but strip `defaultAccount` before persisting to avoid plugin
-// schema validation errors.  ClawX falls back to DEFAULT_ACCOUNT_ID
+// schema validation errors.  insightAllX falls back to DEFAULT_ACCOUNT_ID
 // when `defaultAccount` is absent.
 const CHANNELS_OMIT_DEFAULT_ACCOUNT_KEY = new Set(['dingtalk']);
 
 // Channels whose schema accepts a top-level default account and account map,
-// but whose account payload contains nested strict-schema objects that ClawX
+// but whose account payload contains nested strict-schema objects that insightAllX
 // can accidentally make invalid by adding UI convenience fields.  Keep this
 // sanitization narrowly scoped to known nested maps so local config remains
-// OpenClaw-compatible after a save.
+// insightAll-compatible after a save.
 const DISCORD_GUILD_CHANNEL_KEYS_TO_KEEP = new Set([
     'autoArchiveDuration',
     'autoThread',
@@ -63,7 +63,7 @@ const LEGACY_WECHAT_SYNC_DIR = join(OPENCLAW_DIR, 'agents', 'default', 'sessions
 // configuration remains exclusively under channels.<id>.
 const PLUGIN_CHANNELS: string[] = ['discord', 'qqbot', 'whatsapp'];
 const LEGACY_BUILTIN_CHANNEL_PLUGIN_IDS = new Set<string>();
-// OpenClaw 2026.7.1 bundles only these channel extensions. All other ClawX
+// insightAll 2026.7.1 bundles only these channel extensions. All other insightAllX
 // channels must retain their explicit external plugin allowlist entries.
 const BUILTIN_CHANNEL_IDS = new Set(['telegram', 'imessage']);
 
@@ -95,9 +95,9 @@ function sanitizeDiscordGuildChannelConfig(channelConfig: unknown): void {
 
     const record = channelConfig as Record<string, unknown>;
 
-    // Backward compatibility for the older ClawX-generated shape:
+    // Backward compatibility for the older insightAllX-generated shape:
     //   channels: { "123": { allow: true, requireMention: true } }
-    // OpenClaw's current DiscordGuildChannelConfig does not include `allow`;
+    // insightAll's current DiscordGuildChannelConfig does not include `allow`;
     // represent deny/allow using `enabled` instead.
     if (record.allow === false && record.enabled === undefined) {
         record.enabled = false;
@@ -144,7 +144,7 @@ function sanitizeDiscordGuilds(config: unknown): void {
  * declares additionalProperties:false without listing `defaultAccount`.
  * Call before committing channel-config mutations.
  */
-function sanitizeChannelSectionsBeforeWrite(config: OpenClawConfig): void {
+function sanitizeChannelSectionsBeforeWrite(config: insightAllConfig): void {
     for (const pluginId of PLUGIN_CHANNELS) {
         const pluginEntry = config.plugins?.entries?.[pluginId];
         if (!pluginEntry) continue;
@@ -199,7 +199,7 @@ async function resolveFeishuPluginId(): Promise<string> {
 }
 
 function resolveStoredChannelType(channelType: string): string {
-    return toOpenClawChannelType(channelType);
+    return toinsightAllChannelType(channelType);
 }
 
 function deriveLegacyWeChatRawAccountId(normalizedId: string): string | undefined {
@@ -229,7 +229,7 @@ async function writeWeChatAccountIndex(accountIds: string[]): Promise<void> {
 }
 
 async function deleteWeChatAccountState(accountId: string): Promise<void> {
-    const normalizedAccountId = normalizeOpenClawAccountId(accountId);
+    const normalizedAccountId = normalizeinsightAllAccountId(accountId);
     const legacyRawAccountId = deriveLegacyWeChatRawAccountId(normalizedAccountId);
     const candidateIds = new Set<string>([normalizedAccountId]);
     if (legacyRawAccountId) {
@@ -260,7 +260,7 @@ async function deleteWeChatState(): Promise<void> {
     await rm(LEGACY_WECHAT_SYNC_DIR, { recursive: true, force: true });
 }
 
-function removePluginRegistration(currentConfig: OpenClawConfig, pluginId: string): boolean {
+function removePluginRegistration(currentConfig: insightAllConfig, pluginId: string): boolean {
     if (!currentConfig.plugins) return false;
     let modified = false;
 
@@ -331,7 +331,7 @@ function channelHasConfiguredAccounts(channelSection: ChannelConfigData | undefi
     return Object.keys(channelSection).some((key) => !CHANNEL_TOP_LEVEL_KEYS_TO_KEEP.has(key));
 }
 
-function ensurePluginRegistration(currentConfig: OpenClawConfig, pluginId: string): void {
+function ensurePluginRegistration(currentConfig: insightAllConfig, pluginId: string): void {
     if (!currentConfig.plugins) {
         currentConfig.plugins = {
             allow: [pluginId],
@@ -359,14 +359,14 @@ function ensurePluginRegistration(currentConfig: OpenClawConfig, pluginId: strin
     }
     const pluginEntry = currentConfig.plugins.entries[pluginId];
     // PluginEntryConfig contains plugin activation/config metadata, not channel
-    // accounts. Older ClawX versions mirrored credentials here, which OpenClaw
+    // accounts. Older insightAllX versions mirrored credentials here, which insightAll
     // 2026.7.1 rejects as an invalid plugins.entries.<id> shape.
     delete pluginEntry.accounts;
     delete pluginEntry.defaultAccount;
     pluginEntry.enabled = true;
 }
 
-function syncPluginChannelRegistration(currentConfig: OpenClawConfig, channelType: string): void {
+function syncPluginChannelRegistration(currentConfig: insightAllConfig, channelType: string): void {
     if (!PLUGIN_CHANNELS.includes(channelType)) return;
     const channelSection = currentConfig.channels?.[channelType];
     if (!channelSection) {
@@ -378,7 +378,7 @@ function syncPluginChannelRegistration(currentConfig: OpenClawConfig, channelTyp
 }
 
 function cleanupLegacyBuiltInChannelPluginRegistration(
-    currentConfig: OpenClawConfig,
+    currentConfig: insightAllConfig,
     channelType: string,
 ): boolean {
     if (!LEGACY_BUILTIN_CHANNEL_PLUGIN_IDS.has(channelType)) {
@@ -392,7 +392,7 @@ function isBuiltinChannelId(channelId: string): boolean {
 }
 
 function listConfiguredBuiltinChannels(
-    currentConfig: OpenClawConfig,
+    currentConfig: insightAllConfig,
     additionalChannelIds: string[] = [],
 ): string[] {
     const configured = new Set<string>();
@@ -416,7 +416,7 @@ function listConfiguredBuiltinChannels(
 }
 
 function syncBuiltinChannelsWithPluginAllowlist(
-    currentConfig: OpenClawConfig,
+    currentConfig: insightAllConfig,
     additionalBuiltinChannelIds: string[] = [],
 ): void {
     const plugins = currentConfig.plugins;
@@ -457,7 +457,7 @@ export interface PluginsConfig {
     [key: string]: unknown;
 }
 
-export interface OpenClawConfig {
+export interface insightAllConfig {
     channels?: Record<string, ChannelConfigData>;
     plugins?: PluginsConfig;
     commands?: Record<string, unknown>;
@@ -466,20 +466,20 @@ export interface OpenClawConfig {
 
 // ── Config I/O ───────────────────────────────────────────────────
 
-export async function readOpenClawConfig(): Promise<OpenClawConfig> {
+export async function readinsightAllConfig(): Promise<insightAllConfig> {
     try {
-        const snapshot = await readOpenClawConfigSnapshot();
-        return snapshot.config as OpenClawConfig;
+        const snapshot = await readinsightAllConfigSnapshot();
+        return snapshot.config as insightAllConfig;
     } catch (error) {
-        logger.error('Failed to read OpenClaw config', error);
-        console.error('Failed to read OpenClaw config:', error);
+        logger.error('Failed to read insightAll config', error);
+        console.error('Failed to read insightAll config:', error);
         return {};
     }
 }
 
 // ── Channel operations ───────────────────────────────────────────
 
-async function ensurePluginAllowlist(currentConfig: OpenClawConfig, channelType: string): Promise<void> {
+async function ensurePluginAllowlist(currentConfig: insightAllConfig, channelType: string): Promise<void> {
     if (PLUGIN_CHANNELS.includes(channelType)) {
         ensurePluginRegistration(currentConfig, channelType);
     }
@@ -514,7 +514,7 @@ async function ensurePluginAllowlist(currentConfig: OpenClawConfig, channelType:
             }
             // Remove conflicting feishu plugin entries; keep only the resolved
             // external plugin id. A disabled plugins.entries.feishu record
-            // blocks openclaw-lark in OpenClaw's gateway startup planner.
+            // blocks openclaw-lark in insightAll's gateway startup planner.
             delete currentConfig.plugins.entries['feishu'];
             for (const candidateId of FEISHU_PLUGIN_ID_CANDIDATES) {
                 if (candidateId !== feishuPluginId) {
@@ -809,8 +809,8 @@ export async function saveChannelConfig(
     const resolvedAccountId = accountId || DEFAULT_ACCOUNT_ID;
     let transformedKeys: string[] = [];
 
-    await mutateOpenClawConfig(async (snapshot) => {
-        const currentConfig = snapshot as OpenClawConfig;
+    await mutateinsightAllConfig(async (snapshot) => {
+        const currentConfig = snapshot as insightAllConfig;
 
         cleanupLegacyBuiltInChannelPluginRegistration(currentConfig, resolvedChannelType);
         await ensurePluginAllowlist(currentConfig, resolvedChannelType);
@@ -867,7 +867,7 @@ export async function saveChannelConfig(
 
         syncPluginChannelRegistration(currentConfig, resolvedChannelType);
 
-        // Most OpenClaw channel plugins/built-ins also read the default
+        // Most insightAll channel plugins/built-ins also read the default
         // account's credentials from the top level of `channels.<type>`
         // (e.g. channels.feishu.appId).  Mirror them there so the
         // runtime can discover them.
@@ -887,7 +887,7 @@ export async function saveChannelConfig(
     logger.info('Channel config saved', {
         channelType: resolvedChannelType,
         accountId: resolvedAccountId,
-        configFile: resolveOpenClawConfigPath(),
+        configFile: resolveinsightAllConfigPath(),
         rawKeys: Object.keys(config),
         transformedKeys,
     });
@@ -896,7 +896,7 @@ export async function saveChannelConfig(
 
 export async function getChannelConfig(channelType: string, accountId?: string): Promise<ChannelConfigData | undefined> {
     const resolvedChannelType = resolveStoredChannelType(channelType);
-    const config = await readOpenClawConfig();
+    const config = await readinsightAllConfig();
     const channelSection = config.channels?.[resolvedChannelType];
     if (!channelSection) return undefined;
 
@@ -969,10 +969,10 @@ export async function deleteChannelAccountConfig(channelType: string, accountId:
     let deleteWeChatAccount = false;
     let deletedAccount = false;
 
-    await mutateOpenClawConfig((snapshot) => {
+    await mutateinsightAllConfig((snapshot) => {
         deleteWeChatAccount = false;
         deletedAccount = false;
-        const currentConfig = snapshot as OpenClawConfig;
+        const currentConfig = snapshot as insightAllConfig;
         const channelSection = currentConfig.channels?.[resolvedChannelType];
         if (!channelSection) {
             if (isWechatChannelType(resolvedChannelType)) {
@@ -1053,10 +1053,10 @@ export async function deleteChannelConfig(channelType: string): Promise<void> {
     let deleteWeChat = false;
     let deletedConfig: 'channel' | 'plugin' | undefined;
 
-    await mutateOpenClawConfig((snapshot) => {
+    await mutateinsightAllConfig((snapshot) => {
         deleteWeChat = false;
         deletedConfig = undefined;
-        const currentConfig = snapshot as OpenClawConfig;
+        const currentConfig = snapshot as insightAllConfig;
         cleanupLegacyBuiltInChannelPluginRegistration(currentConfig, resolvedChannelType);
 
         if (currentConfig.channels?.[resolvedChannelType]) {
@@ -1131,7 +1131,7 @@ function channelHasAnyAccount(channelSection: ChannelConfigData): boolean {
     return false;
 }
 
-export async function listConfiguredChannelsFromConfig(config: OpenClawConfig): Promise<string[]> {
+export async function listConfiguredChannelsFromConfig(config: insightAllConfig): Promise<string[]> {
     const channels: string[] = [];
 
     if (config.channels) {
@@ -1170,7 +1170,7 @@ export async function listConfiguredChannelsFromConfig(config: OpenClawConfig): 
 }
 
 export async function listConfiguredChannels(): Promise<string[]> {
-    const config = await readOpenClawConfig();
+    const config = await readinsightAllConfig();
     return listConfiguredChannelsFromConfig(config);
 }
 
@@ -1179,7 +1179,7 @@ export interface ConfiguredChannelAccounts {
     accountIds: string[];
 }
 
-export function listConfiguredChannelAccountsFromConfig(config: OpenClawConfig): Record<string, ConfiguredChannelAccounts> {
+export function listConfiguredChannelAccountsFromConfig(config: insightAllConfig): Record<string, ConfiguredChannelAccounts> {
     const result: Record<string, ConfiguredChannelAccounts> = {};
 
     if (!config.channels) {
@@ -1229,7 +1229,7 @@ export function listConfiguredChannelAccountsFromConfig(config: OpenClawConfig):
 }
 
 export async function listConfiguredChannelAccounts(): Promise<Record<string, ConfiguredChannelAccounts>> {
-    const config = await readOpenClawConfig();
+    const config = await readinsightAllConfig();
     return listConfiguredChannelAccountsFromConfig(config);
 }
 
@@ -1240,8 +1240,8 @@ export async function setChannelDefaultAccount(channelType: string, accountId: s
         throw new Error('accountId is required');
     }
 
-    await mutateOpenClawConfig((snapshot) => {
-        const currentConfig = snapshot as OpenClawConfig;
+    await mutateinsightAllConfig((snapshot) => {
+        const currentConfig = snapshot as insightAllConfig;
         const channelSection = currentConfig.channels?.[resolvedChannelType];
         if (!channelSection) {
             throw new Error(`Channel "${resolvedChannelType}" is not configured`);
@@ -1270,12 +1270,12 @@ export async function deleteAgentChannelAccounts(agentId: string, ownedChannelAc
     let modified = false;
     const accountId = agentId === 'main' ? DEFAULT_ACCOUNT_ID : agentId;
 
-    await mutateOpenClawConfig((snapshot) => {
+    await mutateinsightAllConfig((snapshot) => {
         modified = false;
-        const currentConfig = snapshot as OpenClawConfig;
+        const currentConfig = snapshot as insightAllConfig;
         const channels = currentConfig.channels ?? {};
 
-        // Older ClawX releases could leave the only copy of Discord, QQBot,
+        // Older insightAllX releases could leave the only copy of Discord, QQBot,
         // or WhatsApp account credentials under plugins.entries.<id>. Migrate
         // that invalid legacy shape into channels.<id> before deleting the
         // owned account, so sibling accounts survive while PluginEntryConfig
@@ -1369,9 +1369,9 @@ export async function setChannelEnabled(channelType: string, enabled: boolean): 
     const resolvedChannelType = resolveStoredChannelType(channelType);
     let pluginChannel = false;
 
-    await mutateOpenClawConfig(async (snapshot) => {
+    await mutateinsightAllConfig(async (snapshot) => {
         pluginChannel = false;
-        const currentConfig = snapshot as OpenClawConfig;
+        const currentConfig = snapshot as insightAllConfig;
         cleanupLegacyBuiltInChannelPluginRegistration(currentConfig, resolvedChannelType);
 
         if (isWechatChannelType(resolvedChannelType)) {
@@ -1400,10 +1400,10 @@ export async function cleanupDanglingWeChatPluginState(): Promise<{ cleanedDangl
     let cleanedDanglingState = false;
     let hasConfiguredWeChatAccounts = false;
 
-    await mutateOpenClawConfig((snapshot) => {
+    await mutateinsightAllConfig((snapshot) => {
         cleanedDanglingState = false;
         hasConfiguredWeChatAccounts = false;
-        const currentConfig = snapshot as OpenClawConfig;
+        const currentConfig = snapshot as insightAllConfig;
         const channelSection = currentConfig.channels?.[WECHAT_PLUGIN_ID];
         hasConfiguredWeChatAccounts = channelHasConfiguredAccounts(channelSection);
         const hadPluginRegistration = Boolean(
@@ -1625,7 +1625,7 @@ export async function validateChannelConfig(channelType: string): Promise<Valida
     const result: ValidationResult = { valid: true, errors: [], warnings: [] };
 
     try {
-        const openclawPath = getOpenClawResolvedDir();
+        const openclawPath = getinsightAllResolvedDir();
 
         // Run openclaw doctor command to validate config (async to avoid
         // blocking the main thread).
@@ -1666,7 +1666,7 @@ export async function validateChannelConfig(channelType: string): Promise<Valida
             });
         }
 
-        const config = await readOpenClawConfig();
+        const config = await readinsightAllConfig();
         const savedChannelConfig = await getChannelConfig(resolvedChannelType, DEFAULT_ACCOUNT_ID);
         if (!config.channels?.[resolvedChannelType] || !savedChannelConfig) {
             result.errors.push(`Channel ${resolvedChannelType} is not configured`);
@@ -1705,11 +1705,11 @@ export async function validateChannelConfig(channelType: string): Promise<Valida
             result.errors.push(errorMessage);
             result.valid = false;
         } else if (errorMessage.includes('ENOENT')) {
-            result.errors.push('OpenClaw not found. Please ensure OpenClaw is installed.');
+            result.errors.push('insightAll not found. Please ensure insightAll is installed.');
             result.valid = false;
         } else {
             console.warn('Doctor command failed:', errorMessage);
-            const config = await readOpenClawConfig();
+            const config = await readinsightAllConfig();
             if (config.channels?.[resolvedChannelType]) {
                 result.valid = true;
             } else {

@@ -1,4 +1,4 @@
-# OpenClaw File Activity
+# insightAll File Activity
 
 Status: current compatibility and safety reference, reviewed 2026-07-23.
 
@@ -10,11 +10,11 @@ Related tasks: `restore-acp-file-activity`, `acp-media-attachments`, `acp-attach
 
 ## Semantics And Ownership
 
-File activity is a pure Renderer projection over the active ACP timeline. It records file changes declared by successful OpenClaw file-editing tool calls. It is not a Git diff, a verified disk diff, or a session-start baseline.
+File activity is a pure Renderer projection over the active ACP timeline. It records file changes declared by successful insightAll file-editing tool calls. It is not a Git diff, a verified disk diff, or a session-start baseline.
 
-ClawX does not scan or watch the workspace, create snapshots, infer shell/script side effects, parse arbitrary prose, call `sessions.files.list` to manufacture diffs, or persist an activity ledger. Main does not interpret tool semantics; it only performs workspace-scoped read/stat and explicit native file actions.
+insightAllX does not scan or watch the workspace, create snapshots, infer shell/script side effects, parse arbitrary prose, call `sessions.files.list` to manufacture diffs, or persist an activity ledger. Main does not interpret tool semantics; it only performs workspace-scoped read/stat and explicit native file actions.
 
-The supported tools are exactly `write`, `edit`, and `apply_patch`. Tool identity is the trimmed lowercase segment before the first colon in OpenClaw's ACP title. Status must be `completed`. Unsupported, malformed, pending, running, failed, and cancelled calls remain ordinary tool cards but produce no file activity.
+The supported tools are exactly `write`, `edit`, and `apply_patch`. Tool identity is the trimmed lowercase segment before the first colon in insightAll's ACP title. Status must be `completed`. Unsupported, malformed, pending, running, failed, and cancelled calls remain ordinary tool cards but produce no file activity.
 
 ## Canonical Inputs
 
@@ -24,7 +24,7 @@ For `write` and `edit`, path fields use this precedence: `path`, `file_path`, `f
 
 `edit` accepts `edits: Array<{ oldText, newText }>` and the official top-level `oldText`/`newText` compatibility shape. Invalid entries are skipped. Broad aliases such as `old_string` and `new_string` are intentionally unsupported.
 
-`apply_patch` accepts OpenClaw's patch envelope and optional `<<EOF`, `<<'EOF'`, or `<<"EOF"` wrapper. Supported sections are Add, Update, Delete, and an immediate Move-to after Update. Add lines use `+`; Update lines use space, `-`, and `+`; the first Update chunk may omit `@@`; later chunks require it; `*** End of File` is syntax, not content. Grammar failure rejects the complete tool payload without partial activity. After a valid parse, independently unsafe paths may be omitted while valid in-workspace records remain.
+`apply_patch` accepts insightAll's patch envelope and optional `<<EOF`, `<<'EOF'`, or `<<"EOF"` wrapper. Supported sections are Add, Update, Delete, and an immediate Move-to after Update. Add lines use `+`; Update lines use space, `-`, and `+`; the first Update chunk may omit `@@`; later chunks require it; `*** End of File` is syntax, not content. Grammar failure rejects the complete tool payload without partial activity. After a valid parse, independently unsafe paths may be omitted while valid in-workspace records remain.
 
 A move normally creates source deletion and destination creation with update fragments attached to the destination. Equal normalized paths collapse to one modification.
 
@@ -93,4 +93,4 @@ Full ACP structured replay restores available activity through the same projecti
 
 Key tests include `tests/unit/openclaw-file-activities.test.ts`, `tests/unit/files-api-workspace.test.ts`, the file-preview component suites, and `tests/e2e/chat-file-changes.spec.ts`.
 
-This reference replaces the former OpenClaw file activity hydration design while retaining its protocol grammar, security model, and aggregation semantics.
+This reference replaces the former insightAll file activity hydration design while retaining its protocol grammar, security model, and aggregation semantics.

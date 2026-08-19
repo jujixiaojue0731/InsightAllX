@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { collectQuickAccessSkills, filterEnabledQuickAccessSkills, type QuickAccessSkill } from '@electron/utils/skill-quick-access';
 
-const testRoot = join(tmpdir(), 'clawx-tests', 'skill-quick-access');
+const testRoot = join(tmpdir(), 'insightallx-tests', 'skill-quick-access');
 
 function writeSkill(baseDir: string, skillName: string, content: string): void {
   const skillDir = join(baseDir, skillName);
@@ -35,7 +35,7 @@ describe('collectQuickAccessSkills', () => {
     writeSkill(
       join(openClawDir, 'skills'),
       'create-skill',
-      "---\ndescription: OpenClaw fallback.\n---\n# OpenClaw Skill\n",
+      "---\ndescription: insightAll fallback.\n---\n# insightAll Skill\n",
     );
     writeSkill(
       join(personalAgentsDir, '.agents', 'skills'),
@@ -177,7 +177,7 @@ describe('collectQuickAccessSkills', () => {
     writeSkill(
       join(openClawDir, 'skills'),
       'apple-notes',
-      "---\ndescription: Legacy OpenClaw built-in skill.\n---\n# Apple Notes\n",
+      "---\ndescription: Legacy insightAll built-in skill.\n---\n# Apple Notes\n",
     );
     writeSkill(
       join(extensionDir, 'wecom', 'skills'),
@@ -205,7 +205,7 @@ describe('collectQuickAccessSkills', () => {
     const skills: QuickAccessSkill[] = [
       {
         name: 'apple-notes',
-        description: 'Legacy OpenClaw built-in skill.',
+        description: 'Legacy insightAll built-in skill.',
         source: 'legacy',
         sourceLabel: 'Legacy',
         manifestPath: '/tmp/openclaw/skills/apple-notes/SKILL.md',

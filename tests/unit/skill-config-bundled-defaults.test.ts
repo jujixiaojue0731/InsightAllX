@@ -19,26 +19,26 @@ vi.mock('os', async () => {
 });
 
 vi.mock('@electron/utils/paths', () => ({
-  getOpenClawDir: () => state.openclawDir,
-  getOpenClawResolvedDir: () => state.openclawDir,
+  getinsightAllDir: () => state.openclawDir,
+  getinsightAllResolvedDir: () => state.openclawDir,
   getResourcesDir: () => '',
 }));
 
-describe('bundled OpenClaw skill trimming', () => {
+describe('bundled insightAll skill trimming', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
   });
 
   it('physically trims non-allowlisted bundled skills from a bundled skills root', async () => {
-    const root = mkdtempSync(join(tmpdir(), 'clawx-bundled-skills-'));
+    const root = mkdtempSync(join(tmpdir(), 'insightallx-bundled-skills-'));
     mkdirSync(join(root, 'skill-creator'), { recursive: true });
     mkdirSync(join(root, 'browser-use'), { recursive: true });
     writeFileSync(join(root, 'skill-creator', 'SKILL.md'), '---\nname: skill-creator\ndescription: keep\n---\n');
     writeFileSync(join(root, 'browser-use', 'SKILL.md'), '---\nname: browser-use\ndescription: remove\n---\n');
 
-    const { trimBundledOpenClawSkills } = await import('@electron/utils/skill-config');
-    const result = await trimBundledOpenClawSkills({ bundledSkillsRoot: root });
+    const { trimBundledinsightAllSkills } = await import('@electron/utils/skill-config');
+    const result = await trimBundledinsightAllSkills({ bundledSkillsRoot: root });
 
     expect(result).toMatchObject({ removed: 1, removedSlugs: ['browser-use'], kept: ['skill-creator'] });
     expect(existsSync(join(root, 'skill-creator'))).toBe(true);

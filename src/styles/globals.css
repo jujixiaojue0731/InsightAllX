@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ──────────────────────────────────────────────────────────────────────────
- * ClawX design tokens — CSS variable layer
+ * insightAllX design tokens — CSS variable layer
  * ──────────────────────────────────────────────────────────────────────────
  *
  * This file is the *CSS variable layer only*. HSL channel triplets are
@@ -16,9 +16,9 @@
  *      / ...). The standard shadcn/ui palette — do not rename or remove,
  *      Radix-driven components read these directly.
  *
- *   2. ClawX surface tokens (--surface-modal / --surface-input /
+ *   2. insightAllX surface tokens (--surface-modal / --surface-input /
  *      --surface-sidebar). Three light-mode neutral layers added
- *      by ClawX. In dark mode each one is redirected to an existing
+ *      by insightAllX. In dark mode each one is redirected to an existing
  *      shadcn token (--card / --muted / --background) so we don't have
  *      to maintain a second dark surface palette.
  *
@@ -136,7 +136,7 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
 
-    /* ── ClawX neutral surfaces (light) ───────────────────────────
+    /* ── insightAllX neutral surfaces (light) ───────────────────────────
      *
      * Three stacked neutral layers. The app shell stays white while
      * recessed controls and the sidebar use subtle gray contrast.
@@ -150,7 +150,7 @@
     --surface-input: 0 0% 96.5%;
     --surface-sidebar: 0 0% 96%;
 
-    /* ── ClawX usage accents (light) ─────────────────────────────
+    /* ── insightAllX usage accents (light) ─────────────────────────────
      *
      * Three semantic accents reused everywhere that we visualise
      * token usage / activity. Mirrors the Cron page convention so
@@ -230,58 +230,58 @@
     @apply text-sm font-normal leading-4;
   }
 
-  .clawx-skill-token-overlay {
+  .insightallx-skill-token-overlay {
     background-color: color-mix(in srgb, #2f6bff 14%, hsl(var(--surface-modal)));
   }
 
-  .dark .clawx-skill-token-overlay {
+  .dark .insightallx-skill-token-overlay {
     background-color: color-mix(in srgb, #2f6bff 18%, hsl(var(--surface-modal)));
   }
 
-  .clawx-dialog-overlay {
+  .insightallx-dialog-overlay {
     @apply fixed inset-0 z-50 bg-black/30 dark:bg-black/60;
   }
 
-  .clawx-dialog-content {
+  .insightallx-dialog-content {
     @apply fixed left-1/2 top-1/2 z-50 w-full outline-none;
     transform: translate(-50%, -50%);
     transform-origin: center;
     will-change: opacity, transform;
   }
 
-  .clawx-dialog-overlay[data-state='open'] {
-    animation: clawx-dialog-overlay-in 100ms ease-out both;
+  .insightallx-dialog-overlay[data-state='open'] {
+    animation: insightallx-dialog-overlay-in 100ms ease-out both;
   }
 
-  .clawx-dialog-overlay[data-state='closed'] {
-    animation: clawx-dialog-overlay-out 80ms ease-in both;
+  .insightallx-dialog-overlay[data-state='closed'] {
+    animation: insightallx-dialog-overlay-out 80ms ease-in both;
   }
 
-  .clawx-dialog-content[data-state='open'] {
-    animation: clawx-dialog-content-in 100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  .insightallx-dialog-content[data-state='open'] {
+    animation: insightallx-dialog-content-in 100ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  .clawx-dialog-content[data-state='closed'] {
-    animation: clawx-dialog-content-out 80ms ease-in both;
+  .insightallx-dialog-content[data-state='closed'] {
+    animation: insightallx-dialog-content-out 80ms ease-in both;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .clawx-dialog-overlay[data-state],
-    .clawx-dialog-content[data-state] {
+    .insightallx-dialog-overlay[data-state],
+    .insightallx-dialog-content[data-state] {
       animation: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .clawx-chat-thinking-dot-pulse-dot,
-    .clawx-chat-thinking-dot-pulse-inner::before,
-    .clawx-chat-thinking-dot-pulse-inner::after {
+    .insightallx-chat-thinking-dot-pulse-dot,
+    .insightallx-chat-thinking-dot-pulse-inner::before,
+    .insightallx-chat-thinking-dot-pulse-inner::after {
       animation: none !important;
       transform: scale(1) !important;
     }
   }
 
-  .clawx-chat-thinking-dot-pulse {
+  .insightallx-chat-thinking-dot-pulse {
     --uib-size: 28px;
     --uib-color: hsl(var(--primary));
     --uib-speed: 1.3s;
@@ -294,7 +294,7 @@
     width: var(--uib-size);
   }
 
-  .clawx-chat-thinking-dot-pulse-inner {
+  .insightallx-chat-thinking-dot-pulse-inner {
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -303,9 +303,9 @@
     width: 100%;
   }
 
-  .clawx-chat-thinking-dot-pulse-dot,
-  .clawx-chat-thinking-dot-pulse-inner::before,
-  .clawx-chat-thinking-dot-pulse-inner::after {
+  .insightallx-chat-thinking-dot-pulse-dot,
+  .insightallx-chat-thinking-dot-pulse-inner::before,
+  .insightallx-chat-thinking-dot-pulse-inner::after {
     background-color: var(--uib-color);
     border-radius: 50%;
     content: '';
@@ -316,20 +316,20 @@
     width: var(--uib-dot-size);
   }
 
-  .clawx-chat-thinking-dot-pulse-inner::before {
-    animation: clawx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.375) infinite;
+  .insightallx-chat-thinking-dot-pulse-inner::before {
+    animation: insightallx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.375) infinite;
   }
 
-  .clawx-chat-thinking-dot-pulse-dot {
-    animation: clawx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.25) infinite both;
+  .insightallx-chat-thinking-dot-pulse-dot {
+    animation: insightallx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.25) infinite both;
   }
 
-  .clawx-chat-thinking-dot-pulse-inner::after {
-    animation: clawx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.125) infinite;
+  .insightallx-chat-thinking-dot-pulse-inner::after {
+    animation: insightallx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.125) infinite;
   }
 }
 
-@keyframes clawx-chat-thinking-dot-pulse {
+@keyframes insightallx-chat-thinking-dot-pulse {
   0%,
   100% {
     transform: scale(0);
@@ -340,7 +340,7 @@
   }
 }
 
-@keyframes clawx-dialog-overlay-in {
+@keyframes insightallx-dialog-overlay-in {
   from {
     opacity: 0;
   }
@@ -350,7 +350,7 @@
   }
 }
 
-@keyframes clawx-dialog-overlay-out {
+@keyframes insightallx-dialog-overlay-out {
   from {
     opacity: 1;
   }
@@ -360,7 +360,7 @@
   }
 }
 
-@keyframes clawx-dialog-content-in {
+@keyframes insightallx-dialog-content-in {
   from {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.985);
@@ -372,7 +372,7 @@
   }
 }
 
-@keyframes clawx-dialog-content-out {
+@keyframes insightallx-dialog-content-out {
   from {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -415,13 +415,13 @@
   @apply bg-muted-foreground/30;
 }
 
-/* Monaco's default light diff theme is pure white; keep it aligned with ClawX's light app background. */
-:root:not(.dark) .clawx-diff-editor .monaco-diff-editor,
-:root:not(.dark) .clawx-diff-editor .monaco-editor,
-:root:not(.dark) .clawx-diff-editor .monaco-editor-background,
-:root:not(.dark) .clawx-diff-editor .monaco-editor .margin,
-:root:not(.dark) .clawx-diff-editor .monaco-editor .gutter,
-:root:not(.dark) .clawx-diff-editor .diffOverview {
+/* Monaco's default light diff theme is pure white; keep it aligned with insightAllX's light app background. */
+:root:not(.dark) .insightallx-diff-editor .monaco-diff-editor,
+:root:not(.dark) .insightallx-diff-editor .monaco-editor,
+:root:not(.dark) .insightallx-diff-editor .monaco-editor-background,
+:root:not(.dark) .insightallx-diff-editor .monaco-editor .margin,
+:root:not(.dark) .insightallx-diff-editor .monaco-editor .gutter,
+:root:not(.dark) .insightallx-diff-editor .diffOverview {
   background-color: hsl(var(--background)) !important;
 }
 
@@ -509,41 +509,41 @@
 }
 
 /* Streamdown's root `space-y-4` replaces both margins on sibling blocks. These
- * scoped rules restore ClawX's prose rhythm while preserving edge resets. */
-.prose.clawx-markdown.clawx-streamdown > p {
+ * scoped rules restore insightAllX's prose rhythm while preserving edge resets. */
+.prose.insightallx-markdown.insightallx-streamdown > p {
   margin: 0 0 0.75em;
 }
 
-.prose.clawx-streamdown > [data-streamdown='heading-1'] {
+.prose.insightallx-streamdown > [data-streamdown='heading-1'] {
   margin: 1rem 0 0.6rem;
 }
 
-.prose.clawx-streamdown > [data-streamdown='heading-2'] {
+.prose.insightallx-streamdown > [data-streamdown='heading-2'] {
   margin: 0.9rem 0 0.5rem;
 }
 
-.prose.clawx-streamdown > [data-streamdown='heading-3'] {
+.prose.insightallx-streamdown > [data-streamdown='heading-3'] {
   margin: 0.8rem 0 0.45rem;
 }
 
-.prose.clawx-streamdown > [data-streamdown='heading-4'] {
+.prose.insightallx-streamdown > [data-streamdown='heading-4'] {
   margin: 0.7rem 0 0.4rem;
 }
 
-.prose.clawx-streamdown > [data-streamdown='heading-5'],
-.prose.clawx-streamdown > [data-streamdown='heading-6'] {
+.prose.insightallx-streamdown > [data-streamdown='heading-5'],
+.prose.insightallx-streamdown > [data-streamdown='heading-6'] {
   margin: 0.6rem 0 0.35rem;
 }
 
-.prose.clawx-streamdown > [data-streamdown='horizontal-rule'] {
+.prose.insightallx-streamdown > [data-streamdown='horizontal-rule'] {
   margin: 1rem 0;
 }
 
-.prose.clawx-markdown.clawx-streamdown > :first-child {
+.prose.insightallx-markdown.insightallx-streamdown > :first-child {
   margin-top: 0;
 }
 
-.prose.clawx-markdown.clawx-streamdown > :last-child {
+.prose.insightallx-markdown.insightallx-streamdown > :last-child {
   margin-bottom: 0;
 }
 
@@ -581,83 +581,83 @@
   background: hsl(var(--muted));
 }
 
-.clawx-streamdown [data-streamdown='code-block'] {
+.insightallx-streamdown [data-streamdown='code-block'] {
   @apply relative my-2 gap-0 overflow-hidden rounded-lg border-0 bg-surface-input p-0;
 }
 
-.clawx-streamdown [data-streamdown='code-block-header'] {
+.insightallx-streamdown [data-streamdown='code-block-header'] {
   @apply h-7 justify-end px-3 pr-10;
 }
 
-.clawx-streamdown [data-streamdown='code-block-header'] > span {
+.insightallx-streamdown [data-streamdown='code-block-header'] > span {
   @apply ml-0;
 }
 
-.clawx-streamdown [data-streamdown='code-block'] > div:has(> [data-streamdown='code-block-actions']) {
+.insightallx-streamdown [data-streamdown='code-block'] > div:has(> [data-streamdown='code-block-actions']) {
   @apply absolute right-0 top-0 mt-0 h-7 items-center pr-2;
 }
 
-.clawx-streamdown [data-streamdown='code-block-actions'] {
+.insightallx-streamdown [data-streamdown='code-block-actions'] {
   @apply border-0 bg-transparent p-0 shadow-none backdrop-blur-none;
 }
 
-.clawx-streamdown [data-streamdown='code-block-body'] {
+.insightallx-streamdown [data-streamdown='code-block-body'] {
   @apply min-w-0 overflow-x-auto;
 }
 
-.clawx-streamdown [data-streamdown='code-block-body'] pre {
+.insightallx-streamdown [data-streamdown='code-block-body'] pre {
   @apply max-w-full overflow-x-auto whitespace-pre-wrap bg-transparent;
   overflow-wrap: break-word;
 }
 
-.clawx-streamdown [data-streamdown='code-block-body'] code {
+.insightallx-streamdown [data-streamdown='code-block-body'] code {
   @apply whitespace-pre-wrap bg-transparent font-mono text-sm;
   overflow-wrap: break-word;
 }
 
-.clawx-streamdown [data-streamdown='code-block-body'] code > span {
+.insightallx-streamdown [data-streamdown='code-block-body'] code > span {
   @apply block;
 }
 
-.prose.clawx-markdown.clawx-streamdown [data-streamdown='unordered-list'],
-.prose.clawx-markdown.clawx-streamdown [data-streamdown='ordered-list'] {
+.prose.insightallx-markdown.insightallx-streamdown [data-streamdown='unordered-list'],
+.prose.insightallx-markdown.insightallx-streamdown [data-streamdown='ordered-list'] {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
 
-.clawx-streamdown [data-streamdown='list-item'] {
+.insightallx-streamdown [data-streamdown='list-item'] {
   @apply my-0 py-0.5;
 }
 
-.clawx-streamdown [data-streamdown='list-item'] > p {
+.insightallx-streamdown [data-streamdown='list-item'] > p {
   @apply my-0;
 }
 
-.clawx-streamdown [data-streamdown='table-wrapper'],
-.clawx-streamdown [data-streamdown='table-wrapper'] > div,
-.clawx-streamdown [data-streamdown='table'] {
+.insightallx-streamdown [data-streamdown='table-wrapper'],
+.insightallx-streamdown [data-streamdown='table-wrapper'] > div,
+.insightallx-streamdown [data-streamdown='table'] {
   @apply border-0;
 }
 
-.clawx-streamdown [data-streamdown='table-wrapper'] {
+.insightallx-streamdown [data-streamdown='table-wrapper'] {
   @apply p-0;
 }
 
-.clawx-streamdown [data-streamdown='table-wrapper'] > div {
+.insightallx-streamdown [data-streamdown='table-wrapper'] > div {
   @apply rounded-none;
 }
 
-.clawx-streamdown [data-streamdown='table'] {
+.insightallx-streamdown [data-streamdown='table'] {
   @apply my-0;
 }
 
-.clawx-streamdown [data-streamdown='table-header'],
-.clawx-streamdown [data-streamdown='table-header-cell'] {
+.insightallx-streamdown [data-streamdown='table-header'],
+.insightallx-streamdown [data-streamdown='table-header-cell'] {
   @apply bg-transparent font-bold;
 }
 
-.dark .clawx-streamdown [data-streamdown='table-header'],
-.dark .clawx-streamdown [data-streamdown='table-header-cell'] {
+.dark .insightallx-streamdown [data-streamdown='table-header'],
+.dark .insightallx-streamdown [data-streamdown='table-header-cell'] {
   @apply bg-muted;
 }
 

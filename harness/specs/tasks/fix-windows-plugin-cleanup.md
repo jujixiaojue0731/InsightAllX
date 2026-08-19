@@ -13,7 +13,7 @@ touchedAreas:
   - harness/specs/tasks/fix-windows-plugin-cleanup.md
 expectedUserBehavior:
   - Removing a configured channel also removes its stale plugin directory on Windows.
-  - Plugin cleanup never follows outbound directory links into the bundled OpenClaw runtime.
+  - Plugin cleanup never follows outbound directory links into the bundled insightAll runtime.
 requiredProfiles:
   - fast
 requiredTests:

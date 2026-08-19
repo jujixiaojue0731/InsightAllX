@@ -390,7 +390,7 @@ async function openChat(app: ElectronApplication) {
   return page;
 }
 
-test.describe('ClawX ACP inline timeline', () => {
+test.describe('insightAllX ACP inline timeline', () => {
   test('does not use legacy history on startup or current-session clicks', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -1119,7 +1119,7 @@ test.describe('ClawX ACP inline timeline', () => {
     }
   });
 
-  test('starts on a new empty chat instead of selecting a heartbeat-only ClawX session', async ({ launchElectronApp }) => {
+  test('starts on a new empty chat instead of selecting a heartbeat-only insightAllX session', async ({ launchElectronApp }) => {
     const now = 1711111111111;
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -1132,9 +1132,9 @@ test.describe('ClawX ACP inline timeline', () => {
             result: {
               sessions: [{
                 key: MAIN_SESSION_KEY,
-                displayName: 'ClawX',
+                displayName: 'insightAllX',
                 workspacePath: MAIN_WORKSPACE,
-                lastMessagePreview: '[OpenClaw heartbeat poll]',
+                lastMessagePreview: '[insightAll heartbeat poll]',
                 updatedAt: new Date(now).toISOString(),
               }],
             },
@@ -1148,7 +1148,7 @@ test.describe('ClawX ACP inline timeline', () => {
 
       await expect(page.getByTestId('acp-chat-empty-state')).toBeVisible({ timeout: 30_000 });
       await expect(page.getByTestId(`sidebar-session-${MAIN_SESSION_KEY}`)).toHaveCount(0);
-      await expect(page.getByText('[OpenClaw heartbeat poll]')).toHaveCount(0);
+      await expect(page.getByText('[insightAll heartbeat poll]')).toHaveCount(0);
       expect(await getRecordedAcpLoadSessionKeys(app)).toEqual([]);
 
       await page.getByTestId('chat-composer-input').fill('Start a real conversation');
@@ -1381,7 +1381,7 @@ test.describe('ClawX ACP inline timeline', () => {
     }
   });
 
-  test('hides heartbeat-only ClawX sessions from the sidebar without hiding normal sessions', async ({ launchElectronApp }) => {
+  test('hides heartbeat-only insightAllX sessions from the sidebar without hiding normal sessions', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const updatedAt = new Date().toISOString();
 
@@ -1395,14 +1395,14 @@ test.describe('ClawX ACP inline timeline', () => {
               sessions: [
                 {
                   key: 'agent:main:heartbeat',
-                  displayName: 'ClawX',
-                  lastMessagePreview: '[OpenClaw heartbeat poll]',
+                  displayName: 'insightAllX',
+                  lastMessagePreview: '[insightAll heartbeat poll]',
                   updatedAt,
                 },
                 {
                   key: 'agent:main:session-1710000000000',
-                  displayName: 'ClawX',
-                  derivedTitle: 'ClawX',
+                  displayName: 'insightAllX',
+                  derivedTitle: 'insightAllX',
                   lastMessagePreview: 'Summarize the repository structure',
                   updatedAt,
                 },

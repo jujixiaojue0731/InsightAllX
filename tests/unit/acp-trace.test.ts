@@ -57,7 +57,7 @@ describe('ACP trace diagnostics store', () => {
     expect(normalizeRendererAcpTracePayload(null)).toBeNull();
   });
 
-  it('allowlists OpenClaw transcript projection details without transcript bodies or raw references', () => {
+  it('allowlists insightAll transcript projection details without transcript bodies or raw references', () => {
     const normalized = normalizeRendererAcpTracePayload({
       event: 'openclaw-media:resolution-available',
       sessionKey: 'agent:pi:s1',

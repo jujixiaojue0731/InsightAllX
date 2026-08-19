@@ -3,7 +3,7 @@ id: add-chat-performance-diagnostics
 title: Add chat performance diagnostics
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Establish repeatable Renderer and Electron Main profiling for ACP chat streaming, then remove measured per-update work without changing OpenClaw.
+intent: Establish repeatable Renderer and Electron Main profiling for ACP chat streaming, then remove measured per-update work without changing insightAll.
 touchedAreas:
   - harness/specs/tasks/add-chat-performance-diagnostics.md
   - tests/e2e/renderer-performance.spec.ts
@@ -23,7 +23,7 @@ touchedAreas:
 expectedUserBehavior:
   - ACP chat output remains semantically identical while long streaming responses stay responsive.
   - Developers can capture bounded Renderer and Main CPU profiles from a deterministic synthetic chat workload.
-  - Profiling uses isolated synthetic data and never modifies OpenClaw.
+  - Profiling uses isolated synthetic data and never modifies insightAll.
 requiredProfiles:
   - fast
   - comms
@@ -57,7 +57,7 @@ This task creates a deterministic profiling loop for Electron Main and Renderer,
 
 ## Out of Scope
 
-- Changes to the OpenClaw source tree or bundled package.
+- Changes to the insightAll source tree or bundled package.
 - Hardware-independent absolute timing gates.
 - Uploading CPU profiles or performance traces as product telemetry.
 - GPU-process or native-code profiling.

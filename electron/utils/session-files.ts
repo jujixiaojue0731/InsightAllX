@@ -11,7 +11,7 @@
  *        - `<baseId>.jsonl`               the live transcript
  *        - `<baseId>.deleted.jsonl`       legacy soft-delete leftover
  *        - `<baseId>.jsonl.reset.*`       reset snapshots from sessions.reset
- *        - `<baseId>.trajectory.jsonl`    OpenClaw runtime "flight recorder"
+ *        - `<baseId>.trajectory.jsonl`    insightAll runtime "flight recorder"
  *                                         (default location, beside session)
  *        - `<baseId>.trajectory-path.json` pointer sidecar; when present we
  *                                         follow `runtimeFile` so the actual
@@ -23,8 +23,8 @@
  * agent's `sessions/` directory so a corrupt or malicious `sessions.json`
  * can never steer the unlink loop into an unrelated folder. The pointer-
  * follow path is the only deliberate exception: it walks to whatever
- * `runtimeFile` says (defended by schema + extension checks) so ClawX can
- * cooperate with OpenClaw's documented `OPENCLAW_TRAJECTORY_DIR` override.
+ * `runtimeFile` says (defended by schema + extension checks) so insightAllX can
+ * cooperate with insightAll's documented `OPENCLAW_TRAJECTORY_DIR` override.
  */
 
 import { promises as fsP } from 'node:fs';
@@ -39,7 +39,7 @@ export type SessionResolutionResult =
   | { ok: false; failure: SessionResolutionFailure };
 
 /**
- * `path.isAbsolute` only respects the *current* platform's rules. OpenClaw
+ * `path.isAbsolute` only respects the *current* platform's rules. insightAll
  * may be running in a context (or have been migrated from a profile) where
  * the on-disk `sessionFile` uses Windows-style backslash paths, Windows
  * forward-slash paths (`C:/...`) or POSIX paths. Accepting all three keeps
@@ -109,7 +109,7 @@ export function resolveSessionTranscriptPath(
   }
 
   const sessionsDirAbs = path.dirname(resolvedSrcPath);
-  // sessionsDir is always built from `getOpenClawConfigDir()` + the validated
+  // sessionsDir is always built from `getinsightAllConfigDir()` + the validated
   // agentId, so anything that doesn't resolve underneath it is suspect. We
   // refuse rather than try to "normalise" the entry — the worst case for the
   // user is that the sidebar entry stops listing it; the worst case if we
@@ -129,9 +129,9 @@ export interface SweepResult {
 }
 
 /**
- * Schema marker written by OpenClaw's `writeTrajectoryPointerBestEffort`.
+ * Schema marker written by insightAll's `writeTrajectoryPointerBestEffort`.
  * Any pointer file that doesn't carry this exact `traceSchema` is treated
- * as untrusted and ignored — we only follow pointers we know OpenClaw
+ * as untrusted and ignored — we only follow pointers we know insightAll
  * authored.
  */
 const TRAJECTORY_POINTER_SCHEMA = 'openclaw-trajectory-pointer';
@@ -163,7 +163,7 @@ async function readTrajectoryRuntimeFile(pointerPath: string): Promise<string | 
   if (obj.traceSchema !== TRAJECTORY_POINTER_SCHEMA) return null;
   const runtimeFile = obj.runtimeFile;
   if (typeof runtimeFile !== 'string' || runtimeFile.length === 0) return null;
-  // OpenClaw always writes a `.jsonl` path; refusing anything else keeps us
+  // insightAll always writes a `.jsonl` path; refusing anything else keeps us
   // from being weaponised into deleting (say) `/etc/passwd` if a hostile
   // sessions.json/pointer combination ever showed up on disk.
   if (!runtimeFile.endsWith('.jsonl')) return null;
@@ -181,8 +181,8 @@ async function readTrajectoryRuntimeFile(pointerPath: string): Promise<string | 
  * In addition to the local sidecars (`.jsonl`, `.deleted.jsonl`,
  * `.jsonl.reset.*`, `.trajectory.jsonl`, `.trajectory-path.json`), the
  * sweep follows the `.trajectory-path.json` pointer when it exists and
- * unlinks the off-disk runtime file at `runtimeFile`. This keeps ClawX in
- * sync with OpenClaw's `OPENCLAW_TRAJECTORY_DIR` override (where the
+ * unlinks the off-disk runtime file at `runtimeFile`. This keeps insightAllX in
+ * sync with insightAll's `OPENCLAW_TRAJECTORY_DIR` override (where the
  * actual trajectory is stored outside the sessions/ folder).
  */
 export async function sweepSessionArtefacts(

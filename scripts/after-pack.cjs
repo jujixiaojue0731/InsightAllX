@@ -435,7 +435,7 @@ function patchBrokenModules(nodeModulesDir) {
               const patched = [
                 original,
                 '',
-                '// ClawX patch: add LRUCache named export for Node.js 22+ ESM interop',
+                '// insightAllX patch: add LRUCache named export for Node.js 22+ ESM interop',
                 'if (typeof module.exports === "function" && !module.exports.LRUCache) {',
                 '  module.exports.LRUCache = module.exports;',
                 '}',
@@ -524,7 +524,7 @@ function patchPluginIds(pluginDir, expectedId) {
 }
 
 // ── Plugin bundler ───────────────────────────────────────────────────────────
-// Bundles a single OpenClaw plugin (and its transitive deps) from node_modules
+// Bundles a single insightAll plugin (and its transitive deps) from node_modules
 // directly into the packaged resources directory.  Mirrors the logic in
 // bundle-openclaw-plugins.mjs so the packaged app is self-contained even when
 // build/openclaw-plugins/ was not pre-generated.
@@ -689,7 +689,7 @@ exports.default = async function afterPack(context) {
   // causing TypeError in Node.js 22+ ESM interop.
   patchBrokenModules(dest);
 
-  // 1.1 Bundle OpenClaw plugins directly from node_modules into packaged resources.
+  // 1.1 Bundle insightAll plugins directly from node_modules into packaged resources.
   //     This is intentionally done in afterPack (not extraResources) because:
   //     - electron-builder silently skips extraResources entries whose source
   //       directory doesn't exist (build/openclaw-plugins/ may not be pre-generated)
@@ -726,7 +726,7 @@ exports.default = async function afterPack(context) {
   }
 
   // 1.2 Copy built-in extension node_modules that electron-builder skipped.
-  //     OpenClaw 3.31+ ships built-in extensions (discord, qqbot, etc.) under
+  //     insightAll 3.31+ ships built-in extensions (discord, qqbot, etc.) under
   //     dist/extensions/<ext>/node_modules/. These are skipped by extraResources
   //     because .gitignore contains "node_modules/".
   //
@@ -736,7 +736,7 @@ exports.default = async function afterPack(context) {
   //     the top-level node_modules/ as well.
   const buildExtDir = join(__dirname, '..', 'build', 'openclaw', 'dist', 'extensions');
   const packExtDir = join(openclawRoot, 'dist', 'extensions');
-  // ClawX always uses the official @larksuite/openclaw-lark plugin for Feishu.
+  // insightAllX always uses the official @larksuite/openclaw-lark plugin for Feishu.
   // The built-in openclaw dist/extensions/feishu tree is redundant, and on macOS
   // its mirrored runtime deps significantly increase codesign file pressure.
   rmSync(join(packExtDir, 'feishu'), { recursive: true, force: true });
@@ -913,7 +913,7 @@ exports.default = async function afterPack(context) {
               const patched = [
                 original,
                 '',
-                '// ClawX patch: add LRUCache named export for Node.js 22+ ESM interop',
+                '// insightAllX patch: add LRUCache named export for Node.js 22+ ESM interop',
                 'if (typeof module.exports === "function" && !module.exports.LRUCache) {',
                 '  module.exports.LRUCache = module.exports;',
                 '}',

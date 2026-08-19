@@ -8,10 +8,10 @@ export const SUPERVISED_SYSTEMD_ENV_KEYS = [
 export type GatewayEnv = Record<string, string | undefined>;
 
 /**
- * OpenClaw CLI treats certain environment variables as systemd supervisor hints.
- * When present in ClawX-owned child-process launches, it can mistakenly enter
+ * insightAll CLI treats certain environment variables as systemd supervisor hints.
+ * When present in insightAllX-owned child-process launches, it can mistakenly enter
  * a supervised process retry loop. Strip those variables so startup follows
- * ClawX lifecycle.
+ * insightAllX lifecycle.
  */
 export function stripSystemdSupervisorEnv(env: GatewayEnv): GatewayEnv {
   const next = { ...env };

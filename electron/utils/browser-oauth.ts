@@ -5,16 +5,16 @@ import { loginOpenAICodexOAuth, type OpenAICodexOAuthCredentials } from './opena
 import { getProviderService } from '../services/providers/provider-service';
 import { getSecretStore } from '../services/secrets/secret-store';
 import {
-  ensureOpenClawProviderAgentRuntimePins,
+  ensureinsightAllProviderAgentRuntimePins,
   OPENAI_CODEX_OAUTH_PROVIDER_CONFIG,
-  saveOAuthTokenToOpenClaw,
-  setOpenClawDefaultModelWithOverride,
+  saveOAuthTokenToinsightAll,
+  setinsightAllDefaultModelWithOverride,
 } from './openclaw-auth';
 
-// Google was removed: OpenClaw's `google-gemini-cli` OAuth integration is an
+// Google was removed: insightAll's `google-gemini-cli` OAuth integration is an
 // unofficial third-party flow that requires the `gemini` CLI binary to be on
 // PATH and ships with explicit "use at your own risk" warnings about Google
-// account suspensions. ClawX does not bundle that binary, so the only
+// account suspensions. insightAllX does not bundle that binary, so the only
 // browser-OAuth provider we currently expose end-to-end is OpenAI Codex.
 export type BrowserOAuthProviderType = 'openai';
 
@@ -180,7 +180,7 @@ class BrowserOAuthManager extends EventEmitter {
       subject: oauthTokenSubject,
     });
 
-    await saveOAuthTokenToOpenClaw(runtimeProviderId, {
+    await saveOAuthTokenToinsightAll(runtimeProviderId, {
       access: token.access,
       refresh: token.refresh,
       expires: token.expires,
@@ -201,7 +201,7 @@ class BrowserOAuthManager extends EventEmitter {
       ));
 
     try {
-      await setOpenClawDefaultModelWithOverride(
+      await setinsightAllDefaultModelWithOverride(
         runtimeProviderId,
         modelRef,
         {
@@ -210,7 +210,7 @@ class BrowserOAuthManager extends EventEmitter {
         },
         fallbackModelRefs,
       );
-      await ensureOpenClawProviderAgentRuntimePins();
+      await ensureinsightAllProviderAgentRuntimePins();
       logger.info(`[BrowserOAuth] Registered ${runtimeProviderId} in openclaw.json (default model: ${modelRef})`);
     } catch (err) {
       logger.warn('[BrowserOAuth] Failed to register OpenAI OAuth provider in openclaw.json:', err);

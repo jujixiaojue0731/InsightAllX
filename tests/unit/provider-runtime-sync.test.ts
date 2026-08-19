@@ -12,16 +12,16 @@ const mocks = vi.hoisted(() => ({
   getProvider: vi.fn(),
   getProviderConfig: vi.fn(),
   getProviderDefaultModel: vi.fn(),
-  removeProviderFromOpenClaw: vi.fn(),
-  removeProviderKeyFromOpenClaw: vi.fn(),
-  saveOAuthTokenToOpenClaw: vi.fn(),
-  saveProviderKeyToOpenClaw: vi.fn(),
-  setOpenClawDefaultModel: vi.fn(),
-  setOpenClawDefaultModelWithOverride: vi.fn(),
-  syncProviderConfigToOpenClaw: vi.fn(),
+  removeProviderFrominsightAll: vi.fn(),
+  removeProviderKeyFrominsightAll: vi.fn(),
+  saveOAuthTokenToinsightAll: vi.fn(),
+  saveProviderKeyToinsightAll: vi.fn(),
+  setinsightAllDefaultModel: vi.fn(),
+  setinsightAllDefaultModelWithOverride: vi.fn(),
+  syncProviderConfigToinsightAll: vi.fn(),
   updateAgentModelProvider: vi.fn(),
   updateSingleAgentModelProvider: vi.fn(),
-  getProviderApiKeyFromOpenClaw: vi.fn(),
+  getProviderApiKeyFrominsightAll: vi.fn(),
   listAgentsSnapshot: vi.fn(),
 }));
 
@@ -48,23 +48,23 @@ vi.mock('@electron/utils/provider-registry', () => ({
 
 vi.mock('@electron/utils/openclaw-auth', () => ({
   ensureAnthropicMessagesModelMaxTokens: vi.fn().mockResolvedValue([]),
-  ensureOpenClawProviderAgentRuntimePins: vi.fn().mockResolvedValue([]),
+  ensureinsightAllProviderAgentRuntimePins: vi.fn().mockResolvedValue([]),
   migrateAllAgentAuthProfilesToSqlite: vi.fn().mockResolvedValue(undefined),
   pruneInvalidApiProviderEntries: vi.fn().mockResolvedValue([]),
-  removeProviderFromOpenClaw: mocks.removeProviderFromOpenClaw,
-  removeProviderKeyFromOpenClaw: mocks.removeProviderKeyFromOpenClaw,
-  saveOAuthTokenToOpenClaw: mocks.saveOAuthTokenToOpenClaw,
-  saveProviderKeyToOpenClaw: mocks.saveProviderKeyToOpenClaw,
+  removeProviderFrominsightAll: mocks.removeProviderFrominsightAll,
+  removeProviderKeyFrominsightAll: mocks.removeProviderKeyFrominsightAll,
+  saveOAuthTokenToinsightAll: mocks.saveOAuthTokenToinsightAll,
+  saveProviderKeyToinsightAll: mocks.saveProviderKeyToinsightAll,
   OPENAI_CODEX_OAUTH_PROVIDER_CONFIG: {
     baseUrl: 'https://chatgpt.com/backend-api/codex',
     api: 'openai-chatgpt-responses',
   },
-  setOpenClawDefaultModel: mocks.setOpenClawDefaultModel,
-  setOpenClawDefaultModelWithOverride: mocks.setOpenClawDefaultModelWithOverride,
-  syncProviderConfigToOpenClaw: mocks.syncProviderConfigToOpenClaw,
+  setinsightAllDefaultModel: mocks.setinsightAllDefaultModel,
+  setinsightAllDefaultModelWithOverride: mocks.setinsightAllDefaultModelWithOverride,
+  syncProviderConfigToinsightAll: mocks.syncProviderConfigToinsightAll,
   updateAgentModelProvider: mocks.updateAgentModelProvider,
   updateSingleAgentModelProvider: mocks.updateSingleAgentModelProvider,
-  getProviderApiKeyFromOpenClaw: mocks.getProviderApiKeyFromOpenClaw,
+  getProviderApiKeyFrominsightAll: mocks.getProviderApiKeyFrominsightAll,
 }));
 
 vi.mock('@electron/utils/agent-config', () => ({
@@ -132,15 +132,15 @@ describe('provider-runtime-sync config delivery', () => {
       baseUrl: 'https://api.moonshot.cn/v1',
       apiKeyEnv: 'MOONSHOT_API_KEY',
     });
-    mocks.syncProviderConfigToOpenClaw.mockResolvedValue(undefined);
-    mocks.setOpenClawDefaultModel.mockResolvedValue(undefined);
-    mocks.setOpenClawDefaultModelWithOverride.mockResolvedValue(undefined);
-    mocks.saveProviderKeyToOpenClaw.mockResolvedValue(undefined);
-    mocks.removeProviderFromOpenClaw.mockResolvedValue(undefined);
-    mocks.removeProviderKeyFromOpenClaw.mockResolvedValue(undefined);
+    mocks.syncProviderConfigToinsightAll.mockResolvedValue(undefined);
+    mocks.setinsightAllDefaultModel.mockResolvedValue(undefined);
+    mocks.setinsightAllDefaultModelWithOverride.mockResolvedValue(undefined);
+    mocks.saveProviderKeyToinsightAll.mockResolvedValue(undefined);
+    mocks.removeProviderFrominsightAll.mockResolvedValue(undefined);
+    mocks.removeProviderKeyFrominsightAll.mockResolvedValue(undefined);
     mocks.updateAgentModelProvider.mockResolvedValue(undefined);
     mocks.updateSingleAgentModelProvider.mockResolvedValue(undefined);
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue(null);
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue(null);
     mocks.listProviderAccounts.mockResolvedValue([]);
     mocks.listAgentsSnapshot.mockResolvedValue({ agents: [] });
   });
@@ -176,9 +176,9 @@ describe('provider-runtime-sync config delivery', () => {
 
     await syncDeletedProviderToRuntime(customProvider, 'moonshot-cn', gateway as GatewayManager);
 
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledWith('custom-moonshot');
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledWith('moonshot-cn');
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledTimes(2);
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledWith('custom-moonshot');
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledWith('moonshot-cn');
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledTimes(2);
     expectNoGatewayLifecycleCalls(gateway);
   });
 
@@ -190,7 +190,7 @@ describe('provider-runtime-sync config delivery', () => {
       model: 'gpt-5.5',
     });
 
-    mocks.getProviderApiKeyFromOpenClaw.mockResolvedValue(null);
+    mocks.getProviderApiKeyFrominsightAll.mockResolvedValue(null);
     mocks.listProviderAccounts.mockResolvedValue([
       {
         id: 'openai-oauth-1',
@@ -212,9 +212,9 @@ describe('provider-runtime-sync config delivery', () => {
       'openai',
     );
 
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledWith('openai');
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledWith('openai-oauth-1');
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledWith('openai');
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledWith('openai');
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledWith('openai-oauth-1');
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledWith('openai');
     expectNoGatewayLifecycleCalls(gateway);
   });
 
@@ -226,8 +226,8 @@ describe('provider-runtime-sync config delivery', () => {
 
     await syncDeletedProviderApiKeyToRuntime(openaiProvider, 'openai-personal');
 
-    expect(mocks.removeProviderKeyFromOpenClaw).toHaveBeenCalledWith('openai');
-    expect(mocks.removeProviderFromOpenClaw).not.toHaveBeenCalled();
+    expect(mocks.removeProviderKeyFrominsightAll).toHaveBeenCalledWith('openai');
+    expect(mocks.removeProviderFrominsightAll).not.toHaveBeenCalled();
   });
 
   it('does not schedule an independent reload or restart after switching the default provider', async () => {
@@ -265,7 +265,7 @@ describe('provider-runtime-sync config delivery', () => {
     const gateway = createGateway('running');
     await syncDefaultProviderToRuntime('openai-personal', gateway as GatewayManager);
 
-    expect(mocks.setOpenClawDefaultModelWithOverride).toHaveBeenCalledWith(
+    expect(mocks.setinsightAllDefaultModelWithOverride).toHaveBeenCalledWith(
       'openai',
       'openai/gpt-5.6-sol',
       {
@@ -292,7 +292,7 @@ describe('provider-runtime-sync config delivery', () => {
 
     await syncUpdatedProviderToRuntime(openaiProvider, undefined);
 
-    expect(mocks.syncProviderConfigToOpenClaw).toHaveBeenCalledWith(
+    expect(mocks.syncProviderConfigToinsightAll).toHaveBeenCalledWith(
       'openai',
       'gpt-5.6',
       expect.objectContaining({
@@ -300,7 +300,7 @@ describe('provider-runtime-sync config delivery', () => {
         baseUrl: 'https://api.openai.com/v1',
       }),
     );
-    expect(mocks.setOpenClawDefaultModel).toHaveBeenCalledWith(
+    expect(mocks.setinsightAllDefaultModel).toHaveBeenCalledWith(
       'openai',
       'openai/gpt-5.6',
       [],
@@ -366,7 +366,7 @@ describe('provider-runtime-sync config delivery', () => {
     const gateway = createGateway('running');
     await syncSavedProviderToRuntime(ollamaProvider, undefined, gateway as GatewayManager);
 
-    expect(mocks.syncProviderConfigToOpenClaw).toHaveBeenCalledWith(
+    expect(mocks.syncProviderConfigToinsightAll).toHaveBeenCalledWith(
       'ollama-ollamafd',
       'qwen3:30b',
       expect.objectContaining({
@@ -394,7 +394,7 @@ describe('provider-runtime-sync config delivery', () => {
     const gateway = createGateway('running');
     await syncDefaultProviderToRuntime('ollamafd', gateway as GatewayManager);
 
-    expect(mocks.setOpenClawDefaultModelWithOverride).toHaveBeenCalledWith(
+    expect(mocks.setinsightAllDefaultModelWithOverride).toHaveBeenCalledWith(
       'ollama-ollamafd',
       'ollama-ollamafd/qwen3:30b',
       expect.objectContaining({
@@ -421,7 +421,7 @@ describe('provider-runtime-sync config delivery', () => {
     await syncUpdatedProviderToRuntime(ollamaProvider, undefined, gateway as GatewayManager);
 
     // Should use the custom/ollama branch with explicit override
-    expect(mocks.setOpenClawDefaultModelWithOverride).toHaveBeenCalledWith(
+    expect(mocks.setinsightAllDefaultModelWithOverride).toHaveBeenCalledWith(
       'ollama-ollamafd',
       'ollama-ollamafd/qwen3:30b',
       expect.objectContaining({
@@ -431,7 +431,7 @@ describe('provider-runtime-sync config delivery', () => {
       expect.any(Array),
     );
     // Should NOT call the non-override path
-    expect(mocks.setOpenClawDefaultModel).not.toHaveBeenCalled();
+    expect(mocks.setinsightAllDefaultModel).not.toHaveBeenCalled();
     expectNoGatewayLifecycleCalls(gateway);
   });
 
@@ -447,8 +447,8 @@ describe('provider-runtime-sync config delivery', () => {
     const gateway = createGateway('running');
     await syncDeletedProviderToRuntime(ollamaProvider, 'ollamafd', gateway as GatewayManager);
 
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledWith('ollama-ollamafd');
-    expect(mocks.removeProviderFromOpenClaw).toHaveBeenCalledWith('ollamafd');
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledWith('ollama-ollamafd');
+    expect(mocks.removeProviderFrominsightAll).toHaveBeenCalledWith('ollamafd');
     expectNoGatewayLifecycleCalls(gateway);
   });
 

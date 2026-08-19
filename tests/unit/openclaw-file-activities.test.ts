@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildAcpTurnFileChanges, projectOpenClawFileActivities } from '@/lib/acp/openclaw-file-activities';
+import { buildAcpTurnFileChanges, projectinsightAllFileActivities } from '@/lib/acp/openclaw-file-activities';
 import projectionSource from '@/lib/acp/openclaw-file-activities.ts?raw';
 import { createEmptyAcpTimeline } from '@/lib/acp/reducer';
 import type { AcpTimelineSnapshot, TimelineItem, ToolCallItem } from '@/lib/acp/timeline-types';
@@ -41,10 +41,10 @@ function timeline(items: TimelineItem[]): AcpTimelineSnapshot {
 }
 
 function project(items: TimelineItem[], context = POSIX_CONTEXT) {
-  return projectOpenClawFileActivities({ timeline: timeline(items), ...context });
+  return projectinsightAllFileActivities({ timeline: timeline(items), ...context });
 }
 
-describe('projectOpenClawFileActivities', () => {
+describe('projectinsightAllFileActivities', () => {
   it('does not import Node builtins into the sandboxed Renderer', () => {
     expect(projectionSource).not.toMatch(/from\s+['"]node:/);
   });

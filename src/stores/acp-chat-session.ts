@@ -36,9 +36,9 @@ import {
   createEmptyAcpTimeline,
   upsertSyntheticTurnAttachments,
 } from '@/lib/acp/reducer';
-import { hashOpenClawMediaDiagnostic, type OpenClawMediaCandidate } from '@/lib/acp/openclaw-media-compat';
+import { hashinsightAllMediaDiagnostic, type insightAllMediaCandidate } from '@/lib/acp/openclaw-media-compat';
 import { openClawResourceLinkPromptText } from '@/lib/acp/openclaw-prompt-compat';
-import { fetchOpenClawTranscriptSupplement } from '@/lib/acp/transcript-supplement';
+import { fetchinsightAllTranscriptSupplement } from '@/lib/acp/transcript-supplement';
 import { alignHistoricalTurnTimings, type AcpTurnTiming } from '@/lib/acp/turn-timings';
 import { buildCronHistoryAcpNotifications, fetchCronSessionHistory } from '@/lib/cron-session-history';
 import { hostApi } from '@/lib/host-api';
@@ -611,7 +611,7 @@ function safeAttachmentName(uri: string): string {
   }
 }
 
-function recordOpenClawMediaTrace(
+function recordinsightAllMediaTrace(
   operation: TranscriptSupplementOperation,
   event: string,
   details: Record<string, unknown>,
@@ -624,11 +624,11 @@ function recordOpenClawMediaTrace(
   });
 }
 
-async function resolveOpenClawMediaCandidate(
+async function resolveinsightAllMediaCandidate(
   operation: TranscriptSupplementOperation,
   attempt: number,
   turnId: string,
-  candidate: OpenClawMediaCandidate,
+  candidate: insightAllMediaCandidate,
 ): Promise<void> {
   const isCurrent = () => operation.attempt === attempt
     && isCurrentTranscriptSupplement(useAcpChatSessionStore.getState(), operation);
@@ -652,22 +652,22 @@ async function resolveOpenClawMediaCandidate(
     result = { ok: false, displayName: attachmentName, error: 'operationFailed' };
   }
 
-  const evidenceHash = hashOpenClawMediaDiagnostic(candidate.evidenceId);
+  const evidenceHash = hashinsightAllMediaDiagnostic(candidate.evidenceId);
   if (!isCurrent()) {
-    recordOpenClawMediaTrace(operation, 'openclaw-media:projection-stale', {
+    recordinsightAllMediaTrace(operation, 'openclaw-media:projection-stale', {
       reason: 'attachment-resolution-stale',
       evidenceHash,
     });
     return;
   }
 
-  recordOpenClawMediaTrace(
+  recordinsightAllMediaTrace(
     operation,
     result.ok ? 'openclaw-media:resolution-available' : 'openclaw-media:resolution-unavailable',
     {
       reason: result.ok ? 'available' : result.error,
       evidenceHash,
-      ...(result.ok ? { identityHash: hashOpenClawMediaDiagnostic(result.identity) } : {}),
+      ...(result.ok ? { identityHash: hashinsightAllMediaDiagnostic(result.identity) } : {}),
     },
   );
 
@@ -705,7 +705,7 @@ async function resolveOpenClawMediaCandidate(
     ));
     return { timeline };
   });
-  recordOpenClawMediaTrace(
+  recordinsightAllMediaTrace(
     operation,
     projected ? 'openclaw-media:projection-appended' : 'openclaw-media:projection-deduped',
     { reason: projected ? 'projected' : 'identity-priority', evidenceHash, attachmentCount: projected ? 1 : 0 },
@@ -719,7 +719,7 @@ async function runTranscriptSupplement(operation: TranscriptSupplementOperation)
     && isCurrentTranscriptSupplement(useAcpChatSessionStore.getState(), operation);
   if (!isCurrent()) return;
   const state = useAcpChatSessionStore.getState();
-  const result = await fetchOpenClawTranscriptSupplement({
+  const result = await fetchinsightAllTranscriptSupplement({
     sessionKey: operation.sessionKey,
     generation: operation.generation,
     executionCwd: state.cwd ?? '',
@@ -762,7 +762,7 @@ async function runTranscriptSupplement(operation: TranscriptSupplementOperation)
   for (const supplement of result.media) {
     for (const candidate of supplement.candidates) {
       if (!isCurrent()) return;
-      await resolveOpenClawMediaCandidate(operation, attempt, supplement.acpTurnId, candidate);
+      await resolveinsightAllMediaCandidate(operation, attempt, supplement.acpTurnId, candidate);
     }
   }
 }
@@ -1574,8 +1574,8 @@ export const useAcpChatSessionStore = create<AcpChatSessionState>((set, get) => 
         generation,
         details: projectionTraceDetails(evidence, {
           reason: result.ok ? 'available' : result.error,
-          evidenceHash: hashOpenClawMediaDiagnostic(evidence.evidenceId),
-          ...(result.ok ? { identityHash: hashOpenClawMediaDiagnostic(result.identity) } : {}),
+          evidenceHash: hashinsightAllMediaDiagnostic(evidence.evidenceId),
+          ...(result.ok ? { identityHash: hashinsightAllMediaDiagnostic(result.identity) } : {}),
         }),
       });
       if (result.ok) {

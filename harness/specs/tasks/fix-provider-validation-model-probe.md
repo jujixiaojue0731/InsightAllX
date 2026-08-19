@@ -3,7 +3,7 @@ id: fix-provider-validation-model-probe
 title: Validate provider credentials with the configured model
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Prevent custom and plan-specific provider endpoints from rejecting ClawX credential validation because the fallback request uses a fabricated validation-probe model instead of the model configured by the user.
+intent: Prevent custom and plan-specific provider endpoints from rejecting insightAllX credential validation because the fallback request uses a fabricated validation-probe model instead of the model configured by the user.
 touchedAreas:
   - harness/specs/tasks/fix-provider-validation-model-probe.md
   - shared/host-api/contract.ts
@@ -47,7 +47,7 @@ docs:
 
 ## Background
 
-OpenAI-compatible validation first requests `/models`. When that endpoint is unavailable, ClawX
+OpenAI-compatible validation first requests `/models`. When that endpoint is unavailable, insightAllX
 falls back to a minimal generation request. That request currently hard-codes
 `model: validation-probe`, even though the provider form already has the actual model ID.
 Plan-specific endpoints can reject the fabricated model before credential validity can be

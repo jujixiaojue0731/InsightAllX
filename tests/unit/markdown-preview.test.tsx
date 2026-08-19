@@ -4,7 +4,7 @@ import MarkdownPreview from '@/components/file-preview/MarkdownPreview';
 describe('MarkdownPreview', () => {
   it('lets prose margins control vertical spacing without a root margin reset', () => {
     const { container } = render(<MarkdownPreview source="Preview body" />);
-    const preview = container.querySelector('.clawx-markdown-preview');
+    const preview = container.querySelector('.insightallx-markdown-preview');
 
     expect(preview).not.toHaveClass('space-y-0');
   });

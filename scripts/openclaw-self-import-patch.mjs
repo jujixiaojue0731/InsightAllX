@@ -7,12 +7,12 @@ const OPENCLAW_PLUGIN_SDK_SPECIFIER_RE = /(["'])openclaw\/plugin-sdk\/([^"'\r\n]
 
 function assertSafePluginSdkSubpath(subpath) {
   if (!subpath || subpath.startsWith('/') || subpath.startsWith('\\')) {
-    throw new Error(`Invalid OpenClaw plugin-sdk import subpath: ${JSON.stringify(subpath)}`);
+    throw new Error(`Invalid insightAll plugin-sdk import subpath: ${JSON.stringify(subpath)}`);
   }
 
   const parts = subpath.split(/[\\/]+/);
   if (parts.some((part) => !part || part === '.' || part === '..')) {
-    throw new Error(`Invalid OpenClaw plugin-sdk import subpath: ${JSON.stringify(subpath)}`);
+    throw new Error(`Invalid insightAll plugin-sdk import subpath: ${JSON.stringify(subpath)}`);
   }
 }
 
@@ -31,7 +31,7 @@ export function resolvePluginSdkTarget(distDir, subpath) {
   return path.join(distDir, 'plugin-sdk', ...targetSubpath.split(/[\\/]+/));
 }
 
-export function rewriteOpenClawPluginSdkSpecifiers(content, options) {
+export function rewriteInsightAllPluginSdkSpecifiers(content, options) {
   const { filePath, distDir } = options;
   let replacements = 0;
 
@@ -85,7 +85,7 @@ function listJavaScriptFiles(rootDir) {
   return files;
 }
 
-export function patchExtensionOpenClawSelfImports(outputDir) {
+export function patchExtensionInsightAllSelfImports(outputDir) {
   const distDir = path.join(outputDir, 'dist');
   const extensionsDir = path.join(distDir, 'extensions');
   if (!fs.existsSync(extensionsDir)) {
@@ -107,7 +107,7 @@ export function patchExtensionOpenClawSelfImports(outputDir) {
       continue;
     }
 
-    const result = rewriteOpenClawPluginSdkSpecifiers(content, {
+    const result = rewriteInsightAllPluginSdkSpecifiers(content, {
       filePath,
       distDir,
     });

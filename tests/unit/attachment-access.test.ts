@@ -15,9 +15,9 @@ import {
   getAcpTraceSnapshot,
 } from '../../electron/services/acp-trace';
 import {
-  resolveOpenClawConfigDir,
-  resolveOpenClawConfigPath,
-  resolveOpenClawStateDir,
+  resolveinsightAllConfigDir,
+  resolveinsightAllConfigPath,
+  resolveinsightAllStateDir,
 } from '../../electron/utils/paths';
 
 describe('attachment access boundary', () => {
@@ -38,7 +38,7 @@ describe('attachment access boundary', () => {
 
   beforeEach(async () => {
     clearAcpTraceForTests();
-    testDir = await mkdtemp(join(tmpdir(), 'clawx-attachment-access-'));
+    testDir = await mkdtemp(join(tmpdir(), 'insightallx-attachment-access-'));
     workspaceRoot = join(testDir, 'workspace');
     stateDir = join(testDir, 'state');
     configDir = join(testDir, 'config');
@@ -123,7 +123,7 @@ describe('attachment access boundary', () => {
     } as never)).resolves.toMatchObject({ ok: true });
   });
 
-  it('resolves OpenClaw media roots and files outside declared roots', async () => {
+  it('resolves insightAll media roots and files outside declared roots', async () => {
     const access = getAccess();
 
     await expect(access.resolveAttachment({ ref: ref(join(stateDir, 'media', 'state.png')) }))
@@ -219,7 +219,7 @@ describe('attachment access boundary', () => {
   });
 
   it('requires a Main-owned staging id and matching staged path', async () => {
-    const stagingDir = join(stateDir, 'media', 'outbound', 'clawx-staging');
+    const stagingDir = join(stateDir, 'media', 'outbound', 'insightallx-staging');
     const stagedPath = join(stagingDir, 'owned.txt');
     const previousRunPath = join(stagingDir, 'previous-run.txt');
     await mkdir(stagingDir, { recursive: true });
@@ -286,7 +286,7 @@ describe('attachment access boundary', () => {
   });
 
   it('falls back to regular resolution when stagingId is unknown after restart', async () => {
-    const stagingDir = join(stateDir, 'media', 'outbound', 'clawx-staging');
+    const stagingDir = join(stateDir, 'media', 'outbound', 'insightallx-staging');
     const orphanedPath = join(stagingDir, 'orphaned-from-prev-run.txt');
     await mkdir(stagingDir, { recursive: true });
     await writeFile(orphanedPath, 'persisted on disk');
@@ -835,17 +835,17 @@ describe('attachment access boundary', () => {
   });
 });
 
-describe('OpenClaw attachment path resolution', () => {
+describe('insightAll attachment path resolution', () => {
   it('keeps state and config paths distinct and absolute', () => {
-    const stateDir = resolveOpenClawStateDir({ OPENCLAW_STATE_DIR: '~/custom-state' });
-    const configPath = resolveOpenClawConfigPath({
+    const stateDir = resolveinsightAllStateDir({ OPENCLAW_STATE_DIR: '~/custom-state' });
+    const configPath = resolveinsightAllConfigPath({
       OPENCLAW_STATE_DIR: '~/custom-state',
       OPENCLAW_CONFIG_PATH: './runtime/openclaw.json',
     });
 
     expect(stateDir).toBe(resolve(process.env.HOME!, 'custom-state'));
     expect(configPath).toBe(resolve('runtime/openclaw.json'));
-    expect(resolveOpenClawConfigDir({ OPENCLAW_CONFIG_PATH: configPath })).toBe(resolve('runtime'));
-    expect(resolveOpenClawConfigPath({ OPENCLAW_STATE_DIR: stateDir })).toBe(join(stateDir, 'openclaw.json'));
+    expect(resolveinsightAllConfigDir({ OPENCLAW_CONFIG_PATH: configPath })).toBe(resolve('runtime'));
+    expect(resolveinsightAllConfigPath({ OPENCLAW_STATE_DIR: stateDir })).toBe(join(stateDir, 'openclaw.json'));
   });
 });

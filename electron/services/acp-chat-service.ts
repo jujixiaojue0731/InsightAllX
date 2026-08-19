@@ -22,7 +22,7 @@ import type {
   AcpPermissionRequestEnvelope,
   AcpSessionUpdateEnvelope,
 } from '@shared/acp-chat/types';
-import { getOpenClawEmbeddedForkSpec } from '../utils/openclaw-cli';
+import { getinsightAllEmbeddedForkSpec } from '../utils/openclaw-cli';
 import {
   approvePendingLocalDeviceRequests,
   type GatewayPairingRpcClient,
@@ -87,7 +87,7 @@ function sessionUpdateType(notification: SessionNotification): string | undefine
   return typeof update?.sessionUpdate === 'string' ? update.sessionUpdate : undefined;
 }
 
-// OpenClaw can emit clack/doctor diagnostics to stdout during ACP startup.
+// insightAll can emit clack/doctor diagnostics to stdout during ACP startup.
 // Keep those lines away from the SDK's strict NDJSON parser.
 // Upstream fixed this in https://github.com/openclaw/openclaw/pull/89997 .
 function filterAcpStdoutDiagnostics(output: ReadableStream<Uint8Array>): ReadableStream<Uint8Array> {
@@ -400,8 +400,8 @@ export class AcpChatService {
         sessionId: acpSessionId,
         prompt,
         // ACP 1.1 removed messageId from the PromptRequest wire shape. Keep
-        // ClawX correlation metadata in the protocol extension envelope.
-        // OpenClaw must receive slash commands without its textual cwd prefix
+        // insightAllX correlation metadata in the protocol extension envelope.
+        // insightAll must receive slash commands without its textual cwd prefix
         // so the Gateway can classify and fold command replies into chat final.
         _meta: { sessionKey: payload.sessionKey, prefixCwd: !isSlashCommand, messageId },
       });
@@ -552,11 +552,11 @@ export class AcpChatService {
 
   private async spawnConnection(): Promise<ClientSideConnection> {
     const gatewayToken = await getSetting('gatewayToken');
-    const spec = getOpenClawEmbeddedForkSpec(['acp']);
+    const spec = getinsightAllEmbeddedForkSpec(['acp']);
     const forked = fork(spec.modulePath, spec.args, {
       ...spec.options,
       // ACP is a local Gateway client, so it must use the token that started
-      // this ClawX-owned Gateway instead of relying on config-file fallback.
+      // this insightAllX-owned Gateway instead of relying on config-file fallback.
       env: { ...spec.options.env, OPENCLAW_GATEWAY_TOKEN: gatewayToken },
     });
     if (!forked.stdin || !forked.stdout || !forked.stderr) {
@@ -742,7 +742,7 @@ export class AcpChatService {
             mimeType,
             uri: item.filePath,
             _meta: {
-              clawx: {
+              insightallx: {
                 stagingId: item.stagingId,
                 ...(item.fileName ? { fileName: item.fileName } : {}),
               },
@@ -755,7 +755,7 @@ export class AcpChatService {
             name: item.fileName ?? item.filePath,
             mimeType: item.mimeType,
             _meta: {
-              clawx: {
+              insightallx: {
                 stagingId: item.stagingId,
               },
             },

@@ -49,7 +49,7 @@ acceptance:
   - Permission requests outside an active prompt are cancelled and cannot leave an invisible waiter during load handoff.
   - Renderer operation identity does not advance the Main-owned ACP generation or reject valid replay events after a local-only new conversation.
   - Stale load completions and stale session updates remain ignored.
-  - No persistent ACP history cache, second replay ledger, or OpenClaw source change is introduced.
+  - No persistent ACP history cache, second replay ledger, or insightAll source change is introduced.
 docs:
   required: true
 ---

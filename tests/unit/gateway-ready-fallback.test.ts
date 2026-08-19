@@ -28,7 +28,7 @@ vi.mock('@electron/utils/config', () => ({
 }));
 
 vi.mock('@electron/utils/openclaw-upgrade-snapshot', () => ({
-  removeOpenClaw2026_7_1UpgradeSnapshot: removeUpgradeSnapshotMock,
+  removeinsightAll2026_7_1UpgradeSnapshot: removeUpgradeSnapshotMock,
 }));
 
 vi.mock('@electron/gateway/startup-orchestrator', () => ({

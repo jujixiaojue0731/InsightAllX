@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   getSessionDisplayTitle,
   isAcpWorkingDirectoryTruncatedTitle,
-  isOpenClawSessionIdFallbackTitle,
+  isinsightAllSessionIdFallbackTitle,
   stripAcpWorkingDirectoryPrefix,
 } from '@shared/chat/session-title'
 
@@ -18,7 +18,7 @@ describe('stripAcpWorkingDirectoryPrefix', () => {
   it('removes a leading Windows working-directory marker', () => {
     expect(
       stripAcpWorkingDirectoryPrefix(
-        '[Working directory: C:\\Users\\alex\\workspace\\ClawX]\r\n\r\nFix the test',
+        '[Working directory: C:\\Users\\alex\\workspace\\insightAllX]\r\n\r\nFix the test',
       ),
     ).toBe('Fix the test')
   })
@@ -54,17 +54,17 @@ describe('stripAcpWorkingDirectoryPrefix', () => {
   })
 })
 
-describe('isOpenClawSessionIdFallbackTitle', () => {
+describe('isinsightAllSessionIdFallbackTitle', () => {
   const sessionId = '72e4b28b-8477-4e29-b57e-e14448fd42d0'
 
   it('identifies the UUID-prefix and date title generated for the same session', () => {
-    expect(isOpenClawSessionIdFallbackTitle('72e4b28b (2026-07-22)', sessionId)).toBe(true)
+    expect(isinsightAllSessionIdFallbackTitle('72e4b28b (2026-07-22)', sessionId)).toBe(true)
   })
 
   it('does not discard user labels or another session prefix', () => {
-    expect(isOpenClawSessionIdFallbackTitle('用浏览器打开B站', sessionId)).toBe(false)
-    expect(isOpenClawSessionIdFallbackTitle('9add3001 (2026-07-22)', sessionId)).toBe(false)
-    expect(isOpenClawSessionIdFallbackTitle('72e4b28b (2026-07-22)', undefined)).toBe(false)
+    expect(isinsightAllSessionIdFallbackTitle('用浏览器打开B站', sessionId)).toBe(false)
+    expect(isinsightAllSessionIdFallbackTitle('9add3001 (2026-07-22)', sessionId)).toBe(false)
+    expect(isinsightAllSessionIdFallbackTitle('72e4b28b (2026-07-22)', undefined)).toBe(false)
   })
 })
 
@@ -82,7 +82,7 @@ describe('getSessionDisplayTitle', () => {
       .toBe('Renamed conversation')
   })
 
-  it('skips an OpenClaw UUID fallback title', () => {
+  it('skips an insightAll UUID fallback title', () => {
     expect(getSessionDisplayTitle({
       ...session,
       label: '72e4b28b (2026-07-22)',
@@ -98,7 +98,7 @@ describe('isAcpWorkingDirectoryTruncatedTitle', () => {
   it('identifies a cwd envelope truncated before the user prompt', () => {
     expect(
       isAcpWorkingDirectoryTruncatedTitle(
-        '[Working directory: ~/workspace/clawx-playground]…',
+        '[Working directory: ~/workspace/insightallx-playground]…',
       ),
     ).toBe(true)
   })
@@ -106,7 +106,7 @@ describe('isAcpWorkingDirectoryTruncatedTitle', () => {
   it('preserves an ellipsis after the normal cwd separator', () => {
     expect(
       isAcpWorkingDirectoryTruncatedTitle(
-        '[Working directory: ~/workspace/clawx-playground]\n\n…',
+        '[Working directory: ~/workspace/insightallx-playground]\n\n…',
       ),
     ).toBe(false)
     expect(isAcpWorkingDirectoryTruncatedTitle('…')).toBe(false)

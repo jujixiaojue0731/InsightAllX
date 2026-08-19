@@ -4,16 +4,16 @@ import {
   getReconnectScheduleDecision,
   getReconnectSkipReason,
   isLifecycleSuperseded,
-  isOpenClawFatalConfigExitCode,
+  isinsightAllFatalConfigExitCode,
   nextLifecycleEpoch,
   shouldDeferRestart,
 } from '@electron/gateway/process-policy';
 
 describe('gateway process policy helpers', () => {
-  it('recognizes OpenClaw EX_CONFIG without classifying ordinary exits as fatal config', () => {
-    expect(isOpenClawFatalConfigExitCode(78)).toBe(true);
-    expect(isOpenClawFatalConfigExitCode(1)).toBe(false);
-    expect(isOpenClawFatalConfigExitCode(null)).toBe(false);
+  it('recognizes insightAll EX_CONFIG without classifying ordinary exits as fatal config', () => {
+    expect(isinsightAllFatalConfigExitCode(78)).toBe(true);
+    expect(isinsightAllFatalConfigExitCode(1)).toBe(false);
+    expect(isinsightAllFatalConfigExitCode(null)).toBe(false);
   });
 
   describe('lifecycle epoch helpers', () => {

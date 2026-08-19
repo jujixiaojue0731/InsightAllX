@@ -12,8 +12,8 @@ const state = vi.hoisted(() => ({
   authoritativeConfig: {} as Record<string, unknown>,
 }));
 
-const { mutateOpenClawConfigMock } = vi.hoisted(() => ({
-  mutateOpenClawConfigMock: vi.fn(),
+const { mutateinsightAllConfigMock } = vi.hoisted(() => ({
+  mutateinsightAllConfigMock: vi.fn(),
 }));
 
 vi.mock('os', async () => {
@@ -25,14 +25,14 @@ vi.mock('os', async () => {
 });
 
 vi.mock('@electron/utils/paths', () => ({
-  getOpenClawDir: () => '/runtime/openclaw',
-  getOpenClawResolvedDir: () => '/runtime/openclaw',
+  getinsightAllDir: () => '/runtime/openclaw',
+  getinsightAllResolvedDir: () => '/runtime/openclaw',
   getResourcesDir: () => state.resourcesDir,
-  resolveOpenClawConfigPath: () => join(state.homeDir, '.openclaw', 'openclaw.json'),
+  resolveinsightAllConfigPath: () => join(state.homeDir, '.openclaw', 'openclaw.json'),
 }));
 
 vi.mock('@electron/gateway/config-delivery', () => ({
-  mutateOpenClawConfig: mutateOpenClawConfigMock,
+  mutateinsightAllConfig: mutateinsightAllConfigMock,
 }));
 
 describe('preinstalled skill config', () => {
@@ -41,11 +41,11 @@ describe('preinstalled skill config', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    root = mkdtempSync(join(tmpdir(), 'clawx-preinstalled-skill-'));
+    root = mkdtempSync(join(tmpdir(), 'insightallx-preinstalled-skill-'));
     state.homeDir = join(root, 'home');
     state.resourcesDir = join(root, 'resources');
     state.authoritativeConfig = { gatewayOnly: true };
-    mutateOpenClawConfigMock.mockImplementation(async (
+    mutateinsightAllConfigMock.mockImplementation(async (
       mutator: (config: Record<string, unknown>) => void | Promise<void>,
     ) => {
       await mutator(state.authoritativeConfig);
@@ -73,7 +73,7 @@ describe('preinstalled skill config', () => {
       gatewayOnly: true,
       skills: { entries: { example: { enabled: true } } },
     });
-    expect(mutateOpenClawConfigMock).toHaveBeenCalledOnce();
+    expect(mutateinsightAllConfigMock).toHaveBeenCalledOnce();
     expect(existsSync(join(state.homeDir, '.openclaw', 'openclaw.json'))).toBe(false);
     expect(readFileSync(
       join(state.homeDir, '.openclaw', 'skills', 'example', 'SKILL.md'),

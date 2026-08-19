@@ -6,12 +6,12 @@ import { isDeepStrictEqual } from 'node:util';
 import JSON5 from 'json5';
 import type { GatewayManager } from './manager';
 import { withConfigLock } from '../utils/config-mutex';
-import { resolveOpenClawConfigPath } from '../utils/paths';
+import { resolveinsightAllConfigPath } from '../utils/paths';
 
-export type OpenClawConfig = Record<string, unknown>;
+export type insightAllConfig = Record<string, unknown>;
 /** Mutators may be replayed after a compare-and-swap conflict and must not perform external writes. */
-export type OpenClawConfigMutator = (
-  config: OpenClawConfig,
+export type insightAllConfigMutator = (
+  config: insightAllConfig,
 ) => void | Promise<void>;
 
 type ConfigDeliveryGatewayManager = Pick<GatewayManager, 'getStatus' | 'rpc'>;
@@ -23,18 +23,18 @@ interface ConfigSnapshot {
 }
 
 interface ActiveMutationContext {
-  config: OpenClawConfig;
+  config: insightAllConfig;
   active: boolean;
   sourceExists: boolean;
 }
 
-export interface OpenClawConfigSnapshot {
-  config: OpenClawConfig;
+export interface insightAllConfigSnapshot {
+  config: insightAllConfig;
   exists: boolean;
 }
 
 interface FileConfigSnapshot {
-  config: OpenClawConfig;
+  config: insightAllConfig;
   raw: string | undefined;
 }
 
@@ -42,21 +42,21 @@ let gatewayManager: ConfigDeliveryGatewayManager | undefined;
 let transactionTail: Promise<void> = Promise.resolve();
 const activeMutation = new AsyncLocalStorage<ActiveMutationContext>();
 
-function parseConfig(raw: string): OpenClawConfig {
+function parseConfig(raw: string): insightAllConfig {
   const parsed = JSON5.parse(raw) as unknown;
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    throw new Error('OpenClaw config must be an object');
+    throw new Error('insightAll config must be an object');
   }
-  return parsed as OpenClawConfig;
+  return parsed as insightAllConfig;
 }
 
-function serializeConfig(config: OpenClawConfig): string {
+function serializeConfig(config: insightAllConfig): string {
   return `${JSON.stringify(config, null, 2)}\n`;
 }
 
-function parseRunningConfigSnapshot(snapshot: ConfigSnapshot | undefined): OpenClawConfig {
+function parseRunningConfigSnapshot(snapshot: ConfigSnapshot | undefined): insightAllConfig {
   if (snapshot?.config && typeof snapshot.config === 'object' && !Array.isArray(snapshot.config)) {
-    return structuredClone(snapshot.config) as OpenClawConfig;
+    return structuredClone(snapshot.config) as insightAllConfig;
   }
   const raw = typeof snapshot?.raw === 'string' ? snapshot.raw : '';
   if (!raw.trim()) {
@@ -72,7 +72,7 @@ function isBaseHashConflict(error: unknown): boolean {
 
 async function mutateRunningConfig(
   manager: ConfigDeliveryGatewayManager,
-  mutator: OpenClawConfigMutator,
+  mutator: insightAllConfigMutator,
 ): Promise<boolean> {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const snapshot = await manager.rpc<ConfigSnapshot>('config.get', {});
@@ -94,11 +94,11 @@ async function mutateRunningConfig(
       if (attempt === 0 && isBaseHashConflict(error)) continue;
 
       // config.set may durably replace the file and then close the socket with
-      // code 1012 before its RPC response reaches ClawX. If the manager has
+      // code 1012 before its RPC response reaches insightAllX. If the manager has
       // already left running state, verify that exact commit instead of
       // reporting a false save failure or replaying the mutation out of band.
       if (manager.getStatus().state !== 'running') {
-        const persisted = await readFileConfig(resolveOpenClawConfigPath());
+        const persisted = await readFileConfig(resolveinsightAllConfigPath());
         if (isDeepStrictEqual(persisted.config, config)) return true;
       }
       throw error;
@@ -109,8 +109,8 @@ async function mutateRunningConfig(
 }
 
 async function applyMutator(
-  config: OpenClawConfig,
-  mutator: OpenClawConfigMutator,
+  config: insightAllConfig,
+  mutator: insightAllConfigMutator,
   sourceExists: boolean,
 ): Promise<boolean> {
   const baseline = structuredClone(config);
@@ -125,7 +125,7 @@ async function applyMutator(
 
 async function applyNestedMutator(
   context: ActiveMutationContext,
-  mutator: OpenClawConfigMutator,
+  mutator: insightAllConfigMutator,
 ): Promise<boolean> {
   const baseline = structuredClone(context.config);
   await mutator(context.config);
@@ -163,10 +163,10 @@ async function removeTemporaryFile(temporaryPath: string): Promise<void> {
 
 async function mutateFileConfig(
   manager: ConfigDeliveryGatewayManager | undefined,
-  mutator: OpenClawConfigMutator,
+  mutator: insightAllConfigMutator,
 ): Promise<boolean> {
   return await withConfigLock(async () => {
-    const configPath = resolveOpenClawConfigPath();
+    const configPath = resolveinsightAllConfigPath();
     for (let attempt = 0; attempt < 2; attempt += 1) {
       const snapshot = await readFileConfig(configPath);
       const changed = await applyMutator(snapshot.config, mutator, snapshot.raw !== undefined);
@@ -195,7 +195,7 @@ async function mutateFileConfig(
         }
         if (currentRaw !== snapshot.raw) {
           if (attempt === 0) continue;
-          throw new Error('OpenClaw config changed during file mutation; retry the mutation');
+          throw new Error('insightAll config changed during file mutation; retry the mutation');
         }
 
         await rename(temporaryPath, configPath);
@@ -209,7 +209,7 @@ async function mutateFileConfig(
   });
 }
 
-async function runMutation(mutator: OpenClawConfigMutator): Promise<boolean> {
+async function runMutation(mutator: insightAllConfigMutator): Promise<boolean> {
   const manager = gatewayManager;
   if (manager?.getStatus().state === 'running') {
     return await mutateRunningConfig(manager, mutator);
@@ -217,14 +217,14 @@ async function runMutation(mutator: OpenClawConfigMutator): Promise<boolean> {
   return await mutateFileConfig(manager, mutator);
 }
 
-async function runRead(): Promise<OpenClawConfigSnapshot> {
+async function runRead(): Promise<insightAllConfigSnapshot> {
   const manager = gatewayManager;
   if (manager?.getStatus().state === 'running') {
     const snapshot = await manager.rpc<ConfigSnapshot>('config.get', {});
     return { config: parseRunningConfigSnapshot(snapshot), exists: true };
   }
 
-  const snapshot = await readFileConfig(resolveOpenClawConfigPath());
+  const snapshot = await readFileConfig(resolveinsightAllConfigPath());
   return { config: snapshot.config, exists: snapshot.raw !== undefined };
 }
 
@@ -235,14 +235,14 @@ async function runSecretsReload(): Promise<boolean> {
   return true;
 }
 
-export function registerOpenClawConfigCoordinator(
+export function registerinsightAllConfigCoordinator(
   manager: ConfigDeliveryGatewayManager,
 ): void {
   gatewayManager = manager;
 }
 
-export function mutateOpenClawConfig(
-  mutator: OpenClawConfigMutator,
+export function mutateinsightAllConfig(
+  mutator: insightAllConfigMutator,
 ): Promise<boolean> {
   const context = activeMutation.getStore();
   if (context?.active) {
@@ -260,7 +260,7 @@ export function mutateOpenClawConfig(
   return transaction;
 }
 
-export function readOpenClawConfigSnapshot(): Promise<OpenClawConfigSnapshot> {
+export function readinsightAllConfigSnapshot(): Promise<insightAllConfigSnapshot> {
   const context = activeMutation.getStore();
   if (context?.active) {
     return Promise.resolve({
@@ -280,7 +280,7 @@ export function readOpenClawConfigSnapshot(): Promise<OpenClawConfigSnapshot> {
   return transaction;
 }
 
-export function reloadOpenClawSecretsIfRunning(): Promise<boolean> {
+export function reloadinsightAllSecretsIfRunning(): Promise<boolean> {
   const transaction = transactionTail.then(
     () => runSecretsReload(),
     () => runSecretsReload(),
@@ -292,7 +292,7 @@ export function reloadOpenClawSecretsIfRunning(): Promise<boolean> {
   return transaction;
 }
 
-export function resetOpenClawConfigCoordinatorForTests(): void {
+export function resetinsightAllConfigCoordinatorForTests(): void {
   gatewayManager = undefined;
   transactionTail = Promise.resolve();
 }

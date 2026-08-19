@@ -15,8 +15,8 @@ import type {
   FileReadBinaryOptions,
   ImageGenerationSettingsPayload,
   MediaThumbnailEntry,
-  OpenClawDoctorMode,
-  OpenClawDoctorResult,
+  insightAllDoctorMode,
+  insightAllDoctorResult,
   OpenAttachmentWithPayload,
   OpenWorkspaceWithPayload,
   ProviderAccount,
@@ -77,9 +77,9 @@ export type {
   LocalSkillsResult,
   LogContentResult,
   LogDirResult,
-  OpenClawCliCommandResult,
-  OpenClawDoctorResult,
-  OpenClawStatusResult,
+  insightAllCliCommandResult,
+  insightAllDoctorResult,
+  insightAllStatusResult,
   OpenAttachmentResult,
   ProviderAccountKeyInfo,
   ProviderDefaultAccountResult,
@@ -105,7 +105,7 @@ export type {
 
 export const hostApi = {
   app: {
-    openClawDoctor: async (mode: OpenClawDoctorMode): Promise<OpenClawDoctorResult> => ({
+    openClawDoctor: async (mode: insightAllDoctorMode): Promise<insightAllDoctorResult> => ({
       ...(await invokeHost('app', 'openClawDoctor', { mode })),
       mode,
     }),

@@ -6,7 +6,7 @@ import {
 } from '@electron/gateway/startup-stderr';
 
 describe('Gateway startup stderr diagnostics', () => {
-  it('parses OpenClaw CLI startup timing lines', () => {
+  it('parses insightAll CLI startup timing lines', () => {
     expect(parseGatewayStartupTraceStage(
       '[gateway] startup trace: cli.server-import 209842.7ms total=210114.3ms',
     )).toEqual({
@@ -42,7 +42,7 @@ describe('Gateway startup stderr diagnostics', () => {
     collector.record('[gateway] startup trace: cli.config-snapshot 12.5ms total=15ms');
     collector.record('[gateway] startup trace: cli.server-import 30001.2ms total=30020ms');
     collector.record('[gateway] startup trace: runtime.config 20ms total=30040ms');
-    // OpenClaw starts a new trace clock after importing the server runtime.
+    // insightAll starts a new trace clock after importing the server runtime.
     // The summary must not replace the useful outer total with this smaller value.
     collector.record('[gateway] startup trace: gateway.server-impl-import 457.4ms total=457.4ms');
 
@@ -70,7 +70,7 @@ describe('Gateway startup stderr diagnostics', () => {
       'Rename them by replacing the legacy prefix with OPENCLAW_; the old names are ignored.',
     ).level).toBe('debug');
     expect(classifyGatewayStderrMessage(
-      '(Use `ClawX --trace-deprecation ...` to show where the warning was created)',
+      '(Use `insightAllX --trace-deprecation ...` to show where the warning was created)',
     ).level).toBe('debug');
   });
 

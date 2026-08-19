@@ -26,7 +26,7 @@ import { useStickToBottomInstant } from '@/hooks/use-stick-to-bottom-instant';
 import { getAcpUserMessageAnchorId } from '@/lib/acp/timeline-anchors';
 import type { MessageSegmentItem, RenderPart } from '@/lib/acp/timeline-types';
 import { createEmptyAcpTimeline } from '@/lib/acp/reducer';
-import { projectOpenClawFileActivities, type AcpFileActivityProjection } from '@/lib/acp/openclaw-file-activities';
+import { projectinsightAllFileActivities, type AcpFileActivityProjection } from '@/lib/acp/openclaw-file-activities';
 import { hostApi } from '@/lib/host-api';
 import { getSessionDisplayTitle } from '@shared/chat/session-title';
 import { ChatInput, type ChatWorkspaceOption, type FileAttachment } from './ChatInput';
@@ -429,7 +429,7 @@ export function Chat() {
       || acpActiveSessionKey !== currentSessionKey
       || visibleAcpTimeline.sessionId !== currentSessionKey
     ) return EMPTY_FILE_ACTIVITY;
-    return projectOpenClawFileActivities({
+    return projectinsightAllFileActivities({
       timeline: visibleAcpTimeline,
       workspaceRoot: resolvedWorkspaceContext.workspaceRoot,
       executionCwd: resolvedWorkspaceContext.executionCwd,

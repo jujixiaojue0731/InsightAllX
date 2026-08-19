@@ -41,8 +41,8 @@ vi.mock('electron', () => ({
 }));
 
 vi.mock('@electron/utils/paths', () => ({
-  getOpenClawDir: () => '/tmp/openclaw',
-  getOpenClawEntryPath: () => '/tmp/openclaw/openclaw-entry.js',
+  getinsightAllDir: () => '/tmp/openclaw',
+  getinsightAllEntryPath: () => '/tmp/openclaw/openclaw-entry.js',
 }));
 
 vi.mock('@electron/utils/uv-env', () => ({
@@ -76,8 +76,8 @@ describe('openclaw doctor output handling', () => {
     const child = new MockUtilityChild();
     mockFork.mockReturnValue(child);
 
-    const { runOpenClawDoctor } = await import('@electron/utils/openclaw-doctor');
-    const resultPromise = runOpenClawDoctor();
+    const { runinsightAllDoctor } = await import('@electron/utils/openclaw-doctor');
+    const resultPromise = runinsightAllDoctor();
 
     await vi.waitFor(() => {
       expect(mockFork).toHaveBeenCalledTimes(1);
@@ -97,8 +97,8 @@ describe('openclaw doctor output handling', () => {
     const child = new MockUtilityChild();
     mockFork.mockReturnValue(child);
 
-    const { runOpenClawDoctor } = await import('@electron/utils/openclaw-doctor');
-    const resultPromise = runOpenClawDoctor();
+    const { runinsightAllDoctor } = await import('@electron/utils/openclaw-doctor');
+    const resultPromise = runinsightAllDoctor();
 
     await vi.waitFor(() => {
       expect(mockFork).toHaveBeenCalledTimes(1);
@@ -118,8 +118,8 @@ describe('openclaw doctor output handling', () => {
     const child = new MockUtilityChild();
     mockFork.mockReturnValue(child);
 
-    const { runOpenClawDoctor } = await import('@electron/utils/openclaw-doctor');
-    const resultPromise = runOpenClawDoctor();
+    const { runinsightAllDoctor } = await import('@electron/utils/openclaw-doctor');
+    const resultPromise = runinsightAllDoctor();
 
     await vi.waitFor(() => {
       expect(mockFork).toHaveBeenCalledTimes(1);
@@ -129,7 +129,7 @@ describe('openclaw doctor output handling', () => {
 
     await resultPromise;
     expect(mockLoggerWarn).toHaveBeenCalledWith(
-      `OpenClaw doctor stdout exceeded ${MAX_DOCTOR_OUTPUT_BYTES} bytes; truncating additional output`,
+      `insightAll doctor stdout exceeded ${MAX_DOCTOR_OUTPUT_BYTES} bytes; truncating additional output`,
     );
   });
 
@@ -137,8 +137,8 @@ describe('openclaw doctor output handling', () => {
     const child = new MockUtilityChild();
     mockFork.mockReturnValue(child);
 
-    const { runOpenClawDoctor } = await import('@electron/utils/openclaw-doctor');
-    const resultPromise = runOpenClawDoctor();
+    const { runinsightAllDoctor } = await import('@electron/utils/openclaw-doctor');
+    const resultPromise = runinsightAllDoctor();
 
     await vi.waitFor(() => {
       expect(mockFork).toHaveBeenCalledTimes(1);
@@ -160,8 +160,8 @@ describe('openclaw doctor output handling', () => {
     const child = new MockUtilityChild();
     mockFork.mockReturnValue(child);
 
-    const { runOpenClawDoctor } = await import('@electron/utils/openclaw-doctor');
-    const resultPromise = runOpenClawDoctor();
+    const { runinsightAllDoctor } = await import('@electron/utils/openclaw-doctor');
+    const resultPromise = runinsightAllDoctor();
 
     await vi.waitFor(() => {
       expect(mockFork).toHaveBeenCalledTimes(1);

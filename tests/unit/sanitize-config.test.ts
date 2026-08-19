@@ -1,7 +1,7 @@
 /**
  * Tests for openclaw.json config sanitization before Gateway start.
  *
- * The sanitizeOpenClawConfig() function in openclaw-auth.ts relies on the
+ * The sanitizeinsightAllConfig() function in openclaw-auth.ts relies on the
  * Main-owned config-delivery coordinator. To avoid mocking Electron + the
  * real HOME directory, this test uses a standalone version of the
  * sanitization logic that mirrors the production code exactly, operating
@@ -16,7 +16,7 @@ import { tmpdir } from 'os';
 let tempDir: string;
 let configPath: string;
 
-const CLAWX_DESKTOP_TOOL_DENY = [
+const INSIGHTALLX_DESKTOP_TOOL_DENY = [
   'skill_workshop',
   'web_search',
   'gateway',
@@ -35,7 +35,7 @@ async function readConfig(): Promise<Record<string, unknown>> {
   return JSON.parse(raw);
 }
 
-function withClawXToolDefaults<T extends Record<string, unknown>>(config: T): T & {
+function withinsightAllXToolDefaults<T extends Record<string, unknown>>(config: T): T & {
   tools: Record<string, unknown>;
   gateway: Record<string, unknown>;
   skills: Record<string, unknown>;
@@ -59,7 +59,7 @@ function withClawXToolDefaults<T extends Record<string, unknown>>(config: T): T 
   tools.profile = 'full';
   tools.sessions = sessions;
   tools.exec = exec;
-  tools.deny = CLAWX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  tools.deny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     deny,
   );
@@ -73,7 +73,7 @@ function withClawXToolDefaults<T extends Record<string, unknown>>(config: T): T 
   const gatewayDeny = Array.isArray(gatewayTools.deny)
     ? (gatewayTools.deny as unknown[]).filter((value): value is string => typeof value === 'string')
     : [];
-  gatewayTools.deny = CLAWX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  gatewayTools.deny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     gatewayDeny,
   );
@@ -338,7 +338,7 @@ async function sanitizeConfig(
     }
 
     // Mirror production logic: bundled provider plugins are only preserved when
-    // the provider is actually active, while ClawX-critical bundled plugins are
+    // the provider is actually active, while insightAllX-critical bundled plugins are
     // preserved via a small explicit list.
     const bundledAll = new Set(bundledPlugins?.all ?? []);
     const providersByPluginId = bundledPlugins?.providersByPluginId ?? {};
@@ -401,7 +401,7 @@ async function sanitizeConfig(
     }
   }
 
-  // Mirror: ClawX keeps Skill Workshop disabled even when OpenClaw exposes it
+  // Mirror: insightAllX keeps Skill Workshop disabled even when insightAll exposes it
   // as a built-in tool under permissive tool profiles.
   const toolsConfig = (config.tools as Record<string, unknown> | undefined) || {};
   let toolsModified = false;
@@ -421,7 +421,7 @@ async function sanitizeConfig(
   const deny = Array.isArray(toolsConfig.deny)
     ? toolsConfig.deny.filter((value): value is string => typeof value === 'string')
     : [];
-  const requiredDeny = CLAWX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  const requiredDeny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     deny,
   );
@@ -472,7 +472,7 @@ async function sanitizeConfig(
   const gatewayDeny = Array.isArray(gatewayTools.deny)
     ? gatewayTools.deny.filter((value): value is string => typeof value === 'string')
     : [];
-  const requiredGatewayDeny = CLAWX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  const requiredGatewayDeny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     gatewayDeny,
   );
@@ -579,7 +579,7 @@ async function sanitizeConfig(
 }
 
 beforeEach(async () => {
-  tempDir = await mkdtemp(join(tmpdir(), 'clawx-test-'));
+  tempDir = await mkdtemp(join(tmpdir(), 'insightallx-test-'));
   configPath = join(tempDir, 'openclaw.json');
 });
 
@@ -587,7 +587,7 @@ afterEach(async () => {
   await rm(tempDir, { recursive: true, force: true });
 });
 
-describe('sanitizeOpenClawConfig (blocklist approach)', () => {
+describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   it('removes skills.enabled at the root level of skills', async () => {
     await writeConfig({
       skills: {
@@ -611,7 +611,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
     expect(entries['my-skill'].enabled).toBe(true);
     expect(entries['my-skill'].apiKey).toBe('abc');
     // Other top-level sections are untouched (gateway gets Skill Workshop hardening)
-    expect(result.gateway).toEqual(withClawXToolDefaults({ gateway: { mode: 'local' } }).gateway);
+    expect(result.gateway).toEqual(withinsightAllXToolDefaults({ gateway: { mode: 'local' } }).gateway);
   });
 
   it('removes skills.disabled at the root level of skills', async () => {
@@ -655,7 +655,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('does nothing when config is already valid', async () => {
-    const original = withClawXToolDefaults({
+    const original = withinsightAllXToolDefaults({
       skills: {
         entries: { 'my-skill': { enabled: true } },
         allowBundled: ['web-search'],
@@ -671,9 +671,9 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('preserves unknown valid keys (forward-compatible)', async () => {
-    // If OpenClaw adds new valid keys to skills in the future,
+    // If insightAll adds new valid keys to skills in the future,
     // the blocklist approach should NOT strip them.
-    const original = withClawXToolDefaults({
+    const original = withinsightAllXToolDefaults({
       skills: {
         entries: { 'x': { enabled: true } },
         allowBundled: ['web-search'],
@@ -700,7 +700,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
     expect(modified).toBe(true);
 
     const result = await readConfig();
-    expect(result).toEqual(withClawXToolDefaults(original));
+    expect(result).toEqual(withinsightAllXToolDefaults(original));
   });
 
   it('handles empty config', async () => {
@@ -710,7 +710,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
     expect(modified).toBe(true);
 
     const result = await readConfig();
-    expect(result).toEqual(withClawXToolDefaults({}));
+    expect(result).toEqual(withinsightAllXToolDefaults({}));
   });
 
   it('returns false for missing config file', async () => {
@@ -727,7 +727,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
     expect(modified).toBe(true);
 
     const result = await readConfig();
-    expect(result).toEqual(withClawXToolDefaults(original));
+    expect(result).toEqual(withinsightAllXToolDefaults(original));
   });
 
   it('preserves all other top-level config sections', async () => {
@@ -749,7 +749,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
     // All other sections unchanged
     expect(result.channels).toEqual({ discord: { token: 'abc', enabled: true } });
     expect(result.plugins).toEqual({ entries: { customPlugin: { enabled: true } } });
-    expect(result.gateway).toEqual(withClawXToolDefaults({
+    expect(result.gateway).toEqual(withinsightAllXToolDefaults({
       gateway: {
         mode: 'local',
         auth: { token: 'xyz' },
@@ -822,7 +822,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('keeps tools.web.search.kimi.apiKey when moonshot provider is absent', async () => {
-    const original = withClawXToolDefaults({
+    const original = withinsightAllXToolDefaults({
       models: {
         providers: {
           openrouter: { baseUrl: 'https://openrouter.ai/api/v1', api: 'openai-completions' },
@@ -873,7 +873,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
     // Other plugin config is preserved
     expect(plugins.entries).toEqual({ customPlugin: { enabled: true } });
     // Other top-level sections untouched
-    expect(result.gateway).toEqual(withClawXToolDefaults({ gateway: { mode: 'local' } }).gateway);
+    expect(result.gateway).toEqual(withinsightAllXToolDefaults({ gateway: { mode: 'local' } }).gateway);
   });
 
   it('keeps configured built-in channels in plugins.allow when external plugins are enabled', async () => {
@@ -1015,7 +1015,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('does nothing when plugins.load.paths contains only valid paths', async () => {
-    const original = withClawXToolDefaults({
+    const original = withinsightAllXToolDefaults({
       plugins: {
         load: {
           paths: [tempDir],
@@ -1057,7 +1057,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('handles plugins.load as empty object (no paths key)', async () => {
-    const original = withClawXToolDefaults({
+    const original = withinsightAllXToolDefaults({
       plugins: {
         load: {},
       },
@@ -1069,7 +1069,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('handles plugins.load.paths as empty array', async () => {
-    const original = withClawXToolDefaults({
+    const original = withinsightAllXToolDefaults({
       plugins: {
         load: { paths: [] },
       },
@@ -1190,7 +1190,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('does not modify config when no bundled plugins and no allowlist', async () => {
-    const original = withClawXToolDefaults({
+    const original = withinsightAllXToolDefaults({
       gateway: { mode: 'local' },
     });
     await writeConfig(original);
@@ -1200,7 +1200,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('sets session.dmScope to per-channel-peer when unset', async () => {
-    await writeConfig(withClawXToolDefaults({}));
+    await writeConfig(withinsightAllXToolDefaults({}));
 
     const modified = await sanitizeConfig(configPath, { all: ['browser'], enabledByDefault: ['browser'] });
     expect(modified).toBe(false);
@@ -1210,7 +1210,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   });
 
   it('preserves session.dmScope when already set to per-account-channel-peer', async () => {
-    await writeConfig(withClawXToolDefaults({
+    await writeConfig(withinsightAllXToolDefaults({
       session: { dmScope: 'per-account-channel-peer' },
     }));
 
@@ -1224,7 +1224,7 @@ describe('sanitizeOpenClawConfig (blocklist approach)', () => {
   it('overrides session.dmScope when set to main', async () => {
     // Write config with dmScope: 'main' but otherwise already sanitized,
     // so only the session.dmScope change should trigger modified=true.
-    const base = withClawXToolDefaults({});
+    const base = withinsightAllXToolDefaults({});
     await writeConfig({
       ...base,
       session: { dmScope: 'main' },

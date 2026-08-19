@@ -3,7 +3,7 @@ import type { GatewayManager } from '../gateway/manager';
 import { syncLaunchAtStartupSettingFromStore } from '../main/launch-at-startup';
 import { createMenu } from '../main/menu';
 import { applyProxySettings } from '../main/proxy';
-import { syncProxyConfigToOpenClaw } from '../utils/openclaw-proxy';
+import { syncProxyConfigToinsightAll } from '../utils/openclaw-proxy';
 import {
   type AppSettings,
   getAllSettings,
@@ -76,7 +76,7 @@ function patchTouchesLanguage(patch: Partial<AppSettings>): boolean {
 
 async function handleProxySettingsChange(gatewayManager: GatewayManager): Promise<void> {
   const settings = await getAllSettings();
-  await syncProxyConfigToOpenClaw(settings, { preserveExistingWhenDisabled: false });
+  await syncProxyConfigToinsightAll(settings, { preserveExistingWhenDisabled: false });
   await applyProxySettings(settings);
   if (gatewayManager.getStatus().state === 'running') {
     await gatewayManager.restart();

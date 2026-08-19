@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/clawx-agent-config-${suffix}`,
-    testUserData: `/tmp/clawx-agent-config-user-data-${suffix}`,
+    testHome: `/tmp/insightallx-agent-config-${suffix}`,
+    testUserData: `/tmp/insightallx-agent-config-user-data-${suffix}`,
   };
 });
 
@@ -32,13 +32,13 @@ vi.mock('electron', () => ({
   },
 }));
 
-async function writeOpenClawJson(config: unknown): Promise<void> {
+async function writeinsightAllJson(config: unknown): Promise<void> {
   const openclawDir = join(testHome, '.openclaw');
   await mkdir(openclawDir, { recursive: true });
   await writeFile(join(openclawDir, 'openclaw.json'), JSON.stringify(config, null, 2), 'utf8');
 }
 
-async function readOpenClawJson(): Promise<Record<string, unknown>> {
+async function readinsightAllJson(): Promise<Record<string, unknown>> {
   const content = await readFile(join(testHome, '.openclaw', 'openclaw.json'), 'utf8');
   return JSON.parse(content) as Record<string, unknown>;
 }
@@ -52,7 +52,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('lists configured agent ids from openclaw.json', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -67,7 +67,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('falls back to the implicit main agent when no list exists', async () => {
-    await writeOpenClawJson({});
+    await writeinsightAllJson({});
 
     const { listConfiguredAgentIds } = await import('@electron/utils/agent-config');
 
@@ -75,7 +75,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('includes canonical per-agent main session keys in the snapshot', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       session: {
         mainKey: 'desk',
       },
@@ -105,7 +105,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('exposes effective and override model refs in the snapshot', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         defaults: {
           model: {
@@ -140,7 +140,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('updates and clears per-agent model overrides', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         defaults: {
           model: {
@@ -157,7 +157,7 @@ describe('agent config lifecycle', () => {
     const { listAgentsSnapshot, updateAgentModel } = await import('@electron/utils/agent-config');
 
     await updateAgentModel('coder', 'ark/ark-code-latest');
-    let config = await readOpenClawJson();
+    let config = await readinsightAllJson();
     let coder = ((config.agents as { list: Array<{ id: string; model?: { primary?: string } }> }).list)
       .find((agent) => agent.id === 'coder');
     expect(coder?.model?.primary).toBe('ark/ark-code-latest');
@@ -171,7 +171,7 @@ describe('agent config lifecycle', () => {
     });
 
     await updateAgentModel('coder', null);
-    config = await readOpenClawJson();
+    config = await readinsightAllJson();
     coder = ((config.agents as { list: Array<{ id: string; model?: unknown }> }).list)
       .find((agent) => agent.id === 'coder');
     expect(coder?.model).toBeUndefined();
@@ -186,7 +186,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('mutates the running coordinator snapshot instead of replacing it from the local file', async () => {
-    await writeOpenClawJson({ localOnly: true });
+    await writeinsightAllJson({ localOnly: true });
     let runningConfig: Record<string, unknown> = {
       gatewayOnly: true,
       agents: {
@@ -204,8 +204,8 @@ describe('agent config lifecycle', () => {
         throw new Error(`Unexpected RPC method: ${method}`);
       }),
     };
-    const { registerOpenClawConfigCoordinator } = await import('@electron/gateway/config-delivery');
-    registerOpenClawConfigCoordinator(manager);
+    const { registerinsightAllConfigCoordinator } = await import('@electron/gateway/config-delivery');
+    registerinsightAllConfigCoordinator(manager);
     const { updateAgentName } = await import('@electron/utils/agent-config');
 
     const snapshot = await updateAgentName('main', 'Coordinator Main');
@@ -215,11 +215,11 @@ describe('agent config lifecycle', () => {
       agents: { list: [{ id: 'main', name: 'Coordinator Main', default: true }] },
     });
     expect(snapshot.agents[0].name).toBe('Coordinator Main');
-    expect(await readOpenClawJson()).toEqual({ localOnly: true });
+    expect(await readinsightAllJson()).toEqual({ localOnly: true });
   });
 
   it('rejects invalid model ref formats when updating agent model', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [{ id: 'main', name: 'Main', default: true }],
       },
@@ -233,7 +233,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('prunes stale custom runtime model overrides when listing agents', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       models: {
         providers: {
           'minimax-portal': {
@@ -257,7 +257,7 @@ describe('agent config lifecycle', () => {
 
     const { listAgentsSnapshot } = await import('@electron/utils/agent-config');
     const snapshot = await listAgentsSnapshot();
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const main = snapshot.agents.find((agent) => agent.id === 'main');
     const coder = snapshot.agents.find((agent) => agent.id === 'coder');
     const mainEntry = ((config.agents as { list: Array<{ id: string; model?: unknown }> }).list)
@@ -279,7 +279,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('deletes the config entry, bindings, runtime directory, and managed workspace for a removed agent', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         defaults: {
           model: {
@@ -344,7 +344,7 @@ describe('agent config lifecycle', () => {
     expect(snapshot.agents.map((agent) => agent.id)).toEqual(['main', 'test3']);
     expect(snapshot.channelOwners.feishu).toBe('main');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect((config.agents as { list: Array<{ id: string }> }).list.map((agent) => agent.id)).toEqual([
       'main',
       'test3',
@@ -361,7 +361,7 @@ describe('agent config lifecycle', () => {
   it('preserves unmanaged custom workspaces when deleting an agent', async () => {
     const customWorkspaceDir = join(testHome, 'custom-workspace-test2');
 
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           {
@@ -398,7 +398,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('does not delete a legacy-named account when it is owned by another agent', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -430,7 +430,7 @@ describe('agent config lifecycle', () => {
     const { deleteAgentConfig } = await import('@electron/utils/agent-config');
     await deleteAgentConfig('test2');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const feishu = (config.channels as Record<string, unknown>).feishu as {
       accounts?: Record<string, unknown>;
     };
@@ -438,7 +438,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('does not delete an account reassigned by a later binding', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -462,7 +462,7 @@ describe('agent config lifecycle', () => {
 
     await deleteAgentConfig('test2');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const telegram = (config.channels as Record<string, unknown>).telegram as {
       accounts?: Record<string, unknown>;
     };
@@ -470,7 +470,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('deletes an owned account for a disabled channel with its agent', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -501,12 +501,12 @@ describe('agent config lifecycle', () => {
 
     await deleteAgentConfig('test2');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect((config.channels as Record<string, unknown>).telegram).toBeUndefined();
   });
 
   it('migrates legacy plugin-only credentials while deleting the owned account', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -536,7 +536,7 @@ describe('agent config lifecycle', () => {
 
     await deleteAgentConfig('test2');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const discordChannel = (config.channels as {
       discord: Record<string, unknown>;
     }).discord;
@@ -554,7 +554,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('allows the same agent to bind multiple different channels', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -577,7 +577,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('keeps sibling account bindings for the same agent and channel', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -606,7 +606,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('uses a legacy channel binding for the default account alongside an explicit sibling account', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -637,7 +637,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('atomically migrates a legacy binding while assigning a scoped sibling account', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -652,7 +652,7 @@ describe('agent config lifecycle', () => {
 
     await ensureScopedChannelBinding('feishu', 'alt');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect(config.bindings).toEqual([
       { agentId: 'main', match: { channel: 'feishu', accountId: 'default' } },
       { agentId: 'alt', match: { channel: 'feishu', accountId: 'alt' } },
@@ -660,7 +660,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('preserves original agentId casing when persisting bindings', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'MainAgent', name: 'Main Agent', default: true },
@@ -680,7 +680,7 @@ describe('agent config lifecycle', () => {
 
     await assignChannelAccountToAgent('MainAgent', 'feishu', 'default');
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect(config.bindings).toEqual([
       {
         agentId: 'MainAgent',
@@ -690,7 +690,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('keeps a single owner for the same channel account', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -717,7 +717,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('can clear one channel account binding without affecting another channel on the same agent', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [
           { id: 'main', name: 'Main', default: true },
@@ -741,7 +741,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('avoids numeric-only ids when creating agents from CJK names', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [{ id: 'main', name: 'Main', default: true }],
       },
@@ -761,8 +761,8 @@ describe('agent config lifecycle', () => {
     expect(agentIds).not.toContain('1');
   });
 
-  it('seeds a default ClawX IDENTITY.md for newly created agent workspaces', async () => {
-    await writeOpenClawJson({
+  it('seeds a default insightAllX IDENTITY.md for newly created agent workspaces', async () => {
+    await writeinsightAllJson({
       agents: {
         list: [{ id: 'main', name: 'Main', default: true }],
       },
@@ -772,11 +772,11 @@ describe('agent config lifecycle', () => {
 
     await createAgent('Research');
 
-    await expect(readFile(join(testHome, '.openclaw', 'workspace-research', 'IDENTITY.md'), 'utf8')).resolves.toContain('ClawX');
+    await expect(readFile(join(testHome, '.openclaw', 'workspace-research', 'IDENTITY.md'), 'utf8')).resolves.toContain('insightAllX');
   });
 
   it('rolls back a committed agent entry when filesystem provisioning fails', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [{ id: 'main', name: 'Main', default: true }],
       },
@@ -787,7 +787,7 @@ describe('agent config lifecycle', () => {
 
     await expect(createAgent('Research')).rejects.toThrow();
 
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     const agents = (config.agents as { list: Array<{ id: string }> }).list;
     expect(agents.map((agent) => agent.id)).toEqual(['main']);
     await expect(readFile(blockedWorkspace, 'utf8')).resolves.toBe('pre-existing file');
@@ -795,7 +795,7 @@ describe('agent config lifecycle', () => {
   });
 
   it('does not delete a pre-existing dangling workspace symlink during provisioning rollback', async () => {
-    await writeOpenClawJson({
+    await writeinsightAllJson({
       agents: {
         list: [{ id: 'main', name: 'Main', default: true }],
       },
@@ -808,7 +808,7 @@ describe('agent config lifecycle', () => {
 
     await expect(lstat(workspaceLink)).resolves.toMatchObject({});
     expect((await lstat(workspaceLink)).isSymbolicLink()).toBe(true);
-    const config = await readOpenClawJson();
+    const config = await readinsightAllJson();
     expect((config.agents as { list: Array<{ id: string }> }).list.map((agent) => agent.id)).toEqual(['main']);
   });
 });

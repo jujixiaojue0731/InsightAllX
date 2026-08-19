@@ -19,7 +19,7 @@ export interface AttachedFileMeta {
   gatewayUrl?: string;
 }
 
-/** Structured OpenClaw transcript message used by bounded ACP supplements. */
+/** Structured insightAll transcript message used by bounded ACP supplements. */
 export interface RawMessage {
   role: 'user' | 'assistant' | 'system' | 'toolresult';
   content: unknown; // string | ContentBlock[]
@@ -33,7 +33,7 @@ export interface RawMessage {
   stop_reason?: string;
   errorMessage?: string;
   error_message?: string;
-  /** Canonical OpenClaw-owned transcript metadata. */
+  /** Canonical insightAll-owned transcript metadata. */
   __openclaw?: {
     media?: Array<{
       path?: string;
@@ -84,7 +84,7 @@ export interface ContentBlock {
 /** Session from sessions.list */
 export interface ChatSession {
   key: string;
-  /** OpenClaw transcript session UUID, used to identify synthetic fallback titles. */
+  /** insightAll transcript session UUID, used to identify synthetic fallback titles. */
   sessionId?: string;
   label?: string;
   displayName?: string;
@@ -97,7 +97,7 @@ export interface ChatSession {
   hasActiveRun?: boolean;
   /** Channel provider that last delivered to this session (e.g. webchat, feishu, discord). */
   channel?: string;
-  /** OpenClaw ACP session cwd, mirrored for display and routing. OpenClaw is the source of truth. */
+  /** insightAll ACP session cwd, mirrored for display and routing. insightAll is the source of truth. */
   workspacePath?: string;
   /** Renderer-local placeholder created by New Chat before ACP has created the backing session. */
   createdLocally?: boolean;

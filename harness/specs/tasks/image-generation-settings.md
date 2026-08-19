@@ -11,9 +11,9 @@ touchedAreas:
   - electron/utils/openclaw-image-relay-constants.ts
   - electron/utils/openclaw-auth.ts
   - electron/utils/plugin-install.ts
-  - resources/openclaw-plugins/clawx-openai-image/index.mjs
-  - resources/openclaw-plugins/clawx-openai-image/openclaw.plugin.json
-  - resources/openclaw-plugins/clawx-openai-image/package.json
+  - resources/openclaw-plugins/insightallx-openai-image/index.mjs
+  - resources/openclaw-plugins/insightallx-openai-image/openclaw.plugin.json
+  - resources/openclaw-plugins/insightallx-openai-image/package.json
   - scripts/bundle-openclaw.mjs
   - scripts/patch-openclaw-image-b64-json.mjs
   - package.json
@@ -39,8 +39,8 @@ expectedUserBehavior:
   - Models page no longer embeds Image Generation; developer mode shows a dedicated Image Generation sidebar page alongside Skills and Cron.
   - Saving settings writes openclaw.json agents.defaults.imageGenerationModel from the explicit custom image endpoint form; default chat provider changes do not auto-sync image models.
   - The custom image endpoint is always the page's configuration target; no extra enable/disable switch is shown before Base URL/model/API key fields.
-  - Saving the OpenAI-compatible image endpoint writes a ClawX-owned provider (`clawx-openai-image`) and auth profile, enables `request.allowPrivateNetwork` for trusted custom endpoints, and leaves `models.providers.openai` untouched so chat continues to use the regular OpenAI provider.
-  - Test generate calls OpenClaw in-process generateImage runtime with the selected agent auth directory (no CLI subprocess).
+  - Saving the OpenAI-compatible image endpoint writes a insightAllX-owned provider (`insightallx-openai-image`) and auth profile, enables `request.allowPrivateNetwork` for trusted custom endpoints, and leaves `models.providers.openai` untouched so chat continues to use the regular OpenAI provider.
+  - Test generate calls insightAll in-process generateImage runtime with the selected agent auth directory (no CLI subprocess).
 requiredProfiles:
   - fast
   - comms
@@ -62,10 +62,10 @@ docs:
 
 ## Background
 
-OpenClaw exposes image generation via the `image_generate` tool using global
+insightAll exposes image generation via the `image_generate` tool using global
 `agents.defaults.imageGenerationModel` while credentials remain per-agent under
-`~/.openclaw/agents/{id}/agent/auth-profiles.json`. ClawX's OpenAI-compatible
-image endpoint uses a separate `clawx-openai-image` provider/plugin so image
+`~/.openclaw/agents/{id}/agent/auth-profiles.json`. insightAllX's OpenAI-compatible
+image endpoint uses a separate `insightallx-openai-image` provider/plugin so image
 base URL and API key can differ from the normal `openai` chat provider.
 
-ClawX syncs chat defaults on provider switch, but image generation is configured independently from its developer-only Image Generation page and is never auto-synced from the default chat provider.
+insightAllX syncs chat defaults on provider switch, but image generation is configured independently from its developer-only Image Generation page and is never auto-synced from the default chat provider.

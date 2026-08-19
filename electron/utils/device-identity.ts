@@ -1,7 +1,7 @@
 /**
- * Device identity utilities for OpenClaw Gateway authentication.
+ * Device identity utilities for insightAll Gateway authentication.
  *
- * OpenClaw Gateway 2026.2.15+ requires a signed device identity in the
+ * insightAll Gateway 2026.2.15+ requires a signed device identity in the
  * connect handshake to grant scopes (operator.read, operator.write, etc.).
  * Without a device, the gateway strips all requested scopes.
  *

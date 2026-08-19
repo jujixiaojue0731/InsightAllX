@@ -48,4 +48,4 @@ docs:
 
 ## Scope
 
-This task fixes the renderer coordination between target-agent navigation, workspace resolution, ACP load identity, and first-prompt delivery. It does not change the Main-owned ACP transport or OpenClaw runtime.
+This task fixes the renderer coordination between target-agent navigation, workspace resolution, ACP load identity, and first-prompt delivery. It does not change the Main-owned ACP transport or insightAll runtime.

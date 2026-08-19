@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 async function loadServiceForHome(homeDir: string) {
   vi.resetModules();
   const paths = await import('@electron/utils/paths');
-  vi.spyOn(paths, 'getOpenClawConfigDir').mockReturnValue(join(homeDir, '.openclaw'));
+  vi.spyOn(paths, 'getinsightAllConfigDir').mockReturnValue(join(homeDir, '.openclaw'));
   const mod = await import('@electron/gateway/clawhub');
   return mod.ClawHubService;
 }
@@ -23,7 +23,7 @@ describe('ClawHubService marketplace compatibility', () => {
   });
 
   it('reports local-only capability when no marketplace provider is registered', async () => {
-    const homeDir = mkdtempSync(join(tmpdir(), 'clawx-clawhub-home-'));
+    const homeDir = mkdtempSync(join(tmpdir(), 'insightallx-clawhub-home-'));
     const ClawHubService = await loadServiceForHome(homeDir);
     const service = new ClawHubService();
 
@@ -36,7 +36,7 @@ describe('ClawHubService marketplace compatibility', () => {
   });
 
   it('delegates search and install to a registered marketplace provider', async () => {
-    const homeDir = mkdtempSync(join(tmpdir(), 'clawx-clawhub-home-'));
+    const homeDir = mkdtempSync(join(tmpdir(), 'insightallx-clawhub-home-'));
     const ClawHubService = await loadServiceForHome(homeDir);
     const service = new ClawHubService();
     const provider = {
@@ -56,7 +56,7 @@ describe('ClawHubService marketplace compatibility', () => {
   });
 
   it('lists installed managed skills from the filesystem without the clawhub CLI', async () => {
-    const homeDir = mkdtempSync(join(tmpdir(), 'clawx-clawhub-home-'));
+    const homeDir = mkdtempSync(join(tmpdir(), 'insightallx-clawhub-home-'));
     const openclawDir = join(homeDir, '.openclaw');
     const skillDir = join(openclawDir, 'skills', 'pdf');
     mkdirSync(join(skillDir, '.clawhub'), { recursive: true });

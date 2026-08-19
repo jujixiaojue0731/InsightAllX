@@ -132,11 +132,11 @@ describe('Channels page status refresh', () => {
     });
   });
 
-  it('defines exactly the eight ClawX-supported channel integrations', () => {
+  it('defines exactly the eight insightAllX-supported channel integrations', () => {
     expect(Object.keys(CHANNEL_META).sort()).toEqual([...SUPPORTED_CHANNEL_TYPES].sort());
   });
 
-  it('filters runtime channel groups that ClawX does not support', async () => {
+  it('filters runtime channel groups that insightAllX does not support', async () => {
     subscribeHostEventMock.mockImplementation(() => vi.fn());
     const unsupportedChannelTypes = [
       'signal',
@@ -721,7 +721,7 @@ describe('Channels page status refresh', () => {
             consecutiveHeartbeatMisses: 1,
           },
           channels: [],
-          clawxLogTail: 'clawx',
+          insightallxLogTail: 'insightallx',
           gatewayLogTail: 'gateway',
           gatewayErrLogTail: '',
         };
@@ -945,7 +945,7 @@ describe('Channels page status refresh', () => {
             consecutiveHeartbeatMisses: 1,
           },
           channels: [],
-          clawxLogTail: `clawx-${diagnosticsFetchCount}`,
+          insightallxLogTail: `insightallx-${diagnosticsFetchCount}`,
           gatewayLogTail: 'gateway',
           gatewayErrLogTail: '',
         };

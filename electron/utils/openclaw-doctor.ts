@@ -1,7 +1,7 @@
 import { app, utilityProcess } from 'electron';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { getOpenClawDir, getOpenClawEntryPath } from './paths';
+import { getinsightAllDir, getinsightAllEntryPath } from './paths';
 import { logger } from './logger';
 import { getUvMirrorEnv } from './uv-env';
 
@@ -10,10 +10,10 @@ const MAX_DOCTOR_OUTPUT_BYTES = 10 * 1024 * 1024;
 const OPENCLAW_DOCTOR_ARGS = ['doctor'];
 const OPENCLAW_DOCTOR_FIX_ARGS = ['doctor', '--fix', '--yes', '--non-interactive'];
 
-export type OpenClawDoctorMode = 'diagnose' | 'fix';
+export type insightAllDoctorMode = 'diagnose' | 'fix';
 
-export interface OpenClawDoctorResult {
-  mode: OpenClawDoctorMode;
+export interface insightAllDoctorResult {
+  mode: insightAllDoctorMode;
   success: boolean;
   exitCode: number | null;
   stdout: string;
@@ -48,7 +48,7 @@ function appendDoctorOutput(
   const remaining = Math.max(0, MAX_DOCTOR_OUTPUT_BYTES - currentBytes);
   const appended = remaining > 0 ? chunk.subarray(0, remaining).toString() : '';
   logger.warn(
-    `OpenClaw doctor ${stream} exceeded ${MAX_DOCTOR_OUTPUT_BYTES} bytes; truncating additional output`,
+    `insightAll doctor ${stream} exceeded ${MAX_DOCTOR_OUTPUT_BYTES} bytes; truncating additional output`,
   );
 
   return {
@@ -66,17 +66,17 @@ function getBundledBinPath(): string {
 }
 
 async function runDoctorCommandWithArgs(
-  mode: OpenClawDoctorMode,
+  mode: insightAllDoctorMode,
   args: string[],
-): Promise<OpenClawDoctorResult> {
-  const openclawDir = getOpenClawDir();
-  const entryScript = getOpenClawEntryPath();
+): Promise<insightAllDoctorResult> {
+  const openclawDir = getinsightAllDir();
+  const entryScript = getinsightAllEntryPath();
   const command = `openclaw ${args.join(' ')}`;
   const startedAt = Date.now();
 
   if (!existsSync(entryScript)) {
-    const error = `OpenClaw entry script not found at ${entryScript}`;
-    logger.error(`Cannot run OpenClaw doctor: ${error}`);
+    const error = `insightAll entry script not found at ${entryScript}`;
+    logger.error(`Cannot run insightAll doctor: ${error}`);
     return {
       mode,
       success: false,
@@ -98,10 +98,10 @@ async function runDoctorCommandWithArgs(
   const uvEnv = await getUvMirrorEnv();
 
   logger.info(
-    `Running OpenClaw doctor (mode=${mode}, entry="${entryScript}", args="${args.join(' ')}", cwd="${openclawDir}", bundledBin=${binPathExists ? 'yes' : 'no'})`,
+    `Running insightAll doctor (mode=${mode}, entry="${entryScript}", args="${args.join(' ')}", cwd="${openclawDir}", bundledBin=${binPathExists ? 'yes' : 'no'})`,
   );
 
-  return await new Promise<OpenClawDoctorResult>((resolve) => {
+  return await new Promise<insightAllDoctorResult>((resolve) => {
     const child = utilityProcess.fork(entryScript, args, {
       cwd: openclawDir,
       stdio: 'pipe',
@@ -121,7 +121,7 @@ async function runDoctorCommandWithArgs(
     let stderrTruncated = false;
     let settled = false;
 
-    const finish = (result: Omit<OpenClawDoctorResult, 'durationMs'>) => {
+    const finish = (result: Omit<insightAllDoctorResult, 'durationMs'>) => {
       if (settled) return;
       settled = true;
       resolve({
@@ -131,7 +131,7 @@ async function runDoctorCommandWithArgs(
     };
 
     const timeout = setTimeout(() => {
-      logger.error(`OpenClaw doctor timed out after ${OPENCLAW_DOCTOR_TIMEOUT_MS}ms`);
+      logger.error(`insightAll doctor timed out after ${OPENCLAW_DOCTOR_TIMEOUT_MS}ms`);
       try {
         child.kill();
       } catch {
@@ -166,7 +166,7 @@ async function runDoctorCommandWithArgs(
 
     child.on('error', (error: unknown) => {
       clearTimeout(timeout);
-      logger.error('Failed to spawn OpenClaw doctor process:', error);
+      logger.error('Failed to spawn insightAll doctor process:', error);
       finish({
         mode,
         success: false,
@@ -181,7 +181,7 @@ async function runDoctorCommandWithArgs(
 
     child.on('exit', (code) => {
       clearTimeout(timeout);
-      logger.info(`OpenClaw doctor exited with code ${code ?? 'null'}`);
+      logger.info(`insightAll doctor exited with code ${code ?? 'null'}`);
       finish({
         mode,
         success: code === 0,
@@ -195,10 +195,10 @@ async function runDoctorCommandWithArgs(
   });
 }
 
-export async function runOpenClawDoctor(): Promise<OpenClawDoctorResult> {
+export async function runinsightAllDoctor(): Promise<insightAllDoctorResult> {
   return await runDoctorCommandWithArgs('diagnose', OPENCLAW_DOCTOR_ARGS);
 }
 
-export async function runOpenClawDoctorFix(): Promise<OpenClawDoctorResult> {
+export async function runinsightAllDoctorFix(): Promise<insightAllDoctorResult> {
   return await runDoctorCommandWithArgs('fix', OPENCLAW_DOCTOR_FIX_ARGS);
 }

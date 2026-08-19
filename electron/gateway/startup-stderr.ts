@@ -89,7 +89,7 @@ export function classifyGatewayStderrMessage(message: string): GatewayStderrClas
   }
   const plain = msg.replace(ANSI_ESCAPE_PATTERN, '');
 
-  // OpenClaw startup timing traces are expected diagnostics, not failures.
+  // insightAll startup timing traces are expected diagnostics, not failures.
   if (plain.includes('startup trace:')) {
     return { level: 'info', normalized: msg };
   }

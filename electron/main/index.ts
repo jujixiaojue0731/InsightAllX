@@ -5,7 +5,7 @@
 import { app, BrowserWindow, nativeImage, session, shell, type Session } from 'electron';
 import { join } from 'path';
 import { GatewayManager } from '../gateway/manager';
-import { registerOpenClawConfigCoordinator } from '../gateway/config-delivery';
+import { registerinsightAllConfigCoordinator } from '../gateway/config-delivery';
 import { registerIpcHandlers } from './ipc-handlers';
 import { HostApiRegistry } from './ipc/host-invoke';
 import { createTray } from './tray';
@@ -23,9 +23,9 @@ import { loadExtensionsFromManifest } from '../extensions/loader';
 import { registerAllBuiltinExtensions } from '../extensions/builtin';
 import { loadExternalMainExtensions } from '../extensions/_ext-bridge.generated';
 import {
-  ensureClawXContext,
-  ensureClawXDefaultIdentity,
-  repairClawXOnlyBootstrapFiles,
+  ensureinsightAllXContext,
+  ensureinsightAllXDefaultIdentity,
+  repairinsightAllXOnlyBootstrapFiles,
 } from '../utils/openclaw-workspace';
 import { autoInstallCliIfNeeded, generateCompletionCache, installCompletionToProfile } from '../utils/openclaw-cli';
 import { isQuitting, setQuitting } from './app-state';
@@ -48,17 +48,17 @@ import {
 } from './quit-lifecycle';
 import { createSignalQuitHandler } from './signal-quit';
 import { acquireProcessInstanceFileLock } from './process-instance-lock';
-import { ensureBuiltinSkillsInstalled, ensurePreinstalledSkillsInstalled, trimBundledOpenClawSkillsAndConfigs } from '../utils/skill-config';
+import { ensureBuiltinSkillsInstalled, ensurePreinstalledSkillsInstalled, trimBundledinsightAllSkillsAndConfigs } from '../utils/skill-config';
 
 import { deviceOAuthManager } from '../utils/device-oauth';
 import { browserOAuthManager } from '../utils/browser-oauth';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { syncAllProviderAuthToRuntime } from '../services/providers/provider-runtime-sync';
 
-const WINDOWS_APP_USER_MODEL_ID = 'app.clawx.desktop';
-const isE2EMode = process.env.CLAWX_E2E === '1';
-const requestedUserDataDir = process.env.CLAWX_USER_DATA_DIR?.trim();
-const requestedRemoteDebuggingPort = process.env.CLAWX_REMOTE_DEBUGGING_PORT?.trim();
+const WINDOWS_APP_USER_MODEL_ID = 'app.insightallx.desktop';
+const isE2EMode = process.env.INSIGHTALLX_E2E === '1';
+const requestedUserDataDir = process.env.INSIGHTALLX_USER_DATA_DIR?.trim();
+const requestedRemoteDebuggingPort = process.env.INSIGHTALLX_REMOTE_DEBUGGING_PORT?.trim();
 
 if (requestedRemoteDebuggingPort) {
   app.commandLine.appendSwitch('remote-debugging-port', requestedRemoteDebuggingPort);
@@ -69,12 +69,12 @@ if (isE2EMode && requestedUserDataDir) {
 }
 
 // On Linux, set CHROME_DESKTOP so Chromium can find the correct .desktop file.
-// On Wayland this maps the running window to clawx.desktop (→ icon + app grouping);
+// On Wayland this maps the running window to insightallx.desktop (→ icon + app grouping);
 // on X11 it supplements the StartupWMClass matching.
 // Must be called before app.whenReady() / before any window is created.
 if (process.platform === 'linux') {
   const linuxApp = app as typeof app & { setDesktopName?: (desktopName: string) => void };
-  linuxApp.setDesktopName?.('clawx.desktop');
+  linuxApp.setDesktopName?.('insightallx.desktop');
 }
 
 // Prevent multiple instances of the app from running simultaneously.
@@ -84,7 +84,7 @@ if (process.platform === 'linux') {
 // The losing process must exit immediately so it never reaches Gateway startup.
 const gotElectronLock = isE2EMode ? true : app.requestSingleInstanceLock();
 if (!gotElectronLock) {
-  console.info('[ClawX] Another instance already holds the single-instance lock; exiting duplicate process');
+  console.info('[insightAllX] Another instance already holds the single-instance lock; exiting duplicate process');
   app.exit(0);
 }
 let releaseProcessInstanceFileLock: () => void = () => {};
@@ -93,7 +93,7 @@ if (gotElectronLock && !isE2EMode) {
   try {
     const fileLock = acquireProcessInstanceFileLock({
       userDataDir: app.getPath('userData'),
-      lockName: 'clawx',
+      lockName: 'insightallx',
       force: true, // Electron lock already guarantees exclusivity; force-clean orphan/recycled-PID locks
     });
     gotFileLock = fileLock.acquired;
@@ -105,12 +105,12 @@ if (gotElectronLock && !isE2EMode) {
           ? 'unknown lock format/content'
           : 'unknown owner';
       console.info(
-        `[ClawX] Another instance already holds process lock (${fileLock.lockPath}, ${ownerDescriptor}); exiting duplicate process`,
+        `[insightAllX] Another instance already holds process lock (${fileLock.lockPath}, ${ownerDescriptor}); exiting duplicate process`,
       );
       app.exit(0);
     }
   } catch (error) {
-    console.warn('[ClawX] Failed to acquire process instance file lock; continuing with Electron single-instance lock only', error);
+    console.warn('[insightAllX] Failed to acquire process instance file lock; continuing with Electron single-instance lock only', error);
   }
 }
 const gotTheLock = gotElectronLock && gotFileLock;
@@ -176,7 +176,7 @@ function createWindow(): BrowserWindow {
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: false,
-      webviewTag: true, // Enable <webview> for embedding OpenClaw Control UI
+      webviewTag: true, // Enable <webview> for embedding insightAll Control UI
     },
     titleBarStyle: isMac ? 'hiddenInset' : useCustomTitleBar ? 'hidden' : 'default',
     trafficLightPosition: isMac
@@ -213,7 +213,7 @@ function createWindow(): BrowserWindow {
 }
 
 function loadMainWindow(win: BrowserWindow): void {
-  const shouldSkipSetupForE2E = process.env.CLAWX_E2E_SKIP_SETUP === '1';
+  const shouldSkipSetupForE2E = process.env.INSIGHTALLX_E2E_SKIP_SETUP === '1';
 
   if (process.env.VITE_DEV_SERVER_URL) {
     const rendererUrl = new URL(process.env.VITE_DEV_SERVER_URL);
@@ -301,7 +301,7 @@ function createMainWindow(): BrowserWindow {
 async function initialize(): Promise<void> {
   // Initialize logger first
   logger.init();
-  logger.info('=== ClawX Application Starting ===');
+  logger.info('=== insightAllX Application Starting ===');
   logger.debug(
     `Runtime: platform=${process.platform}/${process.arch}, electron=${process.versions.electron}, node=${process.versions.node}, packaged=${app.isPackaged}, pid=${process.pid}, ppid=${process.ppid}`
   );
@@ -331,7 +331,7 @@ async function initialize(): Promise<void> {
   // Create the main window
   const window = createMainWindow();
 
-  // Override security headers ONLY for the OpenClaw Gateway Control UI.
+  // Override security headers ONLY for the insightAll Gateway Control UI.
   // The URL filter ensures this callback only fires for gateway requests,
   // avoiding unnecessary overhead on every other HTTP response.
   session.defaultSession.webRequest.onHeadersReceived(
@@ -395,18 +395,18 @@ async function initialize(): Promise<void> {
   // so it respects the user's "Auto-check for updates" setting.
 
   // Seed a stable default IDENTITY.md before the Gateway initializes the
-  // workspace so ClawX desktop sessions skip OpenClaw's chat-first bootstrap.
+  // workspace so insightAllX desktop sessions skip insightAll's chat-first bootstrap.
   if (!isE2EMode) {
-    void ensureClawXDefaultIdentity().catch((error) => {
-      logger.warn('Failed to seed default ClawX identity:', error);
+    void ensureinsightAllXDefaultIdentity().catch((error) => {
+      logger.warn('Failed to seed default insightAllX identity:', error);
     });
   }
 
-  // Repair any bootstrap files that only contain ClawX markers (no OpenClaw
-  // template content). This fixes a race condition where ensureClawXContext()
+  // Repair any bootstrap files that only contain insightAllX markers (no insightAll
+  // template content). This fixes a race condition where ensureinsightAllXContext()
   // previously created the file before the gateway could seed the full template.
   if (!isE2EMode) {
-    void repairClawXOnlyBootstrapFiles().catch((error) => {
+    void repairinsightAllXOnlyBootstrapFiles().catch((error) => {
       logger.warn('Failed to repair bootstrap files:', error);
     });
   }
@@ -420,15 +420,15 @@ async function initialize(): Promise<void> {
   }
 
   // Keep community builds aligned with Clawx-biz by physically trimming
-  // bundled OpenClaw consumer skills on startup (dev + packaged), keeping only
+  // bundled insightAll consumer skills on startup (dev + packaged), keeping only
   // `skill-creator`. This also prunes stale openclaw.json entries for trimmed
   // bundled skills so we do not keep `enabled: false` config for skills that no
   // longer exist.
   if (!isE2EMode) {
-    void trimBundledOpenClawSkillsAndConfigs().then(({ removed, removedConfigs, kept }) => {
+    void trimBundledinsightAllSkillsAndConfigs().then(({ removed, removedConfigs, kept }) => {
       if (removed > 0 || removedConfigs > 0) {
         logger.info(
-          `Trimmed bundled OpenClaw skills: removed ${removed}, pruned configs ${removedConfigs}, kept ${kept.join(', ')}`,
+          `Trimmed bundled insightAll skills: removed ${removed}, pruned configs ${removedConfigs}, kept ${kept.join(', ')}`,
         );
       }
     });
@@ -453,8 +453,8 @@ async function initialize(): Promise<void> {
   gatewayManager.on('status', (status: { state: string }) => {
     sendMainWindowEvent('gateway:status-changed', status);
     if (status.state === 'running' && !isE2EMode) {
-      void ensureClawXContext().catch((error) => {
-        logger.warn('Failed to re-merge ClawX context after gateway reconnect:', error);
+      void ensureinsightAllXContext().catch((error) => {
+        logger.warn('Failed to re-merge insightAllX context after gateway reconnect:', error);
       });
     }
   });
@@ -545,12 +545,12 @@ async function initialize(): Promise<void> {
     logger.info('Gateway auto-start disabled in settings');
   }
 
-  // Merge ClawX context snippets into the workspace bootstrap files.
+  // Merge insightAllX context snippets into the workspace bootstrap files.
   // The gateway seeds workspace files asynchronously after its HTTP server
-  // is ready, so ensureClawXContext will retry until the target files appear.
+  // is ready, so ensureinsightAllXContext will retry until the target files appear.
   if (!isE2EMode) {
-    void ensureClawXContext().catch((error) => {
-      logger.warn('Failed to merge ClawX context into workspace:', error);
+    void ensureinsightAllXContext().catch((error) => {
+      logger.warn('Failed to merge insightAllX context into workspace:', error);
     });
   }
 
@@ -589,7 +589,7 @@ if (gotTheLock) {
   }
 
   gatewayManager = new GatewayManager();
-  registerOpenClawConfigCoordinator(gatewayManager);
+  registerinsightAllConfigCoordinator(gatewayManager);
   clawHubService = new ClawHubService();
 
   // Register builtin extensions and load manifest
@@ -601,7 +601,7 @@ if (gotTheLock) {
 
   // When a second instance is launched, focus the existing window instead.
   app.on('second-instance', () => {
-    logger.info('Second ClawX instance detected; redirecting to the existing window');
+    logger.info('Second insightAllX instance detected; redirecting to the existing window');
 
     const focusRequest = requestSecondInstanceFocus(
       mainWindowFocusState,
