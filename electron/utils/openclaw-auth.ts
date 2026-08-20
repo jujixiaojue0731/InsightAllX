@@ -46,8 +46,8 @@ import {
 } from '../shared/providers/types';
 import { inferCustomModelContextWindow, inferCustomModelInputModalities } from '../shared/providers/model-capabilities';
 import {
-  INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL,
-  INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY,
+  INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL,
+  INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY,
 } from './openclaw-image-relay-constants';
 import {
   migrateAuthProfilesJsonToSqliteIfNeeded,
@@ -494,7 +494,7 @@ function getApiKeyFromAuthProfilesStore(
 /**
  * Read the API key insightAll will use for a runtime provider key.
  *
- * This intentionally reads auth-profiles.json rather than insightAllX's provider
+ * This intentionally reads auth-profiles.json rather than InsightAll's provider
  * cache, so UI status can reflect providers imported or preserved by the
  * insightAll runtime across overwrite installs.
  */
@@ -871,7 +871,7 @@ function ensureCompactionSafeguardDefault(config: Record<string, unknown>): bool
 }
 
 /**
- * Backfill `reserveTokensFloor` on compaction configs that insightAllX or insightAll
+ * Backfill `reserveTokensFloor` on compaction configs that InsightAll or insightAll
  * seeded without one. insightAll's built-in default (20k) is too low once
  * contextWindow backfill activates safeguard compaction on 200k+ models.
  */
@@ -901,7 +901,7 @@ function backfillCompactionReserveTokensFloor(config: Record<string, unknown>): 
 /**
  * Self-heal helper: walk `models.providers.custom-*` entries and fill in an
  * inferred `contextWindow` on model rows that have neither `contextWindow`
- * nor `contextTokens`. Rows written by older insightAllX versions only carried
+ * nor `contextTokens`. Rows written by older InsightAll versions only carried
  * `{ id, name, input }`, which disables insightAll's preemptive compaction and
  * context-window guard for custom providers.
  *
@@ -1651,7 +1651,7 @@ function mergeProviderModels(
 /**
  * insightAll 2026.5+ requires a positive `maxTokens` on each model (and can
  * fall back to provider-level `maxTokens`) when `api` is `anthropic-messages`.
- * insightAllX-written entries historically only included `{ id, name }`.
+ * InsightAll-written entries historically only included `{ id, name }`.
  *
  * Generic Anthropic-compatible providers should not be capped at 8k by
  * default: insightAll's native Anthropic transport caps default requests at 32k
@@ -1832,7 +1832,7 @@ export async function ensureAnthropicMessagesModelMaxTokens(): Promise<string[]>
  *
  * insightAll 2026.5+ auto-routes OpenAI providers (`openai`, `openai-codex`) to the
  * external `codex` agent harness, which expects a separate codex plugin install.
- * The bundled insightAll distribution insightAllX ships does not register that harness,
+ * The bundled insightAll distribution InsightAll ships does not register that harness,
  * so without pinning both keys chat fails with
  * `Requested agent harness "codex" is not registered.`
  */
@@ -1974,9 +1974,9 @@ function upsertinsightAllProviderEntry(
  *
  * Mirrors {@link pruneInvalidApiProviderEntries} — invoked opportunistically
  * before a default-provider switch so that pre-existing on-disk entries
- * (written by earlier insightAllX builds that did not pin the runtime) get
+ * (written by earlier InsightAll builds that did not pin the runtime) get
  * repaired before the next Gateway reload picks them up. Without this, users
- * who upgrade insightAllX while still pointing at an OpenAI provider would keep
+ * who upgrade InsightAll while still pointing at an OpenAI provider would keep
  * hitting `Requested agent harness "codex" is not registered.` until they
  * re-saved the provider manually.
  *
@@ -2158,7 +2158,7 @@ function ensurePluginRegistrationEnabled(config: Record<string, unknown>, plugin
 }
 
 /**
- * Configure a insightAllX-owned OpenAI-compatible image provider.
+ * Configure a InsightAll-owned OpenAI-compatible image provider.
  * This intentionally uses a separate provider key from `openai` so chat model
  * routing and OpenAI API/OAuth credentials remain untouched.
  */
@@ -2172,8 +2172,8 @@ export async function syncOpenAiCompatibleImageRelay(params: {
     if (!params.enabled) {
       const models = (config.models || {}) as Record<string, unknown>;
       const providers = (models.providers || {}) as Record<string, unknown>;
-      if (providers[INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]) {
-        delete providers[INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY];
+      if (providers[INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY]) {
+        delete providers[INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY];
         models.providers = providers;
         config.models = models;
       }
@@ -2185,11 +2185,11 @@ export async function syncOpenAiCompatibleImageRelay(params: {
       const primary = typeof imageGenerationModel?.primary === 'string'
         ? imageGenerationModel.primary.trim().toLowerCase()
         : '';
-      if (defaults && imageGenerationModel && primary.startsWith(`${INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY}/`)) {
+      if (defaults && imageGenerationModel && primary.startsWith(`${INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY}/`)) {
         const remainingFallbacks = Array.isArray(imageGenerationModel.fallbacks)
           ? imageGenerationModel.fallbacks.filter((fallback): fallback is string => (
             typeof fallback === 'string'
-              && !fallback.trim().toLowerCase().startsWith(`${INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY}/`)
+              && !fallback.trim().toLowerCase().startsWith(`${INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY}/`)
           ))
           : [];
         if (remainingFallbacks.length > 0) {
@@ -2201,7 +2201,7 @@ export async function syncOpenAiCompatibleImageRelay(params: {
           imageGenerationModel.fallbacks = remainingFallbacks;
         }
       }
-      removePluginRegistrations(config, [INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]);
+      removePluginRegistrations(config, [INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY]);
       normalizeAgentsDefaultsCompactionMode(config);
       return;
     }
@@ -2211,22 +2211,22 @@ export async function syncOpenAiCompatibleImageRelay(params: {
       .map((id) => id.trim())
       .filter(Boolean))];
     if (modelIds.length === 0) {
-      modelIds.push(INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL);
+      modelIds.push(INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL);
     }
-    const existingModels = readModelsProvider(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY)?.models;
+    const existingModels = readModelsProvider(config, INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY)?.models;
     const existingModelsById = new Map(
       (Array.isArray(existingModels) ? existingModels : [])
         .filter((model): model is Record<string, unknown> => isPlainRecord(model) && typeof model.id === 'string')
         .map((model) => [model.id as string, model]),
     );
-    upsertinsightAllProviderEntry(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY, {
+    upsertinsightAllProviderEntry(config, INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY, {
       baseUrl,
       api: 'openai-completions',
       modelIds,
       mergeExistingModels: false,
       request: { allowPrivateNetwork: true },
     });
-    const relayProvider = readModelsProvider(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
+    const relayProvider = readModelsProvider(config, INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY);
     if (relayProvider && Array.isArray(relayProvider.models)) {
       relayProvider.models = relayProvider.models.map((model) => {
         if (!isPlainRecord(model) || typeof model.id !== 'string') return model;
@@ -2234,29 +2234,29 @@ export async function syncOpenAiCompatibleImageRelay(params: {
         return existing ? { ...model, ...existing, id: model.id } : model;
       });
     }
-    ensurePluginRegistrationEnabled(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
+    ensurePluginRegistrationEnabled(config, INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY);
     normalizeAgentsDefaultsCompactionMode(config);
   });
 
   if (!params.enabled) {
-    await removeProviderKeyFrominsightAll(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
+    await removeProviderKeyFrominsightAll(INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY);
   }
   if (params.apiKey?.trim()) {
-    await saveProviderKeyToinsightAll(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
+    await saveProviderKeyToinsightAll(INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY, params.apiKey.trim());
   }
 }
 
 export function readOpenAiCompatibleImageRelayState(
   config: Record<string, unknown>,
 ): { enabled: boolean; baseUrl: string; providerKey?: string } {
-  const insightallxRelay = readModelsProvider(config, INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
-  const relayBaseUrl = typeof insightallxRelay?.baseUrl === 'string' ? insightallxRelay.baseUrl.trim() : '';
+  const insightallRelay = readModelsProvider(config, INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY);
+  const relayBaseUrl = typeof insightallRelay?.baseUrl === 'string' ? insightallRelay.baseUrl.trim() : '';
   if (relayBaseUrl) {
-    return { enabled: true, baseUrl: relayBaseUrl, providerKey: INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY };
+    return { enabled: true, baseUrl: relayBaseUrl, providerKey: INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY };
   }
 
-  // Backward compatibility for insightAllX builds that used models.providers.openai
-  // for image relay. New saves move to the insightAllX-owned provider above.
+  // Backward compatibility for InsightAll builds that used models.providers.openai
+  // for image relay. New saves move to the InsightAll-owned provider above.
   const openai = readModelsProvidersOpenAi(config);
   const baseUrl = typeof openai?.baseUrl === 'string' ? openai.baseUrl.trim() : '';
   if (!baseUrl || baseUrl === OFFICIAL_OPENAI_API_BASE_URL) {
@@ -2355,7 +2355,7 @@ export async function getActiveinsightAllProviders(): Promise<Set<string>> {
 
 /**
  * Read models.providers entries and agents.defaults.model from openclaw.json.
- * Used by insightAllX to seed the provider store when it's empty but providers are
+ * Used by InsightAll to seed the provider store when it's empty but providers are
  * configured externally (e.g. via CLI or by editing openclaw.json directly).
  */
 export async function getinsightAllProvidersConfig(): Promise<{
@@ -2416,7 +2416,7 @@ function applyControlUiAllowedOrigins(controlUi: Record<string, unknown>, port: 
 }
 
 /**
- * Write the insightAllX gateway token into ~/.openclaw/openclaw.json.
+ * Write the InsightAll gateway token into ~/.openclaw/openclaw.json.
  */
 export async function syncGatewayTokenToConfig(token: string): Promise<void> {
   const gatewayPort = (await getSetting('gatewayPort')) || PORTS.OPENCLAW_GATEWAY;
@@ -2549,7 +2549,7 @@ export async function syncBrowserConfigToinsightAll(): Promise<void> {
  * Ensure session idle-reset is configured in ~/.openclaw/openclaw.json.
  *
  * By default insightAll resets the "main" session daily at 04:00 local time,
- * which means conversations disappear after roughly one day.  insightAllX sets
+ * which means conversations disappear after roughly one day.  InsightAll sets
  * `session.idleMinutes` to 10 080 (7 days) so that conversations are
  * preserved for a week unless the user has explicitly configured their own
  * value.  When `idleMinutes` is set without `session.reset` /
@@ -2701,7 +2701,7 @@ export async function batchSyncConfigFields(token: string): Promise<void> {
 
     // ── Memory search default ──
     // insightAll 2026.7.1 supports provider=none as an explicit FTS-only mode.
-    // Migrate insightAllX's exact legacy disabled default once, and otherwise seed
+    // Migrate InsightAll's exact legacy disabled default once, and otherwise seed
     // FTS only when the user has no memorySearch config or OpenAI embedding key.
     memorySearchDefaultResult = shouldMigrateLegacyMemorySearch
       && hasUserMemorySearchConfig(config)
@@ -2865,7 +2865,7 @@ export async function updateSingleAgentModelProvider(
  * Removes known-invalid keys that cause insightAll's strict Zod validation
  * to reject the entire config on startup.  Uses a conservative **blocklist**
  * approach: only strips keys that are KNOWN to be misplaced by older
- * insightAll/insightAllX versions or external tools.
+ * insightAll/InsightAll versions or external tools.
  *
  * Why blocklist instead of allowlist?
  *   • Allowlist (e.g. `VALID_SKILLS_KEYS`) would strip any NEW valid keys
@@ -3087,7 +3087,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
 
     // ── tools.profile & sessions.visibility ───────────────────────
     // insightAll 3.8+ requires tools.profile = 'full' and tools.sessions.visibility = 'all'
-    // for insightAllX to properly integrate with its updated tool system.
+    // for InsightAll to properly integrate with its updated tool system.
     const toolsConfig = (config.tools as Record<string, unknown> | undefined) || {};
     let toolsModified = false;
 
@@ -3104,7 +3104,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     }
 
     // insightAll 6.5+ routes durable skill edits through the Skill Workshop tool.
-    // insightAllX keeps direct skill-creator authoring instead, so deny the workshop
+    // InsightAll keeps direct skill-creator authoring instead, so deny the workshop
     // tool even under tools.profile="full".
     const denyResult = ensureToolDenyIncludes(
       normalizeToolDenyList(toolsConfig.deny),
@@ -3113,13 +3113,13 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     if (denyResult.modified) {
       toolsConfig.deny = denyResult.deny;
       toolsModified = true;
-      console.log('[sanitize] Added "skill_workshop" to tools.deny for insightAllX desktop');
+      console.log('[sanitize] Added "skill_workshop" to tools.deny for InsightAll desktop');
     } else if (!Array.isArray(toolsConfig.deny) || toolsConfig.deny.length !== denyResult.deny.length) {
       toolsConfig.deny = denyResult.deny;
       toolsModified = true;
     }
 
-    // insightAllX uses the managed browser and web_fetch for explicit navigation,
+    // InsightAll uses the managed browser and web_fetch for explicit navigation,
     // but does not expose general-purpose internet search to agents.
     const webSearchDenyResult = ensureToolDenyIncludes(
       normalizeToolDenyList(toolsConfig.deny),
@@ -3128,7 +3128,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     if (webSearchDenyResult.modified) {
       toolsConfig.deny = webSearchDenyResult.deny;
       toolsModified = true;
-      console.log('[sanitize] Added "web_search" to tools.deny for insightAllX desktop');
+      console.log('[sanitize] Added "web_search" to tools.deny for InsightAll desktop');
     } else if (
       !Array.isArray(toolsConfig.deny)
       || toolsConfig.deny.length !== webSearchDenyResult.deny.length
@@ -3144,7 +3144,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     if (controlPlaneToolDenyResult.modified) {
       toolsConfig.deny = controlPlaneToolDenyResult.deny;
       toolsModified = true;
-      console.log('[sanitize] Added control-plane tools to tools.deny for insightAllX desktop');
+      console.log('[sanitize] Added control-plane tools to tools.deny for InsightAll desktop');
     } else if (
       !Array.isArray(toolsConfig.deny)
       || toolsConfig.deny.length !== controlPlaneToolDenyResult.deny.length
@@ -3154,7 +3154,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     }
 
     // ── tools.exec approvals (insightAll 3.28+) ──────────────────────
-    // insightAllX is a local desktop app where the user is the trusted operator.
+    // InsightAll is a local desktop app where the user is the trusted operator.
     // Exec approval prompts add unnecessary friction in this context, so we
     // set security="full" (allow all commands) and ask="off" (never prompt).
     // If a user has manually configured a stricter ~/.openclaw/exec-approvals.json,
@@ -3165,7 +3165,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
       execConfig.ask = 'off';
       toolsConfig.exec = execConfig;
       toolsModified = true;
-      console.log('[sanitize] Set tools.exec.security="full" and tools.exec.ask="off" to disable exec approvals for insightAllX desktop');
+      console.log('[sanitize] Set tools.exec.security="full" and tools.exec.ask="off" to disable exec approvals for InsightAll desktop');
     }
 
     if (toolsModified) {
@@ -3175,7 +3175,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
 
     // ── session.dmScope ─────────────────────────────────────────────
     // insightAll defaults DM session routing to "main" (all channels share
-    // agent:main:main), which makes insightAllX sidebar conflate feishu, dingtalk,
+    // agent:main:main), which makes InsightAll sidebar conflate feishu, dingtalk,
     // and other channel DMs into one entry. Set "per-channel-peer" so each
     // channel+peer gets its own session key (agent:main:feishu:direct:ou_xxx),
     // letting the sidebar show them as separate conversations with channel badges.
@@ -3188,7 +3188,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
       sessionConfig.dmScope = 'per-channel-peer';
       config.session = sessionConfig;
       modified = true;
-      console.log('[sanitize] Set session.dmScope="per-channel-peer" so channel DMs appear as separate sessions in insightAllX');
+      console.log('[sanitize] Set session.dmScope="per-channel-peer" so channel DMs appear as separate sessions in InsightAll');
     }
 
     // ── Skill Workshop hard-disable (insightAll 6.10+) ─────────────────
@@ -3209,7 +3209,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     let gatewayModified = gatewayDenyResult.modified;
     if (gatewayDenyResult.modified) {
       gatewayTools.deny = gatewayDenyResult.deny;
-      console.log('[sanitize] Added "skill_workshop" to gateway.tools.deny for insightAllX desktop');
+      console.log('[sanitize] Added "skill_workshop" to gateway.tools.deny for InsightAll desktop');
     } else if (!Array.isArray(gatewayTools.deny) || gatewayTools.deny.length !== gatewayDenyResult.deny.length) {
       gatewayTools.deny = gatewayDenyResult.deny;
       gatewayModified = true;
@@ -3221,7 +3221,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     if (gatewayWebSearchDenyResult.modified) {
       gatewayTools.deny = gatewayWebSearchDenyResult.deny;
       gatewayModified = true;
-      console.log('[sanitize] Added "web_search" to gateway.tools.deny for insightAllX desktop');
+      console.log('[sanitize] Added "web_search" to gateway.tools.deny for InsightAll desktop');
     } else if (
       !Array.isArray(gatewayTools.deny)
       || gatewayTools.deny.length !== gatewayWebSearchDenyResult.deny.length
@@ -3237,7 +3237,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
     if (gatewayControlPlaneToolDenyResult.modified) {
       gatewayTools.deny = gatewayControlPlaneToolDenyResult.deny;
       gatewayModified = true;
-      console.log('[sanitize] Added control-plane tools to gateway.tools.deny for insightAllX desktop');
+      console.log('[sanitize] Added control-plane tools to gateway.tools.deny for InsightAll desktop');
     } else if (
       !Array.isArray(gatewayTools.deny)
       || gatewayTools.deny.length !== gatewayControlPlaneToolDenyResult.deny.length
@@ -3274,7 +3274,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
       workshop.autonomous = autonomous;
       skillsObj.workshop = workshop;
       skillsModified = true;
-      console.log('[sanitize] Disabled skills.workshop.autonomous for insightAllX desktop');
+      console.log('[sanitize] Disabled skills.workshop.autonomous for InsightAll desktop');
     }
 
     const skillEntries = (
@@ -3290,7 +3290,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
       };
       skillsObj.entries = skillEntries;
       skillsModified = true;
-      console.log('[sanitize] Enabled bundled skill-creator for direct skill authoring in insightAllX desktop');
+      console.log('[sanitize] Enabled bundled skill-creator for direct skill authoring in InsightAll desktop');
     }
 
     if (skillsModified) {
@@ -3481,7 +3481,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
 
       // ── external channel plugin registration cleanup ────────────
       // Channel account configuration belongs under channels.<id>. insightAll's
-      // PluginEntryConfig rejects insightAllX's legacy accounts/defaultAccount mirror.
+      // PluginEntryConfig rejects InsightAll's legacy accounts/defaultAccount mirror.
       // Migrate first: some older configs have no channels.<id> copy, and
       // deleting the plugin account map directly would lose their credentials.
       for (const pluginId of ['discord', 'whatsapp', 'qqbot'] as const) {
@@ -3612,7 +3612,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
 
 
       // ── Remove legacy built-in 'feishu' registration ───────────────
-      // insightAllX bundles Feishu via the official @larksuite/openclaw-lark
+      // InsightAll bundles Feishu via the official @larksuite/openclaw-lark
       // plugin and removes the old built-in dist/extensions/feishu tree.
       // Keeping plugins.entries.feishu={enabled:false} looks harmless, but
       // insightAll's channel startup planner treats it as an explicit blocker
@@ -3653,7 +3653,7 @@ export async function sanitizeinsightAllConfig(): Promise<void> {
 
       // Discover all bundled extension IDs so we can clean stale bundled
       // allowlist entries from older insightAll versions. Re-add only the
-      // insightAllX-critical bundled plugins, active provider plugins, and explicitly
+      // InsightAll-critical bundled plugins, active provider plugins, and explicitly
       // enabled bundled plugins — not every enabledByDefault provider plugin.
       const bundled = discoverBundledPlugins();
       const installedExtensionIds = await discoverInstalledExtensionPluginIds();

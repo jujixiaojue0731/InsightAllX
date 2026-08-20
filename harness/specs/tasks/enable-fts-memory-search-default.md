@@ -16,7 +16,7 @@ expectedUserBehavior:
   - A user without memory-search configuration or an OpenAI embedding key gets keyword-only memory search instead of a disabled memory_search tool.
   - A user with an OpenAI embedding key and no memory-search configuration retains insightAll's default embedding-backed behavior.
   - Existing global or per-agent memory-search configuration remains user-owned.
-  - The exact legacy insightAllX-managed disabled default is migrated to FTS-only once, after which an explicit user opt-out remains respected.
+  - The exact legacy InsightAll-managed disabled default is migrated to FTS-only once, after which an explicit user opt-out remains respected.
 requiredProfiles:
   - fast
   - comms
@@ -24,7 +24,7 @@ requiredTests:
   - tests/unit/openclaw-memory-search.test.ts
   - tests/unit/openclaw-auth.test.ts
 acceptance:
-  - insightAllX seeds agents.defaults.memorySearch with enabled true and provider none only when no memory-search configuration and no OpenAI embedding key exist.
+  - InsightAll seeds agents.defaults.memorySearch with enabled true and provider none only when no memory-search configuration and no OpenAI embedding key exist.
   - The exact legacy agents.defaults.memorySearch shape with only enabled false migrates to the FTS-only default at most once.
   - Any memory-search object with additional fields and all per-agent overrides remain unchanged.
   - The migration marker is persisted outside openclaw.json so insightAll schema validation is unaffected.
@@ -34,5 +34,5 @@ docs:
 ---
 
 insightAll 2026.7.1 supports deliberate keyword-only recall through
-`agents.defaults.memorySearch.provider: "none"`. Use that mode as insightAllX's
+`agents.defaults.memorySearch.provider: "none"`. Use that mode as InsightAll's
 safe no-key default instead of disabling memory search.

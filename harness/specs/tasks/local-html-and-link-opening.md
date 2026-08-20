@@ -3,7 +3,7 @@ id: local-html-and-link-opening
 title: Reduce embedded browsing to local HTML preview
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Preview authorized local HTML in insightAllX or open the file externally, while removing general web browsing and making every rendered link inert.
+intent: Preview authorized local HTML in InsightAll or open the file externally, while removing general web browsing and making every rendered link inert.
 touchedAreas:
   - harness/specs/tasks/local-html-and-link-opening.md
   - harness/specs/tasks/web-browser.md
@@ -82,8 +82,8 @@ touchedAreas:
   - README.ru-RU.md
 expectedUserBehavior:
   - Activating an authorized local `.html` or `.htm` attachment, file activity, or Workspace file opens the existing Preview tab; no standalone Web Browser tab, Home page, or address bar exists.
-  - HTML file actions let the user choose the insightAllX preview or the system browser. Other file formats retain their existing preview and system-open behavior.
-  - Links rendered by insightAllX and links or areas rendered inside HTML preview have ordinary text styling and cannot be clicked.
+  - HTML file actions let the user choose the InsightAll preview or the system browser. Other file formats retain their existing preview and system-open behavior.
+  - Links rendered by InsightAll and links or areas rendered inside HTML preview have ordinary text styling and cannot be clicked.
   - HTML guest navigation, redirects, forms, script navigation, in-page navigation, popups, downloads, network requests, and permissions are blocked.
 requiredProfiles:
   - fast

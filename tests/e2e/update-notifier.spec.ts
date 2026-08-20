@@ -1,6 +1,6 @@
 import { expect, test, completeSetup } from './fixtures/electron';
 
-test.describe('insightAllX update notifications', () => {
+test.describe('InsightAll update notifications', () => {
   test('prompts when a new version is available', async ({ electronApp, page }) => {
     await completeSetup(page);
 

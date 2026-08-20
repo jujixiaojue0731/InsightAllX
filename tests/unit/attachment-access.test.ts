@@ -38,7 +38,7 @@ describe('attachment access boundary', () => {
 
   beforeEach(async () => {
     clearAcpTraceForTests();
-    testDir = await mkdtemp(join(tmpdir(), 'insightallx-attachment-access-'));
+    testDir = await mkdtemp(join(tmpdir(), 'insightall-attachment-access-'));
     workspaceRoot = join(testDir, 'workspace');
     stateDir = join(testDir, 'state');
     configDir = join(testDir, 'config');
@@ -219,7 +219,7 @@ describe('attachment access boundary', () => {
   });
 
   it('requires a Main-owned staging id and matching staged path', async () => {
-    const stagingDir = join(stateDir, 'media', 'outbound', 'insightallx-staging');
+    const stagingDir = join(stateDir, 'media', 'outbound', 'insightall-staging');
     const stagedPath = join(stagingDir, 'owned.txt');
     const previousRunPath = join(stagingDir, 'previous-run.txt');
     await mkdir(stagingDir, { recursive: true });
@@ -286,7 +286,7 @@ describe('attachment access boundary', () => {
   });
 
   it('falls back to regular resolution when stagingId is unknown after restart', async () => {
-    const stagingDir = join(stateDir, 'media', 'outbound', 'insightallx-staging');
+    const stagingDir = join(stateDir, 'media', 'outbound', 'insightall-staging');
     const orphanedPath = join(stagingDir, 'orphaned-from-prev-run.txt');
     await mkdir(stagingDir, { recursive: true });
     await writeFile(orphanedPath, 'persisted on disk');

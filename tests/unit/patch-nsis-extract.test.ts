@@ -48,33 +48,33 @@ describe('patch-nsis-extract', () => {
   });
 
   it('replaces CopyFiles-based extractUsing7za with direct 7z extraction', () => {
-    tempDir = mkdtempSync(join(tmpdir(), 'insightallx-patch-nsis-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'insightall-patch-nsis-'));
     const target = join(tempDir, 'extractAppPackage.nsh');
     writeFileSync(target, SAMPLE_FILE, 'utf8');
 
     expect(patchNsisExtractTemplate(target)).toBe(true);
 
     const result = readFileSync(target, 'utf8');
-    expect(result).toContain('insightAllX-patched-v2');
+    expect(result).toContain('InsightAll-patched-v2');
     expect(result).not.toContain('CopyFiles /SILENT');
     expect(result).not.toContain('$(appCannotBeClosed)');
     expect(result).toContain('$(decompressionFailed)');
     expect(result).toContain('Quit');
     expect(result).toContain('SetErrorLevel 2');
-    expect(result).toContain('Restoring previous insightAllX installation after failed update');
+    expect(result).toContain('Restoring previous InsightAll installation after failed update');
     expect(result).not.toContain('continuing overwrite install anyway');
     expect(patchNsisExtractTemplate(target)).toBe(true);
   });
 
-  it('upgrades stale insightAllX extract patches that used to continue after extract failure', () => {
-    tempDir = mkdtempSync(join(tmpdir(), 'insightallx-patch-nsis-'));
+  it('upgrades stale InsightAll extract patches that used to continue after extract failure', () => {
+    tempDir = mkdtempSync(join(tmpdir(), 'insightall-patch-nsis-'));
     const target = join(tempDir, 'extractAppPackage.nsh');
     writeFileSync(
       target,
       SAMPLE_FILE.replace(
         SAMPLE_EXTRACT_MACRO,
         `!macro extractUsing7za FILE
-  ; insightAllX-patched: extract directly to $INSTDIR.
+  ; InsightAll-patched: extract directly to $INSTDIR.
   ClearErrors
   Nsis7z::Extract "\${FILE}"
   DetailPrint "Extract reported file locks; continuing overwrite install anyway..."
@@ -86,17 +86,17 @@ describe('patch-nsis-extract', () => {
     expect(patchNsisExtractTemplate(target)).toBe(true);
 
     const result = readFileSync(target, 'utf8');
-    expect(result).toContain('insightAllX-patched-v2');
-    expect(result).toContain('Failed to extract insightAllX files after multiple attempts.');
+    expect(result).toContain('InsightAll-patched-v2');
+    expect(result).toContain('Failed to extract InsightAll files after multiple attempts.');
     expect(result).toContain('$(decompressionFailed)');
     expect(result).toContain('Quit');
     expect(result).toContain('SetErrorLevel 2');
-    expect(result).toContain('Restoring previous insightAllX installation after failed update');
+    expect(result).toContain('Restoring previous InsightAll installation after failed update');
     expect(result).not.toContain('continuing overwrite install anyway');
   });
 
   it('restores and re-patches a corrupted template', () => {
-    tempDir = mkdtempSync(join(tmpdir(), 'insightallx-patch-nsis-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'insightall-patch-nsis-'));
     const target = join(tempDir, 'extractAppPackage.nsh');
     writeFileSync(
       target,
@@ -125,7 +125,7 @@ describe('patch-nsis-uninstall', () => {
   });
 
   it('skips the legacy uninstaller retry loop on upgrades', () => {
-    tempDir = mkdtempSync(join(tmpdir(), 'insightallx-patch-nsis-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'insightall-patch-nsis-'));
     const target = join(tempDir, 'installUtil.nsh');
     writeFileSync(target, `before\n${SAMPLE_UNINSTALL_FUNCTION}\nafter`, 'utf8');
 

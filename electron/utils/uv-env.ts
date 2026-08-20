@@ -17,23 +17,23 @@ function quoteTomlString(value: string): string {
   return JSON.stringify(value);
 }
 
-function buildinsightAllXUvConfigToml(): string {
+function buildInsightAllUvConfigToml(): string {
   return [
-    '# This file is managed by insightAllX.',
-    '# It lets uv use insightAllX-selected mirrors even when host exec filters UV_INDEX_URL.',
+    '# This file is managed by InsightAll.',
+    '# It lets uv use InsightAll-selected mirrors even when host exec filters UV_INDEX_URL.',
     `index-url = ${quoteTomlString(UV_INDEX_URL)}`,
     `python-install-mirror = ${quoteTomlString(UV_PYTHON_INSTALL_MIRROR_URL)}`,
     '',
   ].join('\n');
 }
 
-export function getinsightAllXUvConfigFilePath(): string {
-  return path.join(getinsightAllConfigDir(), 'insightallx', 'uv.toml');
+export function getInsightAllUvConfigFilePath(): string {
+  return path.join(getinsightAllConfigDir(), 'insightall', 'uv.toml');
 }
 
-function ensureinsightAllXUvConfigFile(): string | null {
-  const filePath = getinsightAllXUvConfigFilePath();
-  const content = buildinsightAllXUvConfigToml();
+function ensureInsightAllUvConfigFile(): string | null {
+  const filePath = getInsightAllUvConfigFilePath();
+  const content = buildInsightAllUvConfigToml();
 
   try {
     mkdirSync(path.dirname(filePath), { recursive: true });
@@ -42,7 +42,7 @@ function ensureinsightAllXUvConfigFile(): string | null {
     }
     return filePath;
   } catch (err) {
-    logger.warn('Failed to write insightAllX uv config file:', err);
+    logger.warn('Failed to write InsightAll uv config file:', err);
     return null;
   }
 }
@@ -150,7 +150,7 @@ export async function getUvMirrorEnv(): Promise<Record<string, string>> {
   const isOptimized = await shouldOptimizeNetwork();
   if (!isOptimized) return {};
 
-  const uvConfigFile = ensureinsightAllXUvConfigFile();
+  const uvConfigFile = ensureInsightAllUvConfigFile();
   return uvConfigFile
     ? { ...UV_MIRROR_ENV, UV_CONFIG_FILE: uvConfigFile }
     : { ...UV_MIRROR_ENV };

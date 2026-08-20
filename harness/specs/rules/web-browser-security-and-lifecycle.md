@@ -15,7 +15,7 @@ severity: error
 
 # Local HTML preview security and lifecycle
 
-- Treat agent-produced HTML as untrusted. Keep one dedicated-session webview with no preload, Node integration, plugins, insecure content, popup capability, or insightAllX bridge; require sandboxing, context isolation, and web security.
+- Treat agent-produced HTML as untrusted. Keep one dedicated-session webview with no preload, Node integration, plugins, insecure content, popup capability, or InsightAll bridge; require sandboxing, context isolation, and web security.
 - Application navigation may load only a hostless, query-free, fragment-free `file:///` URL whose path ends in `.html` or `.htm`. Renderer must derive it from an already validated attachment or Workspace reference and call the typed Host API.
 - The guest is a Preview implementation detail. Do not expose a Web Browser tab, Home page, address bar, history controls, site-data controls, general HTTP navigation, or an empty guest entry point.
 - Every link is inert. Inject user-origin CSS that removes anchor/area color, decoration, pointer cursor, and pointer events. Independently prevent all guest `will-frame-navigate`, redirect, invalid programmatic, in-page, form, and script navigation.

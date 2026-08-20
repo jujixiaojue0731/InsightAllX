@@ -10,7 +10,7 @@ touchedAreas:
   - tests/unit/chat-input.test.tsx
   - tests/e2e/chat-model-picker.spec.ts
 expectedUserBehavior:
-  - Starting insightAllX with an existing agent model override does not clear the override before configured providers load.
+  - Starting InsightAll with an existing agent model override does not clear the override before configured providers load.
   - ACP session loading is not interrupted by a model-triggered Gateway restart during startup.
 requiredProfiles:
   - fast

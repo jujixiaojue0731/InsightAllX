@@ -1,4 +1,4 @@
-# insightAllX CI Workflow
+# InsightAll CI Workflow
 # Runs on pull requests (main/develop) 
 name: Check and Build
 

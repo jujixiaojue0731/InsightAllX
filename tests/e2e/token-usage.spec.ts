@@ -99,7 +99,7 @@ async function seedTokenUsageTranscripts(homeDir: string): Promise<void> {
   );
 }
 
-test.describe('insightAllX token usage history', () => {
+test.describe('InsightAll token usage history', () => {
 
   async function validateUsageHistory(page: Page): Promise<void> {
     const usageHistory = await page.evaluate(async () => {

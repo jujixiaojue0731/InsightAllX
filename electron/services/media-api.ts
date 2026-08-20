@@ -6,8 +6,8 @@ import type { AttachmentFileRef } from '@shared/host-api/contract';
 import { resolveOutgoingMediaAttachment, type AttachmentAccess } from './attachment-access';
 import { resolveinsightAllStateDir } from '../utils/paths';
 import {
-  INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL,
-  INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY,
+  INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL,
+  INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY,
 } from '../utils/openclaw-image-relay-constants';
 import {
   applyOpenAiImageRelaySettings,
@@ -218,14 +218,14 @@ export function createMediaApi(dependencies: MediaApiDependencies = {}): Complet
       const normalizeRelayModel = (value: unknown): string => {
         const raw = typeof value === 'string' && value.trim()
           ? value.trim()
-          : (current.openAiRelay.model || INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL);
+          : (current.openAiRelay.model || INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL);
         const slash = raw.indexOf('/');
-        return (slash > 0 ? raw.slice(slash + 1) : raw).trim() || INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL;
+        return (slash > 0 ? raw.slice(slash + 1) : raw).trim() || INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL;
       };
       const relayModel = normalizeRelayModel(body.openAiRelayModel);
       let nextPrimary = current.config.primary;
       if (body.openAiRelayEnabled === true) {
-        nextPrimary = `${INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY}/${relayModel}`;
+        nextPrimary = `${INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY}/${relayModel}`;
       } else if (body.openAiRelayEnabled === false) {
         nextPrimary = null;
       }

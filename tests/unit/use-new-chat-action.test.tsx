@@ -59,7 +59,7 @@ describe('useNewChatAction', () => {
     chatState.currentSessionKey = 'agent:main:session-a';
     chatState.sessions = [{
       key: chatState.currentSessionKey,
-      workspacePath: '/Users/e2e/workspace/insightAllX',
+      workspacePath: '/Users/e2e/workspace/InsightAll',
     }];
 
     const { useNewChatAction } = await import('@/components/layout/use-new-chat-action');
@@ -67,7 +67,7 @@ describe('useNewChatAction', () => {
 
     act(() => result.current());
 
-    expect(settingsState.setChatWorkspacePath).toHaveBeenCalledWith('/Users/e2e/workspace/insightAllX');
+    expect(settingsState.setChatWorkspacePath).toHaveBeenCalledWith('/Users/e2e/workspace/InsightAll');
     expect(chatState.newSession).toHaveBeenCalledTimes(1);
     expect(navigateMock).toHaveBeenCalledWith('/');
   });

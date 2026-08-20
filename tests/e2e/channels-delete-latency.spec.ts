@@ -20,9 +20,9 @@ test.describe('Channel deletion responsiveness', () => {
   test('closes the confirmation and removes the channel before host cleanup settles', async ({ electronApp, page }) => {
     await electronApp.evaluate(({ ipcMain }, response) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).__insightallxDeletePending = false;
+      (globalThis as any).__insightallDeletePending = false;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).__insightallxResolveDelete = null;
+      (globalThis as any).__insightallResolveDelete = null;
       const originalHostInvoke = (ipcMain as unknown as {
         _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
       })._invokeHandlers?.get('host:invoke');
@@ -40,7 +40,7 @@ test.describe('Channel deletion responsiveness', () => {
       }) => {
         if (request?.module === 'channels' && request.action === 'accounts') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const pending = (globalThis as any).__insightallxDeletePending === true;
+          const pending = (globalThis as any).__insightallDeletePending === true;
           return respond(request.id, pending ? { success: true, channels: [] } : response);
         }
         if (request?.module === 'agents' && request.action === 'list') {
@@ -48,10 +48,10 @@ test.describe('Channel deletion responsiveness', () => {
         }
         if (request?.module === 'channels' && request.action === 'deleteConfig') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (globalThis as any).__insightallxDeletePending = true;
+          (globalThis as any).__insightallDeletePending = true;
           return await new Promise((resolve) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (globalThis as any).__insightallxResolveDelete = () => resolve(respond(request.id, { success: true }));
+            (globalThis as any).__insightallResolveDelete = () => resolve(respond(request.id, { success: true }));
           });
         }
         return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
@@ -70,12 +70,12 @@ test.describe('Channel deletion responsiveness', () => {
     await expect(channelsPage.getByTitle('Delete channel')).toHaveCount(0);
     await expect.poll(async () => electronApp.evaluate(() => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (globalThis as any).__insightallxDeletePending;
+      return (globalThis as any).__insightallDeletePending;
     })).toBe(true);
 
     await electronApp.evaluate(() => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).__insightallxResolveDelete?.();
+      (globalThis as any).__insightallResolveDelete?.();
     });
   });
 });

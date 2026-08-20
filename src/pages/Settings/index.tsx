@@ -1075,7 +1075,7 @@ export function Settings() {
                 <Button
                   variant="link"
                   className="h-auto p-0 text-sm text-blue-500 hover:text-blue-600 font-medium"
-                  onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/insightAllX')}
+                  onClick={() => window.electron.openExternal('https://github.com/ValueCell-ai/InsightAll')}
                 >
                   {t('about.github')}
                 </Button>

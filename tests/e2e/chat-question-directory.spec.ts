@@ -127,7 +127,7 @@ async function emitAcpSessionUpdates(app: ElectronApplication, updates: AcpSessi
   );
 }
 
-test.describe('insightAllX chat question directory', () => {
+test.describe('InsightAll chat question directory', () => {
   test('opens the ACP question directory for seeded history', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

@@ -85,7 +85,7 @@ export const DEFAULT_CUSTOM_MODEL_CONTEXT_WINDOW = 200_000;
  * Ceiling for locally hosted runtimes (Ollama and friends). A local `qwen3`
  * tag is a quantised small model, not the hosted flagship of the same name, so
  * family rules must not hand it a frontier-sized window. Kept at 128K because
- * insightAllX seeds `compaction.reserveTokensFloor = 50000` — dropping the ceiling
+ * InsightAll seeds `compaction.reserveTokensFloor = 50000` — dropping the ceiling
  * near or below that floor leaves the runner no usable budget.
  */
 export const LOCAL_MODEL_CONTEXT_WINDOW = 131_072;
@@ -98,7 +98,7 @@ export const LOCAL_MODEL_CONTEXT_WINDOW = 131_072;
  * 1.05M. insightAll's own Codex catalog hard-codes 272,000 for every model on
  * this transport, so we mirror that figure rather than inventing our own.
  *
- * This matters because insightAllX writes OAuth rows into `models.providers.openai`
+ * This matters because InsightAll writes OAuth rows into `models.providers.openai`
  * while insightAll's cap lives on its separate `codex` provider — nothing else
  * would clamp the value we write.
  */

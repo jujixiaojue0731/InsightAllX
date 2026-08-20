@@ -19,9 +19,9 @@ export function registerBuiltinExtension(id: string, factory: () => Extension): 
 
 function resolveManifestPath(): string {
   if (app.isPackaged) {
-    return join(process.resourcesPath, 'insightallx-extensions.json');
+    return join(process.resourcesPath, 'insightall-extensions.json');
   }
-  return join(app.getAppPath(), 'insightallx-extensions.json');
+  return join(app.getAppPath(), 'insightall-extensions.json');
 }
 
 export async function loadExtensionsFromManifest(): Promise<void> {
@@ -36,7 +36,7 @@ export async function loadExtensionsFromManifest(): Promise<void> {
       logger.warn(`[extensions] Failed to parse ${manifestPath}, using defaults:`, err);
     }
   } else {
-    logger.debug('[extensions] No insightallx-extensions.json found, loading all builtin extensions');
+    logger.debug('[extensions] No insightall-extensions.json found, loading all builtin extensions');
   }
 
   const mainExtensions = manifest.extensions?.main;

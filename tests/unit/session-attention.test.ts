@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import type { ChatSession } from '@/stores/chat/types';
 import { useSessionAttentionStore } from '@/stores/session-attention';
 
-const STORAGE_KEY = 'insightallx.session-attention';
+const STORAGE_KEY = 'insightall.session-attention';
 const SESSION_KEY = 'agent:main:main';
 const OTHER_KEY = 'agent:main:other';
 

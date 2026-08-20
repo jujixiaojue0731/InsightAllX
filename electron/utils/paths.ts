@@ -24,7 +24,7 @@ function getElectronApp() {
     return (require('electron') as typeof import('electron')).app;
   }
 
-  const fallbackUserData = process.env.INSIGHTALLX_USER_DATA_DIR?.trim() || join(homedir(), '.insightallx');
+  const fallbackUserData = process.env.INSIGHTALL_USER_DATA_DIR?.trim() || join(homedir(), '.insightall');
   const fallbackAppPath = process.cwd();
   const fallbackApp: ElectronAppLike = {
     isPackaged: false,
@@ -76,21 +76,21 @@ export function getinsightAllSkillsDir(): string {
 }
 
 /**
- * Get insightAllX config directory
+ * Get InsightAll config directory
  */
-export function getinsightAllXConfigDir(): string {
-  return join(homedir(), '.insightallx');
+export function getInsightAllConfigDir(): string {
+  return join(homedir(), '.insightall');
 }
 
 /**
- * Get insightAllX logs directory
+ * Get InsightAll logs directory
  */
 export function getLogsDir(): string {
   return join(getElectronApp().getPath('userData'), 'logs');
 }
 
 /**
- * Get insightAllX data directory
+ * Get InsightAll data directory
  */
 export function getDataDir(): string {
   return getElectronApp().getPath('userData');

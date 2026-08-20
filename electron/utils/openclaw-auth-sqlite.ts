@@ -1,6 +1,6 @@
 /**
  * insightAll 2026.6+ persists agent auth in openclaw-agent.sqlite.
- * insightAllX historically wrote auth-profiles.json only; gateway runtime reads SQLite.
+ * InsightAll historically wrote auth-profiles.json only; gateway runtime reads SQLite.
  */
 import { chmodSync, existsSync, mkdirSync } from 'fs';
 import { access, readFile } from 'fs/promises';

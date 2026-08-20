@@ -16,7 +16,7 @@ import { tmpdir } from 'os';
 let tempDir: string;
 let configPath: string;
 
-const INSIGHTALLX_DESKTOP_TOOL_DENY = [
+const INSIGHTALL_DESKTOP_TOOL_DENY = [
   'skill_workshop',
   'web_search',
   'gateway',
@@ -35,7 +35,7 @@ async function readConfig(): Promise<Record<string, unknown>> {
   return JSON.parse(raw);
 }
 
-function withinsightAllXToolDefaults<T extends Record<string, unknown>>(config: T): T & {
+function withInsightAllToolDefaults<T extends Record<string, unknown>>(config: T): T & {
   tools: Record<string, unknown>;
   gateway: Record<string, unknown>;
   skills: Record<string, unknown>;
@@ -59,7 +59,7 @@ function withinsightAllXToolDefaults<T extends Record<string, unknown>>(config: 
   tools.profile = 'full';
   tools.sessions = sessions;
   tools.exec = exec;
-  tools.deny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  tools.deny = INSIGHTALL_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     deny,
   );
@@ -73,7 +73,7 @@ function withinsightAllXToolDefaults<T extends Record<string, unknown>>(config: 
   const gatewayDeny = Array.isArray(gatewayTools.deny)
     ? (gatewayTools.deny as unknown[]).filter((value): value is string => typeof value === 'string')
     : [];
-  gatewayTools.deny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  gatewayTools.deny = INSIGHTALL_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     gatewayDeny,
   );
@@ -338,7 +338,7 @@ async function sanitizeConfig(
     }
 
     // Mirror production logic: bundled provider plugins are only preserved when
-    // the provider is actually active, while insightAllX-critical bundled plugins are
+    // the provider is actually active, while InsightAll-critical bundled plugins are
     // preserved via a small explicit list.
     const bundledAll = new Set(bundledPlugins?.all ?? []);
     const providersByPluginId = bundledPlugins?.providersByPluginId ?? {};
@@ -401,7 +401,7 @@ async function sanitizeConfig(
     }
   }
 
-  // Mirror: insightAllX keeps Skill Workshop disabled even when insightAll exposes it
+  // Mirror: InsightAll keeps Skill Workshop disabled even when insightAll exposes it
   // as a built-in tool under permissive tool profiles.
   const toolsConfig = (config.tools as Record<string, unknown> | undefined) || {};
   let toolsModified = false;
@@ -421,7 +421,7 @@ async function sanitizeConfig(
   const deny = Array.isArray(toolsConfig.deny)
     ? toolsConfig.deny.filter((value): value is string => typeof value === 'string')
     : [];
-  const requiredDeny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  const requiredDeny = INSIGHTALL_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     deny,
   );
@@ -472,7 +472,7 @@ async function sanitizeConfig(
   const gatewayDeny = Array.isArray(gatewayTools.deny)
     ? gatewayTools.deny.filter((value): value is string => typeof value === 'string')
     : [];
-  const requiredGatewayDeny = INSIGHTALLX_DESKTOP_TOOL_DENY.reduce<string[]>(
+  const requiredGatewayDeny = INSIGHTALL_DESKTOP_TOOL_DENY.reduce<string[]>(
     (result, entry) => result.includes(entry) ? result : [...result, entry],
     gatewayDeny,
   );
@@ -579,7 +579,7 @@ async function sanitizeConfig(
 }
 
 beforeEach(async () => {
-  tempDir = await mkdtemp(join(tmpdir(), 'insightallx-test-'));
+  tempDir = await mkdtemp(join(tmpdir(), 'insightall-test-'));
   configPath = join(tempDir, 'openclaw.json');
 });
 
@@ -611,7 +611,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
     expect(entries['my-skill'].enabled).toBe(true);
     expect(entries['my-skill'].apiKey).toBe('abc');
     // Other top-level sections are untouched (gateway gets Skill Workshop hardening)
-    expect(result.gateway).toEqual(withinsightAllXToolDefaults({ gateway: { mode: 'local' } }).gateway);
+    expect(result.gateway).toEqual(withInsightAllToolDefaults({ gateway: { mode: 'local' } }).gateway);
   });
 
   it('removes skills.disabled at the root level of skills', async () => {
@@ -655,7 +655,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('does nothing when config is already valid', async () => {
-    const original = withinsightAllXToolDefaults({
+    const original = withInsightAllToolDefaults({
       skills: {
         entries: { 'my-skill': { enabled: true } },
         allowBundled: ['web-search'],
@@ -673,7 +673,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   it('preserves unknown valid keys (forward-compatible)', async () => {
     // If insightAll adds new valid keys to skills in the future,
     // the blocklist approach should NOT strip them.
-    const original = withinsightAllXToolDefaults({
+    const original = withInsightAllToolDefaults({
       skills: {
         entries: { 'x': { enabled: true } },
         allowBundled: ['web-search'],
@@ -700,7 +700,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
     expect(modified).toBe(true);
 
     const result = await readConfig();
-    expect(result).toEqual(withinsightAllXToolDefaults(original));
+    expect(result).toEqual(withInsightAllToolDefaults(original));
   });
 
   it('handles empty config', async () => {
@@ -710,7 +710,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
     expect(modified).toBe(true);
 
     const result = await readConfig();
-    expect(result).toEqual(withinsightAllXToolDefaults({}));
+    expect(result).toEqual(withInsightAllToolDefaults({}));
   });
 
   it('returns false for missing config file', async () => {
@@ -727,7 +727,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
     expect(modified).toBe(true);
 
     const result = await readConfig();
-    expect(result).toEqual(withinsightAllXToolDefaults(original));
+    expect(result).toEqual(withInsightAllToolDefaults(original));
   });
 
   it('preserves all other top-level config sections', async () => {
@@ -749,7 +749,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
     // All other sections unchanged
     expect(result.channels).toEqual({ discord: { token: 'abc', enabled: true } });
     expect(result.plugins).toEqual({ entries: { customPlugin: { enabled: true } } });
-    expect(result.gateway).toEqual(withinsightAllXToolDefaults({
+    expect(result.gateway).toEqual(withInsightAllToolDefaults({
       gateway: {
         mode: 'local',
         auth: { token: 'xyz' },
@@ -822,7 +822,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('keeps tools.web.search.kimi.apiKey when moonshot provider is absent', async () => {
-    const original = withinsightAllXToolDefaults({
+    const original = withInsightAllToolDefaults({
       models: {
         providers: {
           openrouter: { baseUrl: 'https://openrouter.ai/api/v1', api: 'openai-completions' },
@@ -873,7 +873,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
     // Other plugin config is preserved
     expect(plugins.entries).toEqual({ customPlugin: { enabled: true } });
     // Other top-level sections untouched
-    expect(result.gateway).toEqual(withinsightAllXToolDefaults({ gateway: { mode: 'local' } }).gateway);
+    expect(result.gateway).toEqual(withInsightAllToolDefaults({ gateway: { mode: 'local' } }).gateway);
   });
 
   it('keeps configured built-in channels in plugins.allow when external plugins are enabled', async () => {
@@ -1015,7 +1015,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('does nothing when plugins.load.paths contains only valid paths', async () => {
-    const original = withinsightAllXToolDefaults({
+    const original = withInsightAllToolDefaults({
       plugins: {
         load: {
           paths: [tempDir],
@@ -1057,7 +1057,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('handles plugins.load as empty object (no paths key)', async () => {
-    const original = withinsightAllXToolDefaults({
+    const original = withInsightAllToolDefaults({
       plugins: {
         load: {},
       },
@@ -1069,7 +1069,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('handles plugins.load.paths as empty array', async () => {
-    const original = withinsightAllXToolDefaults({
+    const original = withInsightAllToolDefaults({
       plugins: {
         load: { paths: [] },
       },
@@ -1190,7 +1190,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('does not modify config when no bundled plugins and no allowlist', async () => {
-    const original = withinsightAllXToolDefaults({
+    const original = withInsightAllToolDefaults({
       gateway: { mode: 'local' },
     });
     await writeConfig(original);
@@ -1200,7 +1200,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('sets session.dmScope to per-channel-peer when unset', async () => {
-    await writeConfig(withinsightAllXToolDefaults({}));
+    await writeConfig(withInsightAllToolDefaults({}));
 
     const modified = await sanitizeConfig(configPath, { all: ['browser'], enabledByDefault: ['browser'] });
     expect(modified).toBe(false);
@@ -1210,7 +1210,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   });
 
   it('preserves session.dmScope when already set to per-account-channel-peer', async () => {
-    await writeConfig(withinsightAllXToolDefaults({
+    await writeConfig(withInsightAllToolDefaults({
       session: { dmScope: 'per-account-channel-peer' },
     }));
 
@@ -1224,7 +1224,7 @@ describe('sanitizeinsightAllConfig (blocklist approach)', () => {
   it('overrides session.dmScope when set to main', async () => {
     // Write config with dmScope: 'main' but otherwise already sanitized,
     // so only the session.dmScope change should trigger modified=true.
-    const base = withinsightAllXToolDefaults({});
+    const base = withInsightAllToolDefaults({});
     await writeConfig({
       ...base,
       session: { dmScope: 'main' },

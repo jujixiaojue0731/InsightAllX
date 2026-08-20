@@ -13,7 +13,7 @@ import {
 const tempDirs: string[] = [];
 
 async function createTempStateDir(): Promise<string> {
-  const dir = await mkdtemp(join(tmpdir(), 'insightallx-openclaw-upgrade-'));
+  const dir = await mkdtemp(join(tmpdir(), 'insightall-openclaw-upgrade-'));
   tempDirs.push(dir);
   return dir;
 }
@@ -87,7 +87,7 @@ describe('insightAll 2026.7.1 upgrade snapshot', () => {
 
     const result = await quarantineLegacyUpdateCheckState({ stateDir });
     expect(result.status).toBe('quarantined');
-    expect(result.backupPath).toContain('insightallx-openclaw-2026.7.1-legacy-update-check.json');
+    expect(result.backupPath).toContain('insightall-openclaw-2026.7.1-legacy-update-check.json');
     await expect(stat(sourcePath)).rejects.toThrow();
     await expect(readFile(result.backupPath!, 'utf8')).resolves.toBe('{"lastCheckedAt":"legacy"}\n');
     expect((await stat(result.backupPath!)).mode & 0o777).toBe(0o600);

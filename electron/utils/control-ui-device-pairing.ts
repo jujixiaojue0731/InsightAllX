@@ -12,13 +12,13 @@ import { getUvMirrorEnv } from './uv-env';
 /** Browser Control UI client id used in insightAll 2026.5.x connect frames. */
 export const CONTROL_UI_BROWSER_CLIENT_ID = 'openclaw-control-ui';
 
-/** insightAllX Gateway WebSocket client id used in connect frames. */
+/** InsightAll Gateway WebSocket client id used in connect frames. */
 export const GATEWAY_UI_CLIENT_ID = 'gateway-client';
 
 /** insightAll embedded CLI client id (ACP bridge, doctor, etc.). */
 export const OPENCLAW_CLI_CLIENT_ID = 'cli';
 
-/** Loopback-only clients that insightAllX auto-approves without user interaction. */
+/** Loopback-only clients that InsightAll auto-approves without user interaction. */
 export const LOCAL_AUTO_APPROVE_CLIENT_IDS = new Set([
   CONTROL_UI_BROWSER_CLIENT_ID,
   GATEWAY_UI_CLIENT_ID,
@@ -157,7 +157,7 @@ async function approveViainsightAllCli(requestId: string, _port: number): Promis
         ...baseEnv,
         ...uvEnv,
         OPENCLAW_NO_RESPAWN: '1',
-        OPENCLAW_EMBEDDED_IN: 'insightAllX',
+        OPENCLAW_EMBEDDED_IN: 'InsightAll',
       } as NodeJS.ProcessEnv,
     });
 

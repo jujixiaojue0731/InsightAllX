@@ -36,7 +36,7 @@ type SnapshotOptions = {
 };
 
 function resolveSnapshotDir(stateDir: string): string {
-  return join(stateDir, 'backups', `insightallx-${UPGRADE_ID}-pre-migration`);
+  return join(stateDir, 'backups', `insightall-${UPGRADE_ID}-pre-migration`);
 }
 
 async function isCopyableRegularFile(path: string): Promise<boolean> {
@@ -130,7 +130,7 @@ async function copyTree(
 }
 
 /**
- * Creates a one-time pre-migration snapshot before insightAllX first starts the
+ * Creates a one-time pre-migration snapshot before InsightAll first starts the
  * insightAll 2026.7.1 Gateway. SQLite databases are copied together with their
  * WAL/SHM sidecars; channel credentials under `credentials/` are intentionally
  * excluded because this migration does not rewrite them.
@@ -237,7 +237,7 @@ export async function quarantineLegacyUpdateCheckState(
   const backupDir = join(stateDir, 'backups');
   await mkdir(backupDir, { recursive: true, mode: SNAPSHOT_DIR_MODE });
   const backupPath = await resolveAvailableBackupPath(
-    join(backupDir, `insightallx-${UPGRADE_ID}-legacy-update-check.json`),
+    join(backupDir, `insightall-${UPGRADE_ID}-legacy-update-check.json`),
   );
   await rename(sourcePath, backupPath);
   if (sourceInfo.isFile()) {

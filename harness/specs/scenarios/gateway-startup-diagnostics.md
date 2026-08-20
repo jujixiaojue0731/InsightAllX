@@ -20,16 +20,16 @@ requiredRules:
   - docs-sync
 ---
 
-Use this spec when insightAllX shows the Gateway as starting/running but UI data does not refresh, memory-backed data cannot load, or Gateway RPC calls time out after a restart.
+Use this spec when InsightAll shows the Gateway as starting/running but UI data does not refresh, memory-backed data cannot load, or Gateway RPC calls time out after a restart.
 
-insightAllX should prefer insightAll-native signals over stderr string matching:
+InsightAll should prefer insightAll-native signals over stderr string matching:
 
 - `system-presence` proves the core RPC router is serving requests.
 - `health` provides the Gateway health snapshot; use cached `probe:false` first.
 - `status` provides presence, health, stateVersion, uptime, and session defaults.
 - `channels.status` is the channel capability signal.
 - `doctor.memory.status` is the memory capability signal.
-- `gateway.ready`, `health`, and `presence` events should update insightAllX's main-process capability cache.
+- `gateway.ready`, `health`, and `presence` events should update InsightAll's main-process capability cache.
 
 stderr is supporting evidence only. It should not be the primary source for deciding whether the Gateway is ready, blocked, or should be restarted.
 
@@ -51,7 +51,7 @@ Treat these as the same incident family until proven otherwise:
 Important distinction:
 
 - **Port ready** only means the process is listening.
-- **Handshake ready** only means insightAllX connected to the Gateway socket.
+- **Handshake ready** only means InsightAll connected to the Gateway socket.
 - **RPC ready** means a cheap call such as `system-presence` succeeds.
 
 UI features that depend on Gateway runtime data must prefer RPC-ready evidence over port-ready evidence.
@@ -71,13 +71,13 @@ lsof -nP -iTCP:18789 -sTCP:LISTEN || true
 lsof -nP -iTCP:5173 -sTCP:LISTEN || true
 ```
 
-2. Read recent insightAllX logs:
+2. Read recent InsightAll logs:
 
 ```bash
-tail -n 160 "$HOME/Library/Application Support/insightallx/logs/insightallx-$(date +%F).log"
+tail -n 160 "$HOME/Library/Application Support/insightall/logs/insightall-$(date +%F).log"
 ```
 
-insightAllX-owned Gateway children enable `OPENCLAW_GATEWAY_STARTUP_TRACE=1` automatically. Normal duration-bearing trace lines are normalized as informational records:
+InsightAll-owned Gateway children enable `OPENCLAW_GATEWAY_STARTUP_TRACE=1` automatically. Normal duration-bearing trace lines are normalized as informational records:
 
 ```text
 [gateway-startup] stage=plugins.bootstrap durationMs=... totalMs=...
@@ -88,18 +88,18 @@ Stages taking at least 10 seconds are marked `slow=true`. A spawn-to-handshake d
 3. Probe insightAll-native signals in this order. Redirect output for memory-related calls because successful responses may contain user data:
 
 ```bash
-pnpm exec openclaw gateway call system-presence >/tmp/insightallx-system-presence.json
-pnpm exec openclaw gateway call health --params '{"probe":false}' >/tmp/insightallx-health.json
-pnpm exec openclaw gateway call status >/tmp/insightallx-status.json
-pnpm exec openclaw gateway call channels.status --params '{"probe":false}' >/tmp/insightallx-channels-status.json
-pnpm exec openclaw gateway call doctor.memory.status >/tmp/insightallx-memory-status.json
-pnpm exec openclaw gateway call doctor.memory.dreamDiary >/tmp/insightallx-dream-diary.json
+pnpm exec openclaw gateway call system-presence >/tmp/insightall-system-presence.json
+pnpm exec openclaw gateway call health --params '{"probe":false}' >/tmp/insightall-health.json
+pnpm exec openclaw gateway call status >/tmp/insightall-status.json
+pnpm exec openclaw gateway call channels.status --params '{"probe":false}' >/tmp/insightall-channels-status.json
+pnpm exec openclaw gateway call doctor.memory.status >/tmp/insightall-memory-status.json
+pnpm exec openclaw gateway call doctor.memory.dreamDiary >/tmp/insightall-dream-diary.json
 ```
 
 4. Only if port is listening and the core RPC probe (`system-presence`) times out, agree on the sampling scope, then sample the Gateway process on macOS:
 
 ```bash
-sample <gateway-pid> 3 -mayDie >/tmp/insightallx-gateway.sample.txt
+sample <gateway-pid> 3 -mayDie >/tmp/insightall-gateway.sample.txt
 ```
 
 Look for heavy main-thread stacks around `uv_fs_open`, `uv_fs_scandir`, `open`, `read`, `write`, `mkdir`, or repeated plugin/skill initialization frames. This usually means the Gateway event loop is busy with synchronous file work and cannot service RPCs yet.
@@ -113,12 +113,12 @@ Before sampling, state:
 - Which process will be sampled, including PID and why it is believed to be the Gateway.
 - The sampling command and duration. Default to `sample <pid> 3 -mayDie`; increase duration only after explaining why.
 - Expected impact. A short macOS sample is read-only and usually low impact, but it can produce a large file and may briefly add system load.
-- Where the artifact will be written, usually `/tmp/insightallx-gateway.sample.txt`.
+- Where the artifact will be written, usually `/tmp/insightall-gateway.sample.txt`.
 - What will be inspected and what will not be shared verbatim.
 
 Do not proceed without explicit user agreement when:
 
-- Sampling a process that is not clearly the insightAllX-owned Gateway child.
+- Sampling a process that is not clearly the InsightAll-owned Gateway child.
 - Increasing sample duration above 5 seconds or repeating samples many times.
 - Collecting process environment, open files, memory dumps, trace archives, or any artifact likely to contain secrets.
 - Killing, restarting, or force-cleaning Gateway while active tasks, cron jobs, or user-visible work may be running.
@@ -128,7 +128,7 @@ Safe-by-default commands:
 ```bash
 lsof -nP -iTCP:18789 -sTCP:LISTEN || true
 ps -axo pid,ppid,etime,command | rg -i "openclaw-gateway|Electron|vite" | rg -v "rg -i"
-sample <gateway-pid> 3 -mayDie >/tmp/insightallx-gateway.sample.txt
+sample <gateway-pid> 3 -mayDie >/tmp/insightall-gateway.sample.txt
 ```
 
 Avoid by default:
@@ -142,7 +142,7 @@ When analyzing a sample, report a compact summary:
 
 - Main-thread state: idle, synchronous fs I/O, network connect, CPU-bound JS, or unknown.
 - Dominant stack signature, such as `uv_fs_open` under plugin runtime setup.
-- Whether the finding points to insightAllX-owned prelaunch cleanup, insightAll runtime startup cost, active user work, or inconclusive data.
+- Whether the finding points to InsightAll-owned prelaunch cleanup, insightAll runtime startup cost, active user work, or inconclusive data.
 - Recommended next action and whether it requires another user approval.
 
 ## Known Causes
@@ -224,7 +224,7 @@ Symptoms:
 
 Expected handling:
 
-- Explain to users that restart cost is dominated by active Gateway work, not by insightAllX UI rendering.
+- Explain to users that restart cost is dominated by active Gateway work, not by InsightAll UI rendering.
 - Avoid triggering full Gateway restart for feature toggles when a narrower config reload or plugin RPC is available.
 
 ## Remediation Order
@@ -258,14 +258,14 @@ pnpm exec tsx -e "import { sanitizeinsightAllConfig } from './electron/utils/ope
 5. Confirm core RPC readiness:
 
 ```bash
-pnpm exec openclaw gateway call system-presence >/tmp/insightallx-system-presence.json
+pnpm exec openclaw gateway call system-presence >/tmp/insightall-system-presence.json
 ```
 
 6. Confirm cached insightAll health before deeper probes:
 
 ```bash
-pnpm exec openclaw gateway call health --params '{"probe":false}' >/tmp/insightallx-health.json
-pnpm exec openclaw gateway call status >/tmp/insightallx-status.json
+pnpm exec openclaw gateway call health --params '{"probe":false}' >/tmp/insightall-health.json
+pnpm exec openclaw gateway call status >/tmp/insightall-status.json
 ```
 
 7. Only after `system-presence` succeeds, verify feature-specific RPCs such as memory doctor calls or channel probes.
@@ -279,7 +279,7 @@ pnpm exec openclaw gateway call status >/tmp/insightallx-status.json
 - Memory doctor calls return when the memory capability is available.
 - `doctor.memory.*` and `channels.status` failures degrade their capability only and do not trigger Gateway restart.
 - The first three consecutive heartbeat misses do not replace the Gateway process; the fourth records unresponsive diagnostics and requests one guarded restart when lifecycle auto-recovery is allowed.
-- Logs no longer repeat stale runtime cache or escaped managed-skill symlink warnings for entries insightAllX can safely clean.
+- Logs no longer repeat stale runtime cache or escaped managed-skill symlink warnings for entries InsightAll can safely clean.
 
 ## Required Regression Coverage
 
@@ -306,4 +306,4 @@ When sharing findings:
 - Quote log patterns and timing metrics, not full memory doctor output.
 - Redact tokens, account identifiers, device IDs, and channel recipients.
 - State whether the failure is port readiness, handshake readiness, or RPC readiness.
-- Separate insightAllX-owned cleanup issues from insightAll runtime initialization cost.
+- Separate InsightAll-owned cleanup issues from insightAll runtime initialization cost.

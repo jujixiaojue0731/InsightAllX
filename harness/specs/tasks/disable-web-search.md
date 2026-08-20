@@ -1,8 +1,8 @@
 ---
 id: disable-web-search
-title: Disable general-purpose web search in insightAllX
+title: Disable general-purpose web search in InsightAll
 taskType: runtime-bridge
-intent: Prevent insightAllX agents from using insightAll's general-purpose web_search tool while retaining explicit browser automation and URL fetching.
+intent: Prevent InsightAll agents from using insightAll's general-purpose web_search tool while retaining explicit browser automation and URL fetching.
 scenario: gateway-backend-communication
 touchedAreas:
   - electron/utils/openclaw-auth.ts
@@ -15,7 +15,7 @@ touchedAreas:
   - harness/specs/scenarios/gateway-backend-communication.md
   - harness/specs/tasks/disable-web-search.md
 expectedUserBehavior:
-  - insightAllX agents cannot invoke the web_search tool.
+  - InsightAll agents cannot invoke the web_search tool.
   - Gateway-exposed tools cannot bypass the agent-level web_search restriction.
   - Existing user-defined tool deny entries remain intact.
   - Managed browser automation and web_fetch remain available.
@@ -35,4 +35,4 @@ docs:
   required: true
 ---
 
-insightAllX uses managed browser automation and explicit URL fetching when internet access is needed. General-purpose insightAll web search is disabled at both policy layers so agent and Gateway tool surfaces remain consistent.
+InsightAll uses managed browser automation and explicit URL fetching when internet access is needed. General-purpose insightAll web search is disabled at both policy layers so agent and Gateway tool surfaces remain consistent.

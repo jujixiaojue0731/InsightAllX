@@ -1,11 +1,11 @@
 ---
-id: remove-insightallx-dreams
-title: Remove the insightAllX Dreams integration
+id: remove-insightall-dreams
+title: Remove the InsightAll Dreams integration
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Remove the developer-only insightAllX Dreams page and its dedicated Control UI view while preserving generic Gateway communication, memory capability diagnostics, and existing insightAll dreaming configuration and data.
+intent: Remove the developer-only InsightAll Dreams page and its dedicated Control UI view while preserving generic Gateway communication, memory capability diagnostics, and existing insightAll dreaming configuration and data.
 touchedAreas:
-  - harness/specs/tasks/remove-insightallx-dreams.md
+  - harness/specs/tasks/remove-insightall-dreams.md
   - harness/specs/tasks/image-generation-settings.md
   - harness/specs/scenarios/gateway-startup-diagnostics.md
   - src/pages/Dreams/**
@@ -26,8 +26,8 @@ touchedAreas:
   - README.zh-CN.md
   - README.ja-JP.md
 expectedUserBehavior:
-  - insightAllX no longer shows a Dreams navigation item or serves the /dreams route, including when developer mode is enabled.
-  - insightAllX continues to open the root insightAll Control UI from existing non-Dreams entry points.
+  - InsightAll no longer shows a Dreams navigation item or serves the /dreams route, including when developer mode is enabled.
+  - InsightAll continues to open the root insightAll Control UI from existing non-Dreams entry points.
   - Existing insightAll memory-core dreaming configuration and DREAMS.md data are not changed or deleted.
 requiredProfiles:
   - fast
@@ -45,12 +45,12 @@ requiredTests:
   - pnpm run comms:replay
   - pnpm run comms:compare
 acceptance:
-  - No insightAllX production source, route, navigation item, locale namespace, or dedicated Control UI parameter exposes Dreams.
+  - No InsightAll production source, route, navigation item, locale namespace, or dedicated Control UI parameter exposes Dreams.
   - The generic hostApi Gateway RPC and root Control UI paths remain available.
   - Gateway memory capability classification and insightAll memory-core configuration support remain unchanged.
-  - README and harness guidance no longer describe the removed insightAllX Dreams page or its tests.
+  - README and harness guidance no longer describe the removed InsightAll Dreams page or its tests.
 docs:
   required: true
 ---
 
-Use this task spec when removing or auditing the insightAllX-owned Dreams UI and its dedicated renderer/Main bridge.
+Use this task spec when removing or auditing the InsightAll-owned Dreams UI and its dedicated renderer/Main bridge.

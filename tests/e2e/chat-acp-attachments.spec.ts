@@ -460,7 +460,7 @@ test.describe('ACP media attachments', () => {
             uri: userPath,
             name: 'User report.pdf',
             mimeType: 'application/pdf',
-            _meta: { insightallx: { stagingId: 'stage-user-report' } },
+            _meta: { insightall: { stagingId: 'stage-user-report' } },
           }],
         },
         {
@@ -523,14 +523,14 @@ test.describe('ACP media attachments', () => {
             uri: imagePath,
             data: Buffer.from(imageBytes).toString('base64'),
             mimeType: 'image/png',
-            _meta: { insightallx: { stagingId: 'stage-photo', fileName: 'photo.png' } },
+            _meta: { insightall: { stagingId: 'stage-photo', fileName: 'photo.png' } },
           },
           {
             type: 'resource_link',
             uri: notesPath,
             name: 'notes.txt',
             mimeType: 'text/plain',
-            _meta: { insightallx: { stagingId: 'stage-notes' } },
+            _meta: { insightall: { stagingId: 'stage-notes' } },
           },
         ],
       }]);

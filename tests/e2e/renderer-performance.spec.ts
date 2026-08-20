@@ -113,7 +113,7 @@ async function waitForPaint(page: Page): Promise<void> {
 
 async function startFrameSampling(page: Page, durationMs: number): Promise<void> {
   await page.evaluate((duration) => {
-    const perfWindow = window as typeof window & { __insightallxPerfFrameSamples?: number[] };
+    const perfWindow = window as typeof window & { __insightallPerfFrameSamples?: number[] };
     const samples: number[] = [];
     let previous = performance.now();
     const deadline = previous + duration;
@@ -122,14 +122,14 @@ async function startFrameSampling(page: Page, durationMs: number): Promise<void>
       previous = now;
       if (now < deadline) requestAnimationFrame(sample);
     };
-    perfWindow.__insightallxPerfFrameSamples = samples;
+    perfWindow.__insightallPerfFrameSamples = samples;
     requestAnimationFrame(sample);
   }, durationMs);
 }
 
 async function readFramePacing(page: Page): Promise<FramePacing> {
   const samples = await page.evaluate(() => (
-    (window as typeof window & { __insightallxPerfFrameSamples?: number[] }).__insightallxPerfFrameSamples ?? []
+    (window as typeof window & { __insightallPerfFrameSamples?: number[] }).__insightallPerfFrameSamples ?? []
   ));
   const sorted = [...samples].sort((left, right) => left - right);
   return {
@@ -211,7 +211,7 @@ test('profiles a populated timeline during a growing Markdown stream', {
       } catch {
         // Some Electron builds do not expose the Long Tasks API.
       }
-      Object.assign(window, { __insightallxPerfLongTasks: longTasks, __insightallxPerfObserver: observer });
+      Object.assign(window, { __insightallPerfLongTasks: longTasks, __insightallPerfObserver: observer });
     });
 
     await cdp.send('Profiler.enable');
@@ -254,11 +254,11 @@ test('profiles a populated timeline during a growing Markdown stream', {
     const afterMetrics = metricMap((await cdp.send('Performance.getMetrics')).metrics as PerformanceMetric[]);
     const longTasks = await page.evaluate(() => {
       const perfWindow = window as typeof window & {
-        __insightallxPerfLongTasks?: number[];
-        __insightallxPerfObserver?: PerformanceObserver;
+        __insightallPerfLongTasks?: number[];
+        __insightallPerfObserver?: PerformanceObserver;
       };
-      perfWindow.__insightallxPerfObserver?.disconnect();
-      return perfWindow.__insightallxPerfLongTasks ?? [];
+      perfWindow.__insightallPerfObserver?.disconnect();
+      return perfWindow.__insightallPerfLongTasks ?? [];
     });
     await cdp.detach();
 
@@ -300,7 +300,7 @@ test('profiles a populated timeline during a growing Markdown stream', {
       writeArtifact(testInfo, 'renderer.cpuprofile', rendererProfile),
       writeArtifact(testInfo, 'main.cpuprofile', mainProfile),
     ]);
-    console.log(`insightAllX chat performance: ${JSON.stringify(benchmark)}`);
+    console.log(`InsightAll chat performance: ${JSON.stringify(benchmark)}`);
 
     expect(liveUpdates).toHaveLength(STREAM_CHUNKS + 1);
     const streamedMessage = page.getByTestId('acp-assistant-message').filter({ hasText: STREAM_SENTINEL });
@@ -344,7 +344,7 @@ test('profiles sidebar animation and scrolling with rich static Markdown', {
     });
     const terminalSection = page.getByRole('heading', { name: `Rich Markdown section ${INTERACTION_SECTIONS}` });
     await expect(terminalSection).toBeAttached({ timeout: 30_000 });
-    await expect(page.locator('.insightallx-streamdown [data-streamdown="code-block-body"] pre').first()).toBeAttached({ timeout: 30_000 });
+    await expect(page.locator('.insightall-streamdown [data-streamdown="code-block-body"] pre').first()).toBeAttached({ timeout: 30_000 });
     await waitForPaint(page);
 
     const cdp = await page.context().newCDPSession(page);
@@ -400,7 +400,7 @@ test('profiles sidebar animation and scrolling with rich static Markdown', {
     }));
     const dom = await page.evaluate(() => ({
       nodes: document.getElementsByTagName('*').length,
-      markdownNodes: document.querySelectorAll('.insightallx-streamdown *').length,
+      markdownNodes: document.querySelectorAll('.insightall-streamdown *').length,
     }));
     await cdp.detach();
 
@@ -430,7 +430,7 @@ test('profiles sidebar animation and scrolling with rich static Markdown', {
       writeArtifact(testInfo, 'renderer-interaction.cpuprofile', rendererProfile),
       writeArtifact(testInfo, 'main-interaction.cpuprofile', mainProfile),
     ]);
-    console.log(`insightAllX interaction performance: ${JSON.stringify(benchmark)}`);
+    console.log(`InsightAll interaction performance: ${JSON.stringify(benchmark)}`);
 
     expect(markdown.length).toBeGreaterThan(10_000);
     expect(sidebarCollapseFrames.count).toBeGreaterThan(0);

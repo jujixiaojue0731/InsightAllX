@@ -608,7 +608,7 @@ export async function syncDefaultProviderToRuntime(
   // Self-heal: pin the embedded agent runtime for legacy OpenAI provider entries
   // (`openai`, `openai-codex`) that would otherwise be auto-routed to the
   // unbundled `codex` harness. Running this before every default-provider switch
-  // repairs on-disk config written by earlier insightAllX builds.
+  // repairs on-disk config written by earlier InsightAll builds.
   try {
     const pinned = await ensureinsightAllProviderAgentRuntimePins();
     if (pinned.length > 0) {

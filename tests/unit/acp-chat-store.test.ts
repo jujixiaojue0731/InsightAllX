@@ -1536,7 +1536,7 @@ describe('ACP Chat store', () => {
               uri: '/repo/notes.txt',
               name: 'notes.txt',
               mimeType: 'text/plain',
-              _meta: { insightallx: { stagingId: 'stage-notes' } },
+              _meta: { insightall: { stagingId: 'stage-notes' } },
             },
           ],
         },
@@ -2806,7 +2806,7 @@ describe('ACP Chat store', () => {
 
   it('reprojects image-generation previews from historical ACP assistant MEDIA text', async () => {
     const taskId = '32aa3a12-a05b-4074-af4e-246cc4a9a303';
-    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png';
+    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/insightall-image-1.png';
     const { ensureAcpChatSubscriptions, useAcpChatSessionStore } = await importStore();
     ensureAcpChatSubscriptions();
     await useAcpChatSessionStore.getState().loadSession({ sessionKey: 'agent:pi:s1', workspaceRoot: '/repo', cwd: '/repo' });

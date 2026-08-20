@@ -167,8 +167,8 @@ export class StagedAttachmentRegistry {
   }
 }
 
-export function resolveinsightAllXStagingDir(stateDir = resolveinsightAllStateDir()): string {
-  return join(resolve(stateDir), 'media', 'outbound', 'insightallx-staging');
+export function resolveInsightAllStagingDir(stateDir = resolveinsightAllStateDir()): string {
+  return join(resolve(stateDir), 'media', 'outbound', 'insightall-staging');
 }
 
 function attachmentFailure(error: unknown): AttachmentAccessError {
@@ -282,7 +282,7 @@ function localPathFromUri(uri: string, executionCwd: string): string {
 function parseOutgoingUrl(uri: string): { attachmentId: string; sessionKey: string } | null {
   let url: URL;
   try {
-    url = uri.startsWith('/') ? new URL(uri, 'http://insightallx.local') : new URL(uri);
+    url = uri.startsWith('/') ? new URL(uri, 'http://insightall.local') : new URL(uri);
   } catch {
     return null;
   }

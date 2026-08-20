@@ -12,7 +12,7 @@ Related tasks: `restore-acp-file-activity`, `acp-media-attachments`, `acp-attach
 
 File activity is a pure Renderer projection over the active ACP timeline. It records file changes declared by successful insightAll file-editing tool calls. It is not a Git diff, a verified disk diff, or a session-start baseline.
 
-insightAllX does not scan or watch the workspace, create snapshots, infer shell/script side effects, parse arbitrary prose, call `sessions.files.list` to manufacture diffs, or persist an activity ledger. Main does not interpret tool semantics; it only performs workspace-scoped read/stat and explicit native file actions.
+InsightAll does not scan or watch the workspace, create snapshots, infer shell/script side effects, parse arbitrary prose, call `sessions.files.list` to manufacture diffs, or persist an activity ledger. Main does not interpret tool semantics; it only performs workspace-scoped read/stat and explicit native file actions.
 
 The supported tools are exactly `write`, `edit`, and `apply_patch`. Tool identity is the trimmed lowercase segment before the first colon in insightAll's ACP title. Status must be `completed`. Unsupported, malformed, pending, running, failed, and cancelled calls remain ordinary tool cards but produce no file activity.
 

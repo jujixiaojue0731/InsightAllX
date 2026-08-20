@@ -10,7 +10,7 @@ test.describe('Plugin-backed channel save', () => {
   test('submits QQBot credentials through the typed Channels host API', async ({ electronApp, page }) => {
     await electronApp.evaluate(({ ipcMain }, fixtures) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).__insightallxPluginChannelSavePayload = null;
+      (globalThis as any).__insightallPluginChannelSavePayload = null;
       const originalHostInvoke = (ipcMain as unknown as {
         _invokeHandlers?: Map<string, (event: unknown, request: unknown) => Promise<unknown>>;
       })._invokeHandlers?.get('host:invoke');
@@ -38,7 +38,7 @@ test.describe('Plugin-backed channel save', () => {
         }
         if (request?.module === 'channels' && request.action === 'saveConfig') {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (globalThis as any).__insightallxPluginChannelSavePayload = request.payload;
+          (globalThis as any).__insightallPluginChannelSavePayload = request.payload;
           return respond(request.id, { success: true, activationPending: true });
         }
         return originalHostInvoke?.(event, request) ?? respond(request?.id, {});
@@ -58,7 +58,7 @@ test.describe('Plugin-backed channel save', () => {
 
     await expect.poll(async () => electronApp.evaluate(() => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (globalThis as any).__insightallxPluginChannelSavePayload;
+      return (globalThis as any).__insightallPluginChannelSavePayload;
     })).toEqual({
       channelType: 'qqbot',
       config: {

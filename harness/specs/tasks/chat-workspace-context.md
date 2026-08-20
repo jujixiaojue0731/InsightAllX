@@ -86,7 +86,7 @@ requiredTests:
   - pnpm run comms:compare
 acceptance:
   - insightAll ACP cwd is the authoritative session workspace when available.
-  - insightAllX only persists global workspace selection and recent workspaces.
+  - InsightAll only persists global workspace selection and recent workspaces.
   - The editable composer workspace menu shows deduplicated recent and known-session non-default workspaces with their custom display labels.
   - Bound session footer workspace is read-only.
   - Right workspace tree root matches effective chat workspace.

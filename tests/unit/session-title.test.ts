@@ -18,7 +18,7 @@ describe('stripAcpWorkingDirectoryPrefix', () => {
   it('removes a leading Windows working-directory marker', () => {
     expect(
       stripAcpWorkingDirectoryPrefix(
-        '[Working directory: C:\\Users\\alex\\workspace\\insightAllX]\r\n\r\nFix the test',
+        '[Working directory: C:\\Users\\alex\\workspace\\InsightAll]\r\n\r\nFix the test',
       ),
     ).toBe('Fix the test')
   })
@@ -98,7 +98,7 @@ describe('isAcpWorkingDirectoryTruncatedTitle', () => {
   it('identifies a cwd envelope truncated before the user prompt', () => {
     expect(
       isAcpWorkingDirectoryTruncatedTitle(
-        '[Working directory: ~/workspace/insightallx-playground]…',
+        '[Working directory: ~/workspace/insightall-playground]…',
       ),
     ).toBe(true)
   })
@@ -106,7 +106,7 @@ describe('isAcpWorkingDirectoryTruncatedTitle', () => {
   it('preserves an ellipsis after the normal cwd separator', () => {
     expect(
       isAcpWorkingDirectoryTruncatedTitle(
-        '[Working directory: ~/workspace/insightallx-playground]\n\n…',
+        '[Working directory: ~/workspace/insightall-playground]\n\n…',
       ),
     ).toBe(false)
     expect(isAcpWorkingDirectoryTruncatedTitle('…')).toBe(false)

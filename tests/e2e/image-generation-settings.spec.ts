@@ -65,7 +65,7 @@ test.describe('Image generation settings page', () => {
             json: {
               success: true,
               config: {
-                primary: 'insightallx-openai-image/gpt-image-2',
+                primary: 'insightall-openai-image/gpt-image-2',
                 fallbacks: [],
                 timeoutMs: 180000,
               },
@@ -76,7 +76,7 @@ test.describe('Image generation settings page', () => {
                   id: 'default',
                   name: 'Default',
                   isDefault: true,
-                  provider: 'insightallx-openai-image',
+                  provider: 'insightall-openai-image',
                   configured: true,
                 },
               ],
@@ -84,7 +84,7 @@ test.describe('Image generation settings page', () => {
                 enabled: true,
                 baseUrl: 'https://api.example.com/v1',
                 model: 'gpt-image-2',
-                providerKey: 'insightallx-openai-image',
+                providerKey: 'insightall-openai-image',
                 apiKeyConfigured: true,
               },
             },
@@ -109,7 +109,7 @@ test.describe('Image generation settings page', () => {
     const configuredResponse = {
       success: true,
       config: {
-        primary: 'insightallx-openai-image/gpt-image-2',
+        primary: 'insightall-openai-image/gpt-image-2',
         fallbacks: [],
         timeoutMs: 180000,
       },
@@ -128,7 +128,7 @@ test.describe('Image generation settings page', () => {
         enabled: true,
         baseUrl: 'https://api.example.com/v1',
         model: 'gpt-image-2',
-        providerKey: 'insightallx-openai-image',
+        providerKey: 'insightall-openai-image',
         apiKeyConfigured: true,
       },
     };

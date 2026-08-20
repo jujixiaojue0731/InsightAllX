@@ -7,7 +7,7 @@ export const OPENCLAW_PROVIDER_KEY_MOONSHOT_GLOBAL = 'moonshot-global';
 export const OPENCLAW_PROVIDER_KEY_ZAI = 'zai';
 /** insightAll Codex OAuth runtime provider id (canonical `openai`, not legacy `openai-codex`). */
 export const OPENAI_CODEX_RUNTIME_PROVIDER_KEY = 'openai';
-export const INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY = 'insightallx-openai-image';
+export const INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY = 'insightall-openai-image';
 export const OAUTH_PROVIDER_TYPES = ['minimax-portal', 'minimax-portal-cn'] as const;
 export const OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEYS = [
   OPENCLAW_PROVIDER_KEY_MINIMAX,
@@ -16,7 +16,7 @@ export const OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEYS = [
 const OAUTH_PROVIDER_TYPE_SET = new Set<string>(OAUTH_PROVIDER_TYPES);
 const OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEY_SET = new Set<string>(OPENCLAW_OAUTH_PLUGIN_PROVIDER_KEYS);
 const HIDDEN_PROVIDER_KEYS_FOR_UI = new Set<string>([
-  INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY,
+  INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY,
 ]);
 
 const PROVIDER_KEY_ALIASES: Record<string, string> = {

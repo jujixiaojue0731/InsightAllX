@@ -149,7 +149,7 @@ export function fixupPluginManifest(targetDir: string): void {
     // insightAll 2026.7.1 treats configured channel plugins without a static
     // channelConfigs descriptor as stale/missing and invokes its npm repair
     // flow. The WeCom package has no descriptor upstream, so provide a
-    // permissive schema that preserves insightAllX's existing channel config fields.
+    // permissive schema that preserves InsightAll's existing channel config fields.
     if (manifest.id === 'wecom' && !manifest.channelConfigs?.wecom) {
       manifest.channelConfigs = {
         ...(manifest.channelConfigs ?? {}),
@@ -178,10 +178,10 @@ export function fixupPluginManifest(targetDir: string): void {
     const pkg = JSON.parse(raw);
     let modified = false;
 
-    // Keep the real upstream npm package name/spec even though insightAllX patches
+    // Keep the real upstream npm package name/spec even though InsightAll patches
     // the effective plugin id. Rewriting these to the non-existent
     // `@wecom/wecom` package makes insightAll's repair planner fail before the
-    // Gateway starts. Restore metadata previously rewritten by older insightAllX
+    // Gateway starts. Restore metadata previously rewritten by older InsightAll
     // compatibility code.
     if (pkg.name === '@wecom/wecom') {
       pkg.name = '@wecom/wecom-openclaw-plugin';
@@ -266,7 +266,7 @@ const PLUGIN_NPM_NAMES: Record<string, string> = {
 };
 
 /**
- * Channel plugins whose insightAllX-managed mirrors need synchronized install
+ * Channel plugins whose InsightAll-managed mirrors need synchronized install
  * metadata. insightAll 2026.6+ reads these records from SQLite for trust checks;
  * insightAll 2026.7.1 also uses them to decide whether startup migrations should
  * update an installed plugin.
@@ -275,14 +275,14 @@ type TrustedOfficialExtensionPlugin = {
   npmName: string;
   /** Effective manifest/config id when it differs from the mirror directory. */
   pluginId?: string;
-  /** Path records keep insightAll from replacing a insightAllX-patched mirror. */
+  /** Path records keep insightAll from replacing a InsightAll-patched mirror. */
   recordSource?: 'npm' | 'path';
   legacyPluginIds?: string[];
 };
 
 const TRUSTED_OFFICIAL_EXTENSION_PLUGINS: Record<string, TrustedOfficialExtensionPlugin> = {
   dingtalk: { npmName: '@soimy/dingtalk' },
-  // WeCom intentionally runs under insightAllX's legacy-compatible `wecom` id even
+  // WeCom intentionally runs under InsightAll's legacy-compatible `wecom` id even
   // though the upstream package manifest still declares
   // `wecom-openclaw-plugin`. Keep it path-owned so startup migration does not
   // replace the compatibility-patched mirror with the raw npm package.
@@ -293,7 +293,7 @@ const TRUSTED_OFFICIAL_EXTENSION_PLUGINS: Record<string, TrustedOfficialExtensio
   },
   // @larksuite/openclaw-lark 2026.7.9 declares ./dist/index.js as `main`, but
   // publishes its runtime entry as ./index.js. insightAll 2026.7.1 rejects old
-  // managed npm records during its post-core smoke check. Make insightAllX's complete
+  // managed npm records during its post-core smoke check. Make InsightAll's complete
   // mirror the canonical path-owned payload instead.
   'feishu-openclaw-plugin': {
     npmName: '@larksuite/openclaw-lark',
@@ -305,8 +305,8 @@ const TRUSTED_OFFICIAL_EXTENSION_PLUGINS: Record<string, TrustedOfficialExtensio
   discord: { npmName: '@openclaw/discord' },
   qqbot: { npmName: '@openclaw/qqbot' },
   'openclaw-weixin': { npmName: '@tencent-weixin/openclaw-weixin' },
-  'insightallx-openai-image': {
-    npmName: 'insightallx-openai-image-plugin',
+  'insightall-openai-image': {
+    npmName: 'insightall-openai-image-plugin',
     recordSource: 'path',
   },
 };
@@ -540,7 +540,7 @@ function persistTrustedOfficialPluginInstallRecordsToSqlite(
 }
 
 /**
- * Persist a insightAllX-mirrored plugin install record in insightAll's canonical SQLite
+ * Persist a InsightAll-mirrored plugin install record in insightAll's canonical SQLite
  * index. insightAll 2026.7.1 treats config-level plugins.installs as legacy
  * migration input, so remove that transient copy instead of recreating it.
  * Safe to call repeatedly; no-ops when metadata is already current.
@@ -572,7 +572,7 @@ export async function syncTrustedOfficialPluginInstallRecord(
     logger.warn(`[plugin] Failed to remove legacy install metadata for ${pluginDirName}:`, error);
   }
 
-  // Remove aliases left by older insightAllX/insightAll ownership conventions, but do
+  // Remove aliases left by older InsightAll/insightAll ownership conventions, but do
   // not delete the canonical id first: upsert can replace npm/path ownership
   // atomically without creating a missing-record window.
   const staleRecordIds = recordIds.filter((pluginId) => pluginId !== expected.pluginId);
@@ -584,7 +584,7 @@ export async function syncTrustedOfficialPluginInstallRecord(
 }
 
 /**
- * Remove metadata for a insightAllX mirror that is no longer configured. This must
+ * Remove metadata for a InsightAll mirror that is no longer configured. This must
  * run even when its extension directory is already missing: stale records are
  * themselves enough to fail insightAll's post-core payload smoke check.
  */
@@ -767,7 +767,7 @@ export async function ensurePluginInstalled(
 
   async function finalizeInstalledMirror(): Promise<{ installed: true; peerLinkOk: boolean }> {
     await syncTrustedOfficialPluginInstallRecord(pluginDirName, targetDir);
-    return { installed: true, peerLinkOk: repairPluginOpenClawPeerLink(targetDir) };
+    return { installed: true, peerLinkOk: repairPlugininsightAllPeerLink(targetDir) };
   }
 
   // If already installed, check whether an upgrade is available
@@ -934,11 +934,11 @@ export function ensureWhatsAppPluginInstalled(): Promise<PluginInstallResult> {
   return ensurePluginInstalled('whatsapp', buildCandidateSources('whatsapp'), 'WhatsApp');
 }
 
-export function ensureinsightAllXOpenAiImagePluginInstalled(): Promise<PluginInstallResult> {
+export function ensureInsightAllOpenAiImagePluginInstalled(): Promise<PluginInstallResult> {
   return ensurePluginInstalled(
-    'insightallx-openai-image',
-    buildCandidateSources('insightallx-openai-image'),
-    'insightAllX OpenAI Image',
+    'insightall-openai-image',
+    buildCandidateSources('insightall-openai-image'),
+    'InsightAll OpenAI Image',
   );
 }
 
@@ -956,7 +956,7 @@ const ALL_BUNDLED_PLUGINS = [
   { fn: ensureDiscordPluginInstalled, label: 'Discord' },
   { fn: ensureQQBotPluginInstalled, label: 'QQBot' },
   { fn: ensureWhatsAppPluginInstalled, label: 'WhatsApp' },
-  { fn: ensureinsightAllXOpenAiImagePluginInstalled, label: 'insightAllX OpenAI Image' },
+  { fn: ensureInsightAllOpenAiImagePluginInstalled, label: 'InsightAll OpenAI Image' },
 ] as const;
 
 /**

@@ -1,10 +1,10 @@
 ---
 id: remove-unsupported-channel-catalog-entries
-title: Remove unsupported channels from the insightAllX channel catalog
+title: Remove unsupported channels from the InsightAll channel catalog
 type: ai-coding-task
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Keep the insightAllX channel configuration UI limited to the eight integrations that insightAllX installs and supports.
+intent: Keep the InsightAll channel configuration UI limited to the eight integrations that InsightAll installs and supports.
 touchedAreas:
   - harness/specs/tasks/remove-unsupported-channel-catalog-entries.md
   - harness/specs/rules/channel-plugin-migration-guards.md
@@ -18,8 +18,8 @@ touchedAreas:
   - tests/e2e/channels-supported-catalog.spec.ts
 expectedUserBehavior:
   - The Channels page offers only Telegram, Discord, WhatsApp, WeChat, DingTalk, Feishu/Lark, WeCom, and QQBot.
-  - Signal, iMessage, Matrix, LINE, Microsoft Teams, Google Chat, and Mattermost are not shown as configurable or configured insightAllX channels.
-  - Runtime reports for unknown insightAll channels do not create editable cards in the insightAllX Channels page.
+  - Signal, iMessage, Matrix, LINE, Microsoft Teams, Google Chat, and Mattermost are not shown as configurable or configured InsightAll channels.
+  - Runtime reports for unknown insightAll channels do not create editable cards in the InsightAll Channels page.
 requiredProfiles:
   - fast
   - comms
@@ -34,7 +34,7 @@ requiredTests:
   - tests/unit/channels-page.test.tsx
   - tests/e2e/channels-supported-catalog.spec.ts
 acceptance:
-  - The shared ChannelType and channel metadata catalog contain exactly the eight insightAllX-supported channel ids.
+  - The shared ChannelType and channel metadata catalog contain exactly the eight InsightAll-supported channel ids.
   - Unsupported channel metadata and translations are removed from every supported locale.
   - The Channels page ignores unsupported channel groups returned by the runtime without deleting their insightAll configuration.
   - No new direct IPC or Gateway transport is introduced.

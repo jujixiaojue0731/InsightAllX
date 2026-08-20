@@ -3,7 +3,7 @@ id: preserve-provider-model-metadata
 title: Preserve explicit provider model capabilities during runtime sync
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Prevent insightAllX provider save, update, and default-switch flows from deleting user-authored models.providers model metadata, while giving newly selected custom-provider models the same image-input inference used by insightAll onboarding.
+intent: Prevent InsightAll provider save, update, and default-switch flows from deleting user-authored models.providers model metadata, while giving newly selected custom-provider models the same image-input inference used by insightAll onboarding.
 touchedAreas:
   - harness/specs/tasks/preserve-provider-model-metadata.md
   - harness/specs/rules/provider-model-metadata-preservation.md
@@ -42,7 +42,7 @@ docs:
 
 ## Background
 
-insightAllX explicit-provider sync paths rebuild model rows from the currently selected
+InsightAll explicit-provider sync paths rebuild model rows from the currently selected
 model ID. Before this task, those paths replaced rich rows such as
 `{ id, name, input, reasoning, contextWindow, maxTokens, cost }` with
 `{ id, name }`. insightAll then treated previously image-capable custom models as

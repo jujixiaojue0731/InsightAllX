@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Apply all insightAllX NSIS template patches before makensis (package:win).
+ * Apply all InsightAll NSIS template patches before makensis (package:win).
  */
 
 import { fileURLToPath } from 'node:url';

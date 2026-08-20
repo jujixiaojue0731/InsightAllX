@@ -10,7 +10,7 @@ Related task: `restore-hardware-accelerated-rendering`
 
 ## Runtime Policy
 
-insightAllX leaves Electron and Chromium hardware acceleration enabled by default. Main must not call `app.disableHardwareAcceleration()` or append a global `disable-gpu` switch. Chromium owns driver detection and fallback; users with a broken driver may still launch insightAllX with Chromium's native `--disable-gpu` switch.
+InsightAll leaves Electron and Chromium hardware acceleration enabled by default. Main must not call `app.disableHardwareAcceleration()` or append a global `disable-gpu` switch. Chromium owns driver detection and fallback; users with a broken driver may still launch InsightAll with Chromium's native `--disable-gpu` switch.
 
 Headless Linux and virtualized CI may report software compositing because no usable GPU is present. Tests must distinguish that environment fallback from an application-owned global disable policy. Desktop GPU assertions therefore run only where the test environment provides a real desktop GPU.
 

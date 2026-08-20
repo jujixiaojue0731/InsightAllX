@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   findHiddeninsightAllHeartbeatSession,
   isChannelSessionKey,
-  isinsightAllXDesktopSessionKey,
+  isInsightAllDesktopSessionKey,
   isPlaceholderChannelSession,
   shouldIncludeSessionInSidebarList,
 } from '@/stores/chat/session-key-utils';
@@ -15,17 +15,17 @@ describe('session-key-utils', () => {
     expect(isChannelSessionKey('agent:main:whatsapp:dm:abc')).toBe(true);
   });
 
-  it('treats insightAllX desktop session keys as non-channel', () => {
+  it('treats InsightAll desktop session keys as non-channel', () => {
     expect(isChannelSessionKey('agent:main:main')).toBe(false);
     expect(isChannelSessionKey('agent:main:session-1710000000000')).toBe(false);
     expect(isChannelSessionKey('agent:main:cron:heartbeat')).toBe(false);
   });
 
   it('excludes cron and channel keys from desktop-only session keys', () => {
-    expect(isinsightAllXDesktopSessionKey('agent:main:main')).toBe(true);
-    expect(isinsightAllXDesktopSessionKey('agent:main:session-1710000000000')).toBe(true);
-    expect(isinsightAllXDesktopSessionKey('agent:main:feishu:ou_abc123')).toBe(false);
-    expect(isinsightAllXDesktopSessionKey('agent:main:cron:heartbeat')).toBe(false);
+    expect(isInsightAllDesktopSessionKey('agent:main:main')).toBe(true);
+    expect(isInsightAllDesktopSessionKey('agent:main:session-1710000000000')).toBe(true);
+    expect(isInsightAllDesktopSessionKey('agent:main:feishu:ou_abc123')).toBe(false);
+    expect(isInsightAllDesktopSessionKey('agent:main:cron:heartbeat')).toBe(false);
   });
 
   it('detects placeholder channel sessions without any preview/title', () => {
@@ -100,7 +100,7 @@ describe('session-key-utils', () => {
   it('hides insightAll heartbeat-only desktop sessions from the sidebar', () => {
     const heartbeatOnly: ChatSession = {
       key: 'agent:main:main',
-      displayName: 'insightAllX',
+      displayName: 'InsightAll',
       lastMessagePreview: '[insightAll heartbeat poll]',
     };
 
@@ -123,12 +123,12 @@ describe('session-key-utils', () => {
     const sessions: ChatSession[] = [
       {
         key: 'agent:main:main',
-        displayName: 'insightAllX',
+        displayName: 'InsightAll',
         lastMessagePreview: '[insightAll heartbeat poll]',
       },
       {
         key: 'agent:main:session-1710000000000',
-        displayName: 'insightAllX',
+        displayName: 'InsightAll',
         lastMessagePreview: 'Summarize the repository structure',
       },
     ];
@@ -138,15 +138,15 @@ describe('session-key-utils', () => {
   });
 
   it('does not treat missing metadata as proof of a hidden heartbeat session', () => {
-    const sessions: ChatSession[] = [{ key: 'agent:main:main', displayName: 'insightAllX' }];
+    const sessions: ChatSession[] = [{ key: 'agent:main:main', displayName: 'InsightAll' }];
 
     expect(findHiddeninsightAllHeartbeatSession('agent:main:main', sessions)).toBeNull();
   });
 
-  it('does not hide a real conversation only because it is titled insightAllX', () => {
+  it('does not hide a real conversation only because it is titled InsightAll', () => {
     const realConversation: ChatSession = {
       key: 'agent:main:session-1710000000000',
-      label: 'insightAllX',
+      label: 'InsightAll',
       lastMessagePreview: 'Summarize the repository structure',
     };
 

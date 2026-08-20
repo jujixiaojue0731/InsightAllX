@@ -3,7 +3,7 @@ id: reassign-default-provider-after-delete
 title: Reassign the default provider after deleting it
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Keep insightAllX provider account state and the insightAll default model valid when the user deletes the current default provider while other provider accounts remain.
+intent: Keep InsightAll provider account state and the insightAll default model valid when the user deletes the current default provider while other provider accounts remain.
 touchedAreas:
   - harness/specs/tasks/reassign-default-provider-after-delete.md
   - harness/specs/rules/provider-default-invariant.md

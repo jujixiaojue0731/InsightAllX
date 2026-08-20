@@ -142,7 +142,7 @@ async function emitSessionSnapshot(
   }, input);
 }
 
-test.describe('insightAllX sidebar session attention', () => {
+test.describe('InsightAll sidebar session attention', () => {
   test('projects Gateway busy and unread state through Chat mount, key changes, and unmount', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

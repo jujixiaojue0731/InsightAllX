@@ -6,8 +6,8 @@ import { tmpdir } from 'node:os';
 import { DatabaseSync } from 'node:sqlite';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const testinsightAllDir = join(tmpdir(), `insightallx-session-workspace-${process.pid}`);
-const testinsightAllConfigDir = join(tmpdir(), `insightallx-session-config-${process.pid}`);
+const testinsightAllDir = join(tmpdir(), `insightall-session-workspace-${process.pid}`);
+const testinsightAllConfigDir = join(tmpdir(), `insightall-session-config-${process.pid}`);
 
 vi.mock('@electron/utils/paths', () => ({
   getinsightAllConfigDir: () => testinsightAllDir,
@@ -219,7 +219,7 @@ describe('sessions API workspace summaries', () => {
   });
 
   it('returns insightAll ACP cwd as workspacePath when available', async () => {
-    seedAcpCwd('agent:main:session-a', '/Users/alex/workspace/insightAllX');
+    seedAcpCwd('agent:main:session-a', '/Users/alex/workspace/InsightAll');
     const { createSessionsApi } = await import('@electron/services/sessions-api');
     const api = createSessionsApi();
 
@@ -228,7 +228,7 @@ describe('sessions API workspace summaries', () => {
     expect(result.success).toBe(true);
     expect(result.summaries?.[0]).toMatchObject({
       sessionKey: 'agent:main:session-a',
-      workspacePath: '/Users/alex/workspace/insightAllX',
+      workspacePath: '/Users/alex/workspace/InsightAll',
     });
   });
 

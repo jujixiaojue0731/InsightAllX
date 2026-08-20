@@ -79,8 +79,8 @@ function isConfigSetResponseLost(error: unknown): boolean {
     || message.includes('Failed to send RPC request:');
 }
 
-async function acceptPersistedConfigSetCommitIfMatched(config: OpenClawConfig): Promise<boolean> {
-  const persisted = await readFileConfig(resolveOpenClawConfigPath());
+async function acceptPersistedConfigSetCommitIfMatched(config: insightAllConfig): Promise<boolean> {
+  const persisted = await readFileConfig(resolveinsightAllConfigPath());
   return isDeepStrictEqual(persisted.config, config);
 }
 
@@ -108,7 +108,7 @@ async function mutateRunningConfig(
       if (attempt === 0 && isBaseHashConflict(error)) continue;
 
       // config.set may durably replace the file and then close the socket with
-      // code 1012 before its RPC response reaches insightAllX. Reconnect can restore
+      // code 1012 before its RPC response reaches InsightAll. Reconnect can restore
       // running state before the RPC timeout fires, so verify the persisted
       // snapshot whenever the response was lost instead of only while stopped.
       if (manager.getStatus().state !== 'running' || isConfigSetResponseLost(error)) {

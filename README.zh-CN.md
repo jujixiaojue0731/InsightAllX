@@ -1,16 +1,16 @@
 
 <p align="center">
-  <img src="src/assets/logo.svg" width="128" height="128" alt="insightAllX Logo" />
+  <img src="src/assets/logo.svg" width="128" height="128" alt="InsightAll Logo" />
 </p>
 
-<h1 align="center">insightAllX</h1>
+<h1 align="center">InsightAll</h1>
 
 <p align="center">
   <strong>insightAll AI 智能体的桌面客户端</strong>
 </p>
 
 <p align="center">
-  <a href="#为什么选择-insightallx">为什么选择 insightAllX</a> •
+  <a href="#为什么选择-insightall">为什么选择 InsightAll</a> •
   <a href="#快速上手">快速上手</a> •
   <a href="#系统架构">系统架构</a> •
   <a href="#开发指南">开发指南</a> •
@@ -24,7 +24,7 @@
   <a href="https://discord.com/invite/84Kex3GGAh" target="_blank">
   <img src="https://img.shields.io/discord/1399603591471435907?logo=discord&labelColor=%20%235462eb&logoColor=%20%23f5f5f5&color=%20%235462eb" alt="chat on Discord" />
   </a>
-  <img src="https://img.shields.io/github/downloads/ValueCell-ai/insightAllX/total?color=%23027DEB" alt="Downloads" />
+  <img src="https://img.shields.io/github/downloads/ValueCell-ai/InsightAll/total?color=%23027DEB" alt="Downloads" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
 </p>
 
@@ -36,11 +36,11 @@
 
 ## 概述
 
-**insightAllX** 是连接强大 AI 智能体与普通用户之间的桥梁。基于 [insightAll](https://github.com/insightAll) 构建，它将命令行式的 AI 编排转变为易用、美观的桌面体验——无需使用终端。
+**InsightAll** 是连接强大 AI 智能体与普通用户之间的桥梁。基于 [insightAll](https://github.com/insightAll) 构建，它将命令行式的 AI 编排转变为易用、美观的桌面体验——无需使用终端。
 
-无论是自动化工作流、连接通讯软件，还是调度智能定时任务，insightAllX 都能提供高效易用的图形界面，帮助你充分发挥 AI 智能体的能力。
+无论是自动化工作流、连接通讯软件，还是调度智能定时任务，InsightAll 都能提供高效易用的图形界面，帮助你充分发挥 AI 智能体的能力。
 
-insightAllX 预置了最佳实践的模型供应商配置，原生支持 Windows 平台以及多语言设置。当然，你也可以通过 **设置 → 高级 → 开发者模式** 来进行精细的高级配置。
+InsightAll 预置了最佳实践的模型供应商配置，原生支持 Windows 平台以及多语言设置。当然，你也可以通过 **设置 → 高级 → 开发者模式** 来进行精细的高级配置。
 
 <p align="center"><strong style="font-size:1.1em; text-decoration: underline;">如需完整的企业版、专属服务支持或面向您业务场景的定制化落地辅导，请联系 <a href="mailto:public@valuecell.ai">public@valuecell.ai</a>。</strong></p>
 
@@ -60,11 +60,11 @@ insightAllX 预置了最佳实践的模型供应商配置，原生支持 Windows
     <td align="center"><img src="resources/screenshot/zh/settings.png" alt="Settings"><br><em>设置</em></td>
   </tr>
 </table>
-## 为什么选择 insightAllX
+## 为什么选择 InsightAll
 
-构建 AI 智能体不应该需要精通命令行。insightAllX 的设计理念很简单：**强大的技术值得拥有一个尊重用户时间的界面**。insightAllX 直接基于官方 insightAll 核心构建。无需单独安装，我们将运行时嵌入应用内部，提供开箱即用的无缝体验，并致力于与上游 insightAll 项目保持严格同步，确保你始终可以使用官方发布的最新功能、稳定性改进和生态兼容性。
+构建 AI 智能体不应该需要精通命令行。InsightAll 的设计理念很简单：**强大的技术值得拥有一个尊重用户时间的界面**。InsightAll 直接基于官方 insightAll 核心构建。无需单独安装，我们将运行时嵌入应用内部，提供开箱即用的无缝体验，并致力于与上游 insightAll 项目保持严格同步，确保你始终可以使用官方发布的最新功能、稳定性改进和生态兼容性。
 
-| 痛点 | insightAllX 解决方案 |
+| 痛点 | InsightAll 解决方案 |
 |------|----------------|
 | 复杂的命令行配置 | 一键安装，配合引导式设置向导 |
 | 手动编辑配置文件 | 可视化设置界面，实时校验 |
@@ -106,14 +106,14 @@ insightAllX 预置了最佳实践的模型供应商配置，原生支持 Windows
 
 #### 预构建版本（推荐）
 
-从 [Releases](https://github.com/ValueCell-ai/insightAllX/releases) 页面下载适用于你平台的最新版本。
+从 [Releases](https://github.com/ValueCell-ai/InsightAll/releases) 页面下载适用于你平台的最新版本。
 
 #### 从源码开始
 
 ```bash
 # 克隆仓库
-git clone https://github.com/ValueCell-ai/insightAllX.git
-cd insightAllX
+git clone https://github.com/ValueCell-ai/InsightAll.git
+cd InsightAll
 
 # 初始化项目
 pnpm run init
@@ -123,21 +123,21 @@ pnpm dev
 ```
 ### 首次启动
 
-首次启动 insightAllX 时，**设置向导** 将引导你完成以下步骤：
+首次启动 InsightAll 时，**设置向导** 将引导你完成以下步骤：
 
 1. **语言与区域** – 配置你的首选语言和地区
 2. **AI 供应商** – 通过 API 密钥或 OAuth（支持浏览器/设备登录的供应商）添加账号
 3. **技能包** – 选择适用于常见场景的预配置技能
 4. **验证** – 在进入主界面前测试你的配置
 
-> Web search 说明：insightAllX 会在 Agent 和 Gateway 两层策略中禁用 insightAll 的通用 `web_search` 工具。
+> Web search 说明：InsightAll 会在 Agent 和 Gateway 两层策略中禁用 insightAll 的通用 `web_search` 工具。
 > 这也包括 Moonshot（Kimi）搜索；受管浏览器自动化和 `web_fetch` 仍然可用。
 >
-> 内部工具说明：insightAllX 还会在两层策略中对 Agent 禁用 `gateway`、`nodes`、`create_goal`、`get_goal` 和 `update_goal`。insightAllX 应用自身的 Gateway RPC 不受影响，消息、会话编排和 Agent 发现工具仍然可用。
+> 内部工具说明：InsightAll 还会在两层策略中对 Agent 禁用 `gateway`、`nodes`、`create_goal`、`get_goal` 和 `update_goal`。InsightAll 应用自身的 Gateway RPC 不受影响，消息、会话编排和 Agent 发现工具仍然可用。
 
 ### 代理设置
 
-insightAllX 内置了代理设置，适用于需要通过本地代理客户端访问外网的场景，包括 Electron 本身、insightAll Gateway，以及 Telegram 这类频道的联网请求。
+InsightAll 内置了代理设置，适用于需要通过本地代理客户端访问外网的场景，包括 Electron 本身、insightAll Gateway，以及 Telegram 这类频道的联网请求。
 
 打开 **设置 → 网关 → 代理**，配置以下内容：
 
@@ -149,7 +149,7 @@ insightAllX 内置了代理设置，适用于需要通过本地代理客户端�
 
 ## 系统架构
 
-insightAllX 采用 **双进程 + Host API 统一接入架构**：React 渲染进程只通过统一的 host-api/api-client 抽象与后端交互，协议选择、Gateway 生命周期与 ACP Chat stdio bridge 全部由 Electron 主进程统一管理。
+InsightAll 采用 **双进程 + Host API 统一接入架构**：React 渲染进程只通过统一的 host-api/api-client 抽象与后端交互，协议选择、Gateway 生命周期与 ACP Chat stdio bridge 全部由 Electron 主进程统一管理。
 
 - **进程模型**：Electron 主进程负责窗口、网关进程监控、系统集成与自动更新；insightAll Gateway 作为独立运行时进程提供 AI 编排、频道和技能能力；渲染层不直接访问本地端点。
 - **配置交付**：Gateway 运行时由 Main 使用 `config.get` / `config.set`，停止或启动中则更新解析后的 JSON5 配置；普通 Provider/Agent/Skill/模型修改不会替换进程，凭据通过 `secrets.reload` 热更新；连续 4 次心跳无响应后才会请求受生命周期保护的自动恢复。
@@ -183,7 +183,7 @@ pnpm package         # 为当前平台打包（可用 :mac / :win / :linux 后�
 
 ## 参与贡献
 
-我们欢迎社区的各种贡献！无论是修复 Bug、开发新功能、改进文档还是翻译——每一份贡献都让 insightAllX 变得更好。
+我们欢迎社区的各种贡献！无论是修复 Bug、开发新功能、改进文档还是翻译——每一份贡献都让 InsightAll 变得更好。
 
 ### 如何贡献
 
@@ -201,7 +201,7 @@ pnpm package         # 为当前平台打包（可用 :mac / :win / :linux 后�
 
 ## 致谢
 
-insightAllX 构建于以下优秀的开源项目之上：
+InsightAll 构建于以下优秀的开源项目之上：
 
 - [insightAll](https://github.com/insightAll) – AI 智能体运行时
 - [Electron](https://www.electronjs.org/) – 跨平台桌面框架
@@ -218,11 +218,11 @@ insightAllX 构建于以下优秀的开源项目之上：
 | :---: | :---: | :---: |
 | <img src="src/assets/community/wecom-qr.png" width="150" alt="企业微信二维码" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="飞书二维码" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord 二维码" /> |
 
-### insightAllX 合作伙伴计划 🚀
+### InsightAll 合作伙伴计划 🚀
 
-我们正在启动 insightAllX 合作伙伴计划，寻找能够帮助我们将 insightAllX 介绍给更多客户的合作伙伴，尤其是那些有定制化 AI 智能体或自动化需求的客户。
+我们正在启动 InsightAll 合作伙伴计划，寻找能够帮助我们将 InsightAll 介绍给更多客户的合作伙伴，尤其是那些有定制化 AI 智能体或自动化需求的客户。
 
-合作伙伴负责帮助我们连接潜在用户和项目，insightAllX 团队则提供完整的技术支持、定制开发与集成服务。如果你服务的客户对 AI 工具或自动化方案感兴趣，欢迎与我们合作。
+合作伙伴负责帮助我们连接潜在用户和项目，InsightAll 团队则提供完整的技术支持、定制开发与集成服务。如果你服务的客户对 AI 工具或自动化方案感兴趣，欢迎与我们合作。
 
 欢迎私信我们，或发送邮件至 [public@valuecell.ai](mailto:public@valuecell.ai) 了解更多。
 
@@ -230,13 +230,13 @@ insightAllX 构建于以下优秀的开源项目之上：
 ## Stars 历史
 
 <p align="center">
-  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/insightAllX&type=Date" alt="Stars 历史图表" />
+  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/InsightAll&type=Date" alt="Stars 历史图表" />
 </p>
 
 
 ## 许可证
 
-insightAllX 基于 [MIT 许可证](LICENSE) 发布。你可以自由地使用、修改和分发本软件。
+InsightAll 基于 [MIT 许可证](LICENSE) 发布。你可以自由地使用、修改和分发本软件。
 
 <hr>
 

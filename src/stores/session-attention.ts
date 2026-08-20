@@ -165,7 +165,7 @@ export const useSessionAttentionStore = create<SessionAttentionState>()(
       }),
     }),
     {
-      name: 'insightallx.session-attention',
+      name: 'insightall.session-attention',
       version: 1,
       partialize: (state) => ({ bySessionKey: state.bySessionKey }),
       migrate: (persistedState) => sanitizePersistedState(persistedState),

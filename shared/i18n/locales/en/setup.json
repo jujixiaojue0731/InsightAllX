@@ -1,7 +1,7 @@
 {
     "steps": {
         "welcome": {
-            "title": "Welcome to insightAllX",
+            "title": "Welcome to InsightAll",
             "description": "Your AI assistant is ready to be configured"
         },
         "runtime": {
@@ -22,12 +22,12 @@
         },
         "complete": {
             "title": "All Set!",
-            "description": "insightAllX is ready to use"
+            "description": "InsightAll is ready to use"
         }
     },
     "welcome": {
-        "title": "Welcome to insightAllX",
-        "description": "insightAllX is a graphical interface for insightAll, making it easy to use AI assistants across your favorite messaging platforms.",
+        "title": "Welcome to InsightAll",
+        "description": "InsightAll is a graphical interface for insightAll, making it easy to use AI assistants across your favorite messaging platforms.",
         "features": {
             "noCommand": "Zero command-line required",
             "modernUI": "Modern, beautiful interface",
@@ -113,7 +113,7 @@
     },
     "complete": {
         "title": "Setup Complete!",
-        "subtitle": "insightAllX is configured and ready to use. You can now start chatting with your AI assistant.",
+        "subtitle": "InsightAll is configured and ready to use. You can now start chatting with your AI assistant.",
         "provider": "AI Provider",
         "components": "Components",
         "gateway": "Gateway",

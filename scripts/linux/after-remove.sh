@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Post-removal script for insightAllX on Linux
+# Post-removal script for InsightAll on Linux
 
 set -e
 
 # Remove symbolic links
-rm -f /usr/local/bin/insightallx 2>/dev/null || true
+rm -f /usr/local/bin/insightall 2>/dev/null || true
 rm -f /usr/local/bin/openclaw 2>/dev/null || true
 
 # Update desktop database
@@ -19,9 +19,9 @@ if command -v gtk-update-icon-cache &> /dev/null; then
 fi
 
 # Remove AppArmor profile
-APPARMOR_PROFILE_TARGET='/etc/apparmor.d/insightallx'
+APPARMOR_PROFILE_TARGET='/etc/apparmor.d/insightall'
 if [ -f "$APPARMOR_PROFILE_TARGET" ]; then
     rm -f "$APPARMOR_PROFILE_TARGET"
 fi
 
-echo "insightAllX has been removed."
+echo "InsightAll has been removed."

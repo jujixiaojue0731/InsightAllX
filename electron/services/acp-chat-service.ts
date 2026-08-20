@@ -404,7 +404,7 @@ export class AcpChatService {
         sessionId: acpSessionId,
         prompt,
         // ACP 1.1 removed messageId from the PromptRequest wire shape. Keep
-        // insightAllX correlation metadata in the protocol extension envelope.
+        // InsightAll correlation metadata in the protocol extension envelope.
         // insightAll must receive slash commands without its textual cwd prefix
         // so the Gateway can classify and fold command replies into chat final.
         _meta: { sessionKey: payload.sessionKey, prefixCwd: !isSlashCommand, messageId },
@@ -560,7 +560,7 @@ export class AcpChatService {
     const forked = fork(spec.modulePath, spec.args, {
       ...spec.options,
       // ACP is a local Gateway client, so it must use the token that started
-      // this insightAllX-owned Gateway instead of relying on config-file fallback.
+      // this InsightAll-owned Gateway instead of relying on config-file fallback.
       env: {
         ...spec.options.env,
         OPENCLAW_GATEWAY_TOKEN: gatewayToken,
@@ -750,7 +750,7 @@ export class AcpChatService {
             mimeType,
             uri: item.filePath,
             _meta: {
-              insightallx: {
+              insightall: {
                 stagingId: item.stagingId,
                 ...(item.fileName ? { fileName: item.fileName } : {}),
               },
@@ -763,7 +763,7 @@ export class AcpChatService {
             name: item.fileName ?? item.filePath,
             mimeType: item.mimeType,
             _meta: {
-              insightallx: {
+              insightall: {
                 stagingId: item.stagingId,
               },
             },

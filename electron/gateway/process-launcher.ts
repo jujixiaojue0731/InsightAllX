@@ -10,10 +10,10 @@ const GATEWAY_FETCH_PRELOAD_SOURCE = `'use strict';
 (function () {
   var _f = globalThis.fetch;
   if (typeof _f !== 'function') return;
-  if (globalThis.__insightallxFetchPatched) return;
-  globalThis.__insightallxFetchPatched = true;
+  if (globalThis.__insightallFetchPatched) return;
+  globalThis.__insightallFetchPatched = true;
 
-  globalThis.fetch = function insightallxFetch(input, init) {
+  globalThis.fetch = function insightallFetch(input, init) {
     var url =
       typeof input === 'string' ? input
         : input && typeof input === 'object' && typeof input.url === 'string'
@@ -35,7 +35,7 @@ const GATEWAY_FETCH_PRELOAD_SOURCE = `'use strict';
       delete flat['x-openrouter-title'];
       delete flat['X-OpenRouter-Title'];
       flat['HTTP-Referer'] = 'https://claw-x.com';
-      flat['X-OpenRouter-Title'] = 'insightAllX';
+      flat['X-OpenRouter-Title'] = 'InsightAll';
       init.headers = flat;
     }
     return _f.call(globalThis, input, init);
@@ -44,8 +44,8 @@ const GATEWAY_FETCH_PRELOAD_SOURCE = `'use strict';
   if (process.platform === 'win32') {
     try {
       var cp = require('child_process');
-      if (!cp.__insightallxPatched) {
-        cp.__insightallxPatched = true;
+      if (!cp.__insightallPatched) {
+        cp.__insightallPatched = true;
         ['spawn', 'exec', 'execFile', 'fork', 'spawnSync', 'execSync', 'execFileSync'].forEach(function(method) {
           var original = cp[method];
           if (typeof original !== 'function') return;
@@ -85,7 +85,7 @@ export function buildGatewayRuntimeEnv(
 ): Record<string, string | undefined> {
   return {
     ...forkEnv,
-    // insightAllX does not expose LAN discovery, so keep Bonjour disabled even if
+    // InsightAll does not expose LAN discovery, so keep Bonjour disabled even if
     // the parent process inherited an explicit opt-in value.
     OPENCLAW_DISABLE_BONJOUR: '1',
     // insightAll's built-in trace contains stage names and timings only. Keep it
@@ -139,13 +139,13 @@ export async function launchGatewayProcess(options: {
   // The insightAll gateway advertises `_openclaw-gw._tcp.local` on every
   // active network interface using a hardcoded `openclaw.local` hostname,
   // which causes:
-  //   - cross-machine name collisions when multiple insightAll/insightAllX peers
+  //   - cross-machine name collisions when multiple insightAll/InsightAll peers
   //     share a LAN (each falls back to "<name> (insightAll) (2)")
   //   - self-collisions on multi-homed hosts (Wi-Fi + Tailscale + utun ...)
-  //   - "ghost" record collisions after an unclean insightAllX exit, because
+  //   - "ghost" record collisions after an unclean InsightAll exit, because
   //     SIGKILL prevents ciao from emitting the mDNS goodbye record.
   //
-  // insightAllX has no UI for LAN gateway discovery today, so the advertiser is
+  // InsightAll has no UI for LAN gateway discovery today, so the advertiser is
   // pure log noise.  `OPENCLAW_DISABLE_BONJOUR=1` short-circuits
   // `startGatewayBonjourAdvertiser()` (openclaw `src/infra/bonjour.ts`,
   // `isDisabledByEnv()`).  Set after the `forkEnv` spread so any

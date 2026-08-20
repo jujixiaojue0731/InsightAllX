@@ -1,4 +1,4 @@
-# insightAllX — macOS-only build (unsigned), manual trigger.
+# InsightAll — macOS-only build (unsigned), manual trigger.
 # Forked repo has no Apple signing secrets, so this produces an unsigned dmg/zip.
 # Kept separate from release.yml so Windows SignPath / OSS upload don't block it.
 

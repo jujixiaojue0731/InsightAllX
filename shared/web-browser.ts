@@ -1,4 +1,4 @@
-export const WEB_BROWSER_PARTITION = 'persist:insightallx-web-browser' as const;
+export const WEB_BROWSER_PARTITION = 'persist:insightall-web-browser' as const;
 export const WEB_BROWSER_INITIAL_URL = 'about:blank' as const;
 export const WEB_BROWSER_USER_AGENT =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36' as const;

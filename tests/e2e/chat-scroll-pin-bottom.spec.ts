@@ -79,7 +79,7 @@ async function keepAcpPromptPending(app: ElectronApplication) {
   });
 }
 
-test.describe('insightAllX chat scroll pin-to-bottom during runs', () => {
+test.describe('InsightAll chat scroll pin-to-bottom during runs', () => {
   test('keeps the scrollbar pinned to the bottom through oscillating tool-heavy streaming, and yields to manual scroll-up', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

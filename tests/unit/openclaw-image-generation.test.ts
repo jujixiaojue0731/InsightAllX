@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/insightallx-openclaw-image-gen-${suffix}`,
-    testUserData: `/tmp/insightallx-openclaw-image-gen-user-data-${suffix}`,
+    testHome: `/tmp/insightall-openclaw-image-gen-${suffix}`,
+    testUserData: `/tmp/insightall-openclaw-image-gen-user-data-${suffix}`,
   };
 });
 
@@ -45,7 +45,7 @@ vi.mock('@electron/utils/paths', async () => {
 });
 
 vi.mock('@electron/utils/plugin-install', () => ({
-  ensureinsightAllXOpenAiImagePluginInstalled: ensureImagePluginInstalledMock,
+  ensureInsightAllOpenAiImagePluginInstalled: ensureImagePluginInstalledMock,
 }));
 
 async function writeinsightAllJson(config: unknown): Promise<void> {

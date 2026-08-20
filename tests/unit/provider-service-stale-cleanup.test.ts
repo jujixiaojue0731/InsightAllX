@@ -703,7 +703,7 @@ describe('ProviderService.listAccountsKeyInfo', () => {
     ]);
   });
 
-  it('falls back to insightAllX local secrets when insightAll has no runtime key', async () => {
+  it('falls back to InsightAll local secrets when insightAll has no runtime key', async () => {
     mocks.listProviderAccounts.mockResolvedValue([
       makeAccount({
         id: 'openrouter-ui-account-id',

@@ -9,7 +9,7 @@ requiredProfiles:
   - comms
 ---
 
-Provider account deletion must keep the insightAllX account store and insightAll runtime default model aligned.
+Provider account deletion must keep the InsightAll account store and insightAll runtime default model aligned.
 
 Rules:
 

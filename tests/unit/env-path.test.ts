@@ -59,15 +59,15 @@ describe('env-path', () => {
 
   it('prepends entry with Windows delimiter', () => {
     setPlatform('win32');
-    const next = prependPathEntry({ Path: 'C:\\Windows\\System32' }, 'D:\\insightallx\\resources\\bin');
-    expect(next.path).toBe('D:\\insightallx\\resources\\bin;C:\\Windows\\System32');
-    expect(next.env.Path).toBe('D:\\insightallx\\resources\\bin;C:\\Windows\\System32');
+    const next = prependPathEntry({ Path: 'C:\\Windows\\System32' }, 'D:\\insightall\\resources\\bin');
+    expect(next.path).toBe('D:\\insightall\\resources\\bin;C:\\Windows\\System32');
+    expect(next.env.Path).toBe('D:\\insightall\\resources\\bin;C:\\Windows\\System32');
   });
 
   it('prepends entry with POSIX delimiter', () => {
     setPlatform('linux');
-    const next = prependPathEntry({ PATH: '/usr/bin:/bin' }, '/opt/insightallx/bin');
-    expect(next.path).toBe('/opt/insightallx/bin:/usr/bin:/bin');
-    expect(next.env.PATH).toBe('/opt/insightallx/bin:/usr/bin:/bin');
+    const next = prependPathEntry({ PATH: '/usr/bin:/bin' }, '/opt/insightall/bin');
+    expect(next.path).toBe('/opt/insightall/bin:/usr/bin:/bin');
+    expect(next.env.PATH).toBe('/opt/insightall/bin:/usr/bin:/bin');
   });
 });

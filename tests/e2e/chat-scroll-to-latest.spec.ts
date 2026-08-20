@@ -50,7 +50,7 @@ async function emitAcpSessionUpdates(app: ElectronApplication, updates: AcpSessi
   );
 }
 
-test.describe('insightAllX chat scroll-to-latest affordance', () => {
+test.describe('InsightAll chat scroll-to-latest affordance', () => {
   test('shows a jump button when reading older messages and returns to the latest message', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

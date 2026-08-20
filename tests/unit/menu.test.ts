@@ -19,7 +19,7 @@ const electronMock = vi.hoisted(() => {
 });
 
 vi.mock('electron', () => ({
-  app: { name: 'ClawX', getLocale: () => 'en' },
+  app: { name: 'InsightAll', getLocale: () => 'en' },
   BrowserWindow: {
     getFocusedWindow: () => electronMock.window,
     getAllWindows: () => [electronMock.window],

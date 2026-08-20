@@ -1,7 +1,7 @@
 import { closeSync, existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const LOCK_SCHEMA = 'insightallx-instance-lock';
+const LOCK_SCHEMA = 'insightall-instance-lock';
 const LOCK_VERSION = 1;
 
 export interface ProcessInstanceFileLock {
@@ -121,7 +121,7 @@ export function acquireProcessInstanceFileLock(
     }
     if (staleOwner.kind !== 'unknown') {
       console.info(
-        `[insightAllX] Force-cleaned stale instance lock (pid=${staleOwner.pid}, format=${staleOwner.kind})`,
+        `[InsightAll] Force-cleaned stale instance lock (pid=${staleOwner.pid}, format=${staleOwner.kind})`,
       );
     }
   }

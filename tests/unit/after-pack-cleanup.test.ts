@@ -24,7 +24,7 @@ describe('after-pack cleanup helpers', () => {
   });
 
   function makeTempNodeModules(): string {
-    const root = mkdtempSync(join(tmpdir(), 'insightallx-after-pack-'));
+    const root = mkdtempSync(join(tmpdir(), 'insightall-after-pack-'));
     tempRoots.push(root);
     const nodeModules = join(root, 'node_modules');
     mkdirSync(nodeModules, { recursive: true });

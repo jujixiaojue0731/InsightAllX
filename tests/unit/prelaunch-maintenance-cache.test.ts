@@ -12,7 +12,7 @@ describe('prelaunch maintenance cache', () => {
   let cachePath: string;
 
   beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'insightallx-prelaunch-cache-'));
+    tempDir = mkdtempSync(join(tmpdir(), 'insightall-prelaunch-cache-'));
     cachePath = join(tempDir, 'cache.json');
   });
 

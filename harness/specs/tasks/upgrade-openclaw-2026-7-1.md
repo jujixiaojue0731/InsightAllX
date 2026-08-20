@@ -3,7 +3,7 @@ id: upgrade-openclaw-2026-7-1
 title: Upgrade the bundled insightAll runtime to 2026.7.1
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Keep insightAllX runtime and bundled channel plugins aligned with insightAll 2026.7.1 across supported platforms.
+intent: Keep InsightAll runtime and bundled channel plugins aligned with insightAll 2026.7.1 across supported platforms.
 touchedAreas:
   - .github/workflows/check.yml
   - package.json
@@ -46,10 +46,10 @@ touchedAreas:
   - harness/specs/tasks/upgrade-openclaw-2026-7-1.md
   - harness/specs/tasks/upgrade-openclaw-2026-7-1-2.md
 expectedUserBehavior:
-  - Existing insightAllX-managed insightAll 2026.6.10 configuration, authentication, sessions, selected provider models, and channel credentials remain usable after upgrade, with a one-time pre-migration snapshot of migration-critical config/auth/SQLite state that is removed after Gateway startup succeeds.
-  - insightAllX reconciles old managed channel-plugin install records with its current mirrored extensions, removes records for unconfigured mirrors, and links declared `openclaw` peers to the bundled runtime before insightAll's post-core payload smoke check.
-  - insightAllX starts and communicates with the bundled insightAll 2026.7.1 Gateway, including migration and control-plane safe-mode startup states.
-  - insightAllX registers the compatibility-patched WeCom mirror as a local-path install with static channel metadata so insightAll startup migration does not replace it with the raw mismatched npm package.
+  - Existing InsightAll-managed insightAll 2026.6.10 configuration, authentication, sessions, selected provider models, and channel credentials remain usable after upgrade, with a one-time pre-migration snapshot of migration-critical config/auth/SQLite state that is removed after Gateway startup succeeds.
+  - InsightAll reconciles old managed channel-plugin install records with its current mirrored extensions, removes records for unconfigured mirrors, and links declared `openclaw` peers to the bundled runtime before insightAll's post-core payload smoke check.
+  - InsightAll starts and communicates with the bundled insightAll 2026.7.1 Gateway, including migration and control-plane safe-mode startup states.
+  - InsightAll registers the compatibility-patched WeCom mirror as a local-path install with static channel metadata so insightAll startup migration does not replace it with the raw mismatched npm package.
   - Fatal runtime/SQLite incompatibility, EX_CONFIG exits, invalid migrations, and active migration leases do not enter unbounded Gateway restart loops.
   - ACP chat initializes, replays, prompts, cancels, requests permission, and forwards unknown ACP 1.1 session updates without dropping the NDJSON connection.
   - Cron sessions use insightAll 2026.7.1's SQLite-backed `cron.runs` history when ACP replay is empty, so immediate and scheduled executions show their prompt and completed summaries instead of an empty timeline.
@@ -73,16 +73,16 @@ requiredTests:
   - tests/unit/channel-config.test.ts
 acceptance:
   - insightAll, ACP SDK, Electron, Windows Node, and official insightAll channel plugins are pinned to compatible runtime versions.
-  - DingTalk is pinned to 3.6.6, WeCom to 2026.7.2, and Open Lark to 2026.7.9 without changing insightAllX's effective manifest-ID mappings.
+  - DingTalk is pinned to 3.6.6, WeCom to 2026.7.2, and Open Lark to 2026.7.9 without changing InsightAll's effective manifest-ID mappings.
   - The lockfile resolves insightAll and all bundled channel plugins without incompatible peers or stale 2026.6.10 plugin packages.
   - Electron embeds Node 24.15.0 or newer within the Node 24 line and a WAL-reset-safe SQLite runtime.
   - The bundled Windows Node version satisfies insightAll 2026.7.1's declared engine range.
-  - insightAllX snapshots insightAll config and SQLite databases with WAL/SHM sidecars plus per-agent auth files once before the first 2026.7.1 prelaunch sync, excludes channel credentials under `credentials/`, and removes the snapshot after Gateway startup succeeds.
-  - insightAllX writes plugin install metadata to insightAll 2026.7.1's canonical `state/openclaw.sqlite` index, removes legacy config records, and represents the patched WeCom and official Feishu mirrors as local paths rather than stale npm-managed installs.
+  - InsightAll snapshots insightAll config and SQLite databases with WAL/SHM sidecars plus per-agent auth files once before the first 2026.7.1 prelaunch sync, excludes channel credentials under `credentials/`, and removes the snapshot after Gateway startup succeeds.
+  - InsightAll writes plugin install metadata to insightAll 2026.7.1's canonical `state/openclaw.sqlite` index, removes legacy config records, and represents the patched WeCom and official Feishu mirrors as local paths rather than stale npm-managed installs.
   - Configured mirrored plugins that declare an `openclaw` peer have a runtime link to the current bundled insightAll package before migration validation; stale install records for unconfigured mirrors are removed so missing directories cannot block startup.
   - Gateway recovery performs at most one doctor repair per startup flow and does not retry fatal runtime, EX_CONFIG, invalid migration, or active migration-lease failures indefinitely.
   - Electron Main reads current cron history through Gateway `cron.runs`, retains legacy JSONL as a compatibility fallback, and supplements only empty cron ACP replay in memory without replacing non-empty replay.
-  - insightAllX-managed selected models remain explicit in provider configuration, but upgrade preflight treats manual catalog-only model references separately: insightAll's unconfigured `models list --all` catalog changes from 140 entries in 2026.6.10 to 86 in 2026.7.1, removing the built-in Venice, Fireworks, Tencent TokenHub, and Z.AI catalog groups plus several older Moonshot entries.
+  - InsightAll-managed selected models remain explicit in provider configuration, but upgrade preflight treats manual catalog-only model references separately: insightAll's unconfigured `models list --all` catalog changes from 140 entries in 2026.6.10 to 86 in 2026.7.1, removing the built-in Venice, Fireworks, Tencent TokenHub, and Z.AI catalog groups plus several older Moonshot entries.
   - ACP 1.1 type checks, targeted runtime tests, communication regression checks, and harness validation pass.
 docs:
   required: true

@@ -1,4 +1,4 @@
-# insightAllX Development Guide
+# InsightAll Development Guide
 
 This document provides the detailed version of the Development section in the README.
 
@@ -15,7 +15,7 @@ This document provides the detailed version of the Development section in the RE
 ### Project Structure
 
 ```text
-insightAllX/
+InsightAll/
 ├── electron/                 # Electron Main Process
 │   ├── services/            # Typed Host API, provider, secrets, and runtime services
 │   │   ├── providers/       # Provider/account model sync logic
@@ -72,7 +72,7 @@ pnpm package:linux        # Package for Linux
 
 On headless Linux, Electron tests need a display service. Use `xvfb-run -a pnpm run test:e2e`.
 
-Electron E2E functional tests use two Playwright workers by default both locally and in CI. Set `INSIGHTALLX_E2E_WORKERS=<positive integer>` to tune the ordinary parallel lane for the machine. Tests that touch OS-global state use the one-worker `exclusive` project, and host performance profiles run alone afterward. New E2E tests are parallel by default; apply `E2E_EXCLUSIVE_TAG` from `tests/e2e/parallel-policy.ts` when a test uses the real clipboard or another machine-global resource.
+Electron E2E functional tests use two Playwright workers by default both locally and in CI. Set `INSIGHTALL_E2E_WORKERS=<positive integer>` to tune the ordinary parallel lane for the machine. Tests that touch OS-global state use the one-worker `exclusive` project, and host performance profiles run alone afterward. New E2E tests are parallel by default; apply `E2E_EXCLUSIVE_TAG` from `tests/e2e/parallel-policy.ts` when a test uses the real clipboard or another machine-global resource.
 
 For a focused ordinary spec that does not need the exclusive prerequisite, run `pnpm exec playwright test <spec> --project=parallel --no-deps`.
 
@@ -82,9 +82,9 @@ For a focused ordinary spec that does not need the exclusive prerequisite, run `
 
 Open a CPU profile in Chrome DevTools. The artifacts contain generated fixture text only and are not product telemetry. Results are hardware-dependent, so compare repeated runs on the same machine instead of applying one cross-platform absolute threshold.
 
-For a live Renderer recording, start development with `INSIGHTALLX_REMOTE_DEBUGGING_PORT=9223 pnpm dev` and attach Playwright or Chrome DevTools to `localhost:9223`. For a live Electron Main recording, run `pnpm run profile:main`, open `chrome://inspect`, configure `localhost:9229`, and select the Electron Main target. Leave `INSIGHTALLX_GATEWAY_WS_TRACE` unset unless WebSocket tracing itself is being measured.
+For a live Renderer recording, start development with `INSIGHTALL_REMOTE_DEBUGGING_PORT=9223 pnpm dev` and attach Playwright or Chrome DevTools to `localhost:9223`. For a live Electron Main recording, run `pnpm run profile:main`, open `chrome://inspect`, configure `localhost:9229`, and select the Electron Main target. Leave `INSIGHTALL_GATEWAY_WS_TRACE` unset unless WebSocket tracing itself is being measured.
 
-insightAllX leaves Chromium hardware acceleration enabled by default so long documents, scrolling, and layout animations can use GPU compositing and rasterization. Chromium still honors the native `--disable-gpu` command-line switch as a troubleshooting fallback for a machine with a broken graphics driver.
+InsightAll leaves Chromium hardware acceleration enabled by default so long documents, scrolling, and layout animations can use GPU compositing and rasterization. Chromium still honors the native `--disable-gpu` command-line switch as a troubleshooting fallback for a machine with a broken graphics driver.
 
 ### Communication Regression Checks
 
@@ -105,7 +105,7 @@ The Playwright Electron suite launches the packaged renderer and Main process fr
 
 - builds the renderer and Electron bundles with `pnpm run build:vite`
 - starts Electron in an isolated E2E mode with a temporary `HOME`
-- uses a temporary insightAllX `userData` directory
+- uses a temporary InsightAll `userData` directory
 - runs ordinary spec files concurrently while fencing OS-global and performance tests
 - skips heavy startup side effects such as Gateway auto-start, bundled skill installation, tray creation, and CLI auto-install
 

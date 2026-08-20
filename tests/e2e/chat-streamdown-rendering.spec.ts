@@ -79,7 +79,7 @@ async function resolveAcpPrompt(app: ElectronApplication) {
   });
 }
 
-test.describe('insightAllX streaming Markdown rendering', { tag: E2E_EXCLUSIVE_TAG }, () => {
+test.describe('InsightAll streaming Markdown rendering', { tag: E2E_EXCLUSIVE_TAG }, () => {
   test('repairs and animates only the pending assistant response, then clears animation markers', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -212,7 +212,7 @@ test.describe('insightAllX streaming Markdown rendering', { tag: E2E_EXCLUSIVE_T
         },
       }]);
       await expect(activeMessage).toContainText('Final streamed text.');
-      await expect(activeMessage.locator('.insightallx-streamdown')).not.toHaveClass(/space-y-0/);
+      await expect(activeMessage.locator('.insightall-streamdown')).not.toHaveClass(/space-y-0/);
 
       const headingMargins = await activeMessage.getByRole('heading', { name: 'Spaced heading' }).evaluate((element) => {
         const style = window.getComputedStyle(element);

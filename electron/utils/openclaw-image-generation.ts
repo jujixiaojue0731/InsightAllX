@@ -9,7 +9,7 @@ import {
   readOpenAiCompatibleImageRelayState,
   syncOpenAiCompatibleImageRelay,
 } from './openclaw-auth';
-import { ensureinsightAllXOpenAiImagePluginInstalled } from './plugin-install';
+import { ensureInsightAllOpenAiImagePluginInstalled } from './plugin-install';
 import {
   listAgentsSnapshot,
   listAgentsSnapshotFromConfig,
@@ -22,8 +22,8 @@ import {
 } from './openclaw-image-generation-runtime';
 import { OPENAI_CODEX_RUNTIME_PROVIDER_KEY } from './provider-keys';
 import {
-  INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL,
-  INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY,
+  INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL,
+  INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY,
 } from './openclaw-image-relay-constants';
 
 export interface ImageGenerationModelConfig {
@@ -232,9 +232,9 @@ export async function setImageGenerationConfig(
     } else {
       delete defaults.imageGenerationModel;
     }
-    // insightAllX image generation is configured as one explicit custom endpoint.
+    // InsightAll image generation is configured as one explicit custom endpoint.
     // Keep insightAll from appending other authenticated image providers such as
-    // minimax-portal/image-01 after the configured insightAllX image provider.
+    // minimax-portal/image-01 after the configured InsightAll image provider.
     defaults.mediaGenerationAutoProviderFallback = false;
 
     agents.defaults = defaults;
@@ -303,8 +303,8 @@ function resolveOpenAiImageRelayModelId(
     const slash = primary.indexOf('/');
     if (slash > 0 && slash < primary.length - 1) {
       const provider = primary.slice(0, slash).toLowerCase();
-      if (provider === INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY || provider === 'openai') {
-        return primary.slice(slash + 1).trim() || INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL;
+      if (provider === INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY || provider === 'openai') {
+        return primary.slice(slash + 1).trim() || INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL;
       }
     }
   }
@@ -314,9 +314,9 @@ function resolveOpenAiImageRelayModelId(
     ? (models as Record<string, unknown>).providers
     : null;
   const providerEntry = providers && typeof providers === 'object'
-    ? (providers as Record<string, unknown>)[INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]
+    ? (providers as Record<string, unknown>)[INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY]
     : null;
-  return extractModelIdFromProviderEntry(providerEntry) ?? INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL;
+  return extractModelIdFromProviderEntry(providerEntry) ?? INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL;
 }
 
 export async function getImageGenerationSettingsSnapshot(): Promise<ImageGenerationSettingsSnapshot> {
@@ -328,7 +328,7 @@ export async function getImageGenerationSettingsSnapshot(): Promise<ImageGenerat
 
   const providerKey = config.primary ? parseProviderFromModelRef(config.primary) : null;
   const relayState = readOpenAiCompatibleImageRelayState(openclawConfig as Record<string, unknown>);
-  const relayAuthProvider = relayState.providerKey === 'openai' ? 'openai' : INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY;
+  const relayAuthProvider = relayState.providerKey === 'openai' ? 'openai' : INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY;
   const relayKeyConfigured = await isImageProviderAuthenticated(relayAuthProvider, snapshot.defaultAgentId);
 
   return {
@@ -353,9 +353,9 @@ export async function applyOpenAiImageRelaySettings(params: {
   model?: string | null;
 }): Promise<void> {
   if (params.enabled) {
-    const plugin = await ensureinsightAllXOpenAiImagePluginInstalled();
+    const plugin = await ensureInsightAllOpenAiImagePluginInstalled();
     if (!plugin.installed) {
-      throw new Error(plugin.warning || 'Failed to install insightAllX OpenAI Image plugin');
+      throw new Error(plugin.warning || 'Failed to install InsightAll OpenAI Image plugin');
     }
   }
   const imageModelIds: string[] = [];
@@ -365,7 +365,7 @@ export async function applyOpenAiImageRelaySettings(params: {
     imageModelIds.push(slash > 0 ? explicitModel.slice(slash + 1).trim() : explicitModel);
   }
   if (imageModelIds.length === 0) {
-    imageModelIds.push(INSIGHTALLX_OPENAI_IMAGE_DEFAULT_MODEL);
+    imageModelIds.push(INSIGHTALL_OPENAI_IMAGE_DEFAULT_MODEL);
   }
 
   await syncOpenAiCompatibleImageRelay({
@@ -383,7 +383,7 @@ export async function listImageGenerationProvidersFromRuntime(): Promise<ImageGe
     config: cfg,
     isProviderConfigured: (providerId) => isImageProviderAuthenticated(providerId, snapshot.defaultAgentId),
   });
-  return rows.filter((row) => row.id === INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
+  return rows.filter((row) => row.id === INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY);
 }
 
 function resolveAgentDirForTest(agentId: string, snapshot: AgentsSnapshot): string {

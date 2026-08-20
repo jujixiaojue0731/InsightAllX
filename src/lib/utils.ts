@@ -6,7 +6,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 
 /**
- * tailwind-merge instance configured for insightAllX's custom design tokens.
+ * tailwind-merge instance configured for InsightAll's custom design tokens.
  *
  * Why this is necessary:
  *   `tailwind-merge` ships with hardcoded knowledge of Tailwind's standard
@@ -45,7 +45,7 @@ const twMerge = extendTailwindMerge({
 
 /**
  * Merge class names with Tailwind CSS classes.
- * Uses the insightAllX-aware twMerge above so custom font-size tokens
+ * Uses the InsightAll-aware twMerge above so custom font-size tokens
  * (text-2xs / tiny / meta / subtitle / stat) are not mistaken for colors.
  */
 export function cn(...inputs: ClassValue[]) {

@@ -15,7 +15,7 @@ async function git(cwd: string, args: string[]): Promise<void> {
 
 describe('harness git changed files', () => {
   it('includes staged tracked files when collecting changed paths', async () => {
-    const repo = await mkdtemp(path.join(tmpdir(), 'insightallx-harness-git-'));
+    const repo = await mkdtemp(path.join(tmpdir(), 'insightall-harness-git-'));
     const harnessDir = path.join(repo, 'harness', 'src');
 
     try {

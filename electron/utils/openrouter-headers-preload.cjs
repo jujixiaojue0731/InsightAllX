@@ -3,7 +3,7 @@
  * the insightAll Gateway starts.
  *
  * Patches globalThis.fetch so that every request whose URL contains
- * "openrouter.ai" carries the insightAllX app-attribution headers.
+ * "openrouter.ai" carries the InsightAll app-attribution headers.
  *
  * The OpenAI SDK (used by insightAll) captures globalThis.fetch in its
  * constructor, so patching here guarantees all SDK requests go through
@@ -14,10 +14,10 @@
 (function () {
   var _f = globalThis.fetch;
   if (typeof _f !== 'function') return;
-  if (globalThis.__insightallxFetchPatched) return;
-  globalThis.__insightallxFetchPatched = true;
+  if (globalThis.__insightallFetchPatched) return;
+  globalThis.__insightallFetchPatched = true;
 
-  globalThis.fetch = function insightallxFetch(input, init) {
+  globalThis.fetch = function insightallFetch(input, init) {
     var url =
       typeof input === 'string' ? input
         : input && typeof input === 'object' && typeof input.url === 'string'
@@ -39,7 +39,7 @@
       delete flat['x-openrouter-title'];
       delete flat['X-OpenRouter-Title'];
       flat['HTTP-Referer'] = 'https://claw-x.com';
-      flat['X-OpenRouter-Title'] = 'insightAllX';
+      flat['X-OpenRouter-Title'] = 'InsightAll';
       init.headers = flat;
     }
     return _f.call(globalThis, input, init);

@@ -168,13 +168,13 @@ const electronAPI = {
   isDev: process.env.NODE_ENV === 'development' || !!process.env.VITE_DEV_SERVER_URL,
 };
 
-const insightallxAPI = {
+const insightallAPI = {
   hostInvoke: (request: HostRequest) => ipcRenderer.invoke('host:invoke', request),
 };
 
 // Expose the API to the renderer process
 contextBridge.exposeInMainWorld('electron', electronAPI);
-contextBridge.exposeInMainWorld('insightallx', insightallxAPI);
+contextBridge.exposeInMainWorld('insightall', insightallAPI);
 
 // Type declarations for the renderer process
 export type ElectronAPI = typeof electronAPI;

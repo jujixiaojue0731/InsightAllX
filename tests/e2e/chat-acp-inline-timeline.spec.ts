@@ -390,7 +390,7 @@ async function openChat(app: ElectronApplication) {
   return page;
 }
 
-test.describe('insightAllX ACP inline timeline', () => {
+test.describe('InsightAll ACP inline timeline', () => {
   test('does not use legacy history on startup or current-session clicks', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -1119,7 +1119,7 @@ test.describe('insightAllX ACP inline timeline', () => {
     }
   });
 
-  test('starts on a new empty chat instead of selecting a heartbeat-only insightAllX session', async ({ launchElectronApp }) => {
+  test('starts on a new empty chat instead of selecting a heartbeat-only InsightAll session', async ({ launchElectronApp }) => {
     const now = 1711111111111;
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -1132,7 +1132,7 @@ test.describe('insightAllX ACP inline timeline', () => {
             result: {
               sessions: [{
                 key: MAIN_SESSION_KEY,
-                displayName: 'insightAllX',
+                displayName: 'InsightAll',
                 workspacePath: MAIN_WORKSPACE,
                 lastMessagePreview: '[insightAll heartbeat poll]',
                 updatedAt: new Date(now).toISOString(),
@@ -1381,7 +1381,7 @@ test.describe('insightAllX ACP inline timeline', () => {
     }
   });
 
-  test('hides heartbeat-only insightAllX sessions from the sidebar without hiding normal sessions', async ({ launchElectronApp }) => {
+  test('hides heartbeat-only InsightAll sessions from the sidebar without hiding normal sessions', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
     const updatedAt = new Date().toISOString();
 
@@ -1395,14 +1395,14 @@ test.describe('insightAllX ACP inline timeline', () => {
               sessions: [
                 {
                   key: 'agent:main:heartbeat',
-                  displayName: 'insightAllX',
+                  displayName: 'InsightAll',
                   lastMessagePreview: '[insightAll heartbeat poll]',
                   updatedAt,
                 },
                 {
                   key: 'agent:main:session-1710000000000',
-                  displayName: 'insightAllX',
-                  derivedTitle: 'insightAllX',
+                  displayName: 'InsightAll',
+                  derivedTitle: 'InsightAll',
                   lastMessagePreview: 'Summarize the repository structure',
                   updatedAt,
                 },

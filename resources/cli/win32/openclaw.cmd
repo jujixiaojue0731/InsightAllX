@@ -2,10 +2,10 @@
 setlocal
 
 if /i "%1"=="update" (
-    echo openclaw is managed by insightAllX ^(bundled version^).
+    echo openclaw is managed by InsightAll ^(bundled version^).
     echo.
-    echo To update openclaw, update insightAllX:
-    echo   Open insightAllX ^> Settings ^> Check for Updates
+    echo To update openclaw, update InsightAll:
+    echo   Open InsightAll ^> Settings ^> Check for Updates
     echo   Or download the latest version from https://claw-x.com
     exit /b 0
 )
@@ -15,7 +15,7 @@ rem on non-English Windows (e.g. Chinese CP936). Save the previous codepage to r
 for /f "tokens=2 delims=:." %%a in ('chcp') do set /a "_CP=%%a" 2>nul
 chcp 65001 >nul 2>&1
 
-set OPENCLAW_EMBEDDED_IN=insightAllX
+set OPENCLAW_EMBEDDED_IN=InsightAll
 set "NODE_EXE=%~dp0..\bin\node.exe"
 set "OPENCLAW_ENTRY=%~dp0..\openclaw\openclaw.mjs"
 
@@ -29,7 +29,7 @@ if "%_USE_BUNDLED_NODE%"=="1" (
     "%NODE_EXE%" "%OPENCLAW_ENTRY%" %*
 ) else (
     set ELECTRON_RUN_AS_NODE=1
-    "%~dp0..\..\insightAllX.exe" "%OPENCLAW_ENTRY%" %*
+    "%~dp0..\..\InsightAll.exe" "%OPENCLAW_ENTRY%" %*
 )
 set _EXIT=%ERRORLEVEL%
 

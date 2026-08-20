@@ -3,7 +3,7 @@ import { closeElectronApp, expect, getStableWindow, test } from './fixtures/elec
 const alphaModelRef = 'custom-alpha123/model-alpha';
 const betaModelRef = 'custom-beta5678/provider/model-beta';
 
-test.describe('insightAllX chat model picker', () => {
+test.describe('InsightAll chat model picker', () => {
   test('switches the current agent model without requesting a gateway refresh', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -27,7 +27,7 @@ test.describe('insightAllX chat model picker', () => {
           data,
         });
 
-        const workspacePath = '/tmp/insightallx-model-picker-workspace';
+        const workspacePath = '/tmp/insightall-model-picker-workspace';
         const agentsSnapshot = () => ({
           success: true,
           agents: [{

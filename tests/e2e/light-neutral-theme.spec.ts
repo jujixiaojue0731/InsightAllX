@@ -31,7 +31,7 @@ async function readThemeSnapshot(page: import('@playwright/test').Page, mode: 'l
   }, mode);
 }
 
-test.describe('insightAllX light neutral theme tokens', () => {
+test.describe('InsightAll light neutral theme tokens', () => {
   test('uses white and neutral gray surfaces in light mode without changing dark mode tokens', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

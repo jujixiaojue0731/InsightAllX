@@ -337,7 +337,7 @@ export const CHANNEL_META: Record<ChannelType, ChannelMeta> = {
 };
 
 /**
- * Get the channel integrations supported by insightAllX.
+ * Get the channel integrations supported by InsightAll.
  */
 export function getPrimaryChannels(): ChannelType[] {
   return [...SUPPORTED_CHANNEL_TYPES];

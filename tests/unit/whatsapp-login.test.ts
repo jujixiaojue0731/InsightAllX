@@ -20,8 +20,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData, mockLoggerWarn, mockLoggerInfo, mockLoggerError } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/insightallx-whatsapp-login-${suffix}`,
-    testUserData: `/tmp/insightallx-whatsapp-login-user-data-${suffix}`,
+    testHome: `/tmp/insightall-whatsapp-login-${suffix}`,
+    testUserData: `/tmp/insightall-whatsapp-login-user-data-${suffix}`,
     mockLoggerWarn: vi.fn(),
     mockLoggerInfo: vi.fn(),
     mockLoggerError: vi.fn(),

@@ -1,7 +1,7 @@
 import { definePluginEntry } from 'openclaw/plugin-sdk/core';
 import { createOpenAiCompatibleImageGenerationProvider, toImageDataUrl } from 'openclaw/plugin-sdk/image-generation';
 
-const PROVIDER_ID = 'insightallx-openai-image';
+const PROVIDER_ID = 'insightall-openai-image';
 const DEFAULT_MODEL = 'gpt-image-2';
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 const DEFAULT_SIZE = '1024x1024';
@@ -33,7 +33,7 @@ function imageToDataUrl(image) {
 function buildProvider() {
   return createOpenAiCompatibleImageGenerationProvider({
     id: PROVIDER_ID,
-    label: 'insightAllX OpenAI Images',
+    label: 'InsightAll OpenAI Images',
     defaultModel: DEFAULT_MODEL,
     models: [DEFAULT_MODEL],
     defaultBaseUrl: DEFAULT_BASE_URL,
@@ -95,21 +95,21 @@ function buildProvider() {
     }),
     response: {
       defaultMimeType: 'image/png',
-      fileNamePrefix: 'insightallx-image',
+      fileNamePrefix: 'insightall-image',
       sniffMimeType: true,
     },
-    missingApiKeyError: 'insightAllX OpenAI image API key missing',
+    missingApiKeyError: 'InsightAll OpenAI image API key missing',
     failureLabels: {
-      generate: 'insightAllX OpenAI image generation failed',
-      edit: 'insightAllX OpenAI image edit failed',
+      generate: 'InsightAll OpenAI image generation failed',
+      edit: 'InsightAll OpenAI image edit failed',
     },
   });
 }
 
 export const pluginEntry = definePluginEntry({
   id: PROVIDER_ID,
-  name: 'insightAllX OpenAI Image',
-  description: 'Independent OpenAI-compatible image generation provider managed by insightAllX.',
+  name: 'InsightAll OpenAI Image',
+  description: 'Independent OpenAI-compatible image generation provider managed by InsightAll.',
   register(api) {
     api.registerImageGenerationProvider(buildProvider());
   },

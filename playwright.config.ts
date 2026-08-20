@@ -6,12 +6,12 @@ import {
 } from './tests/e2e/parallel-policy';
 
 function e2eWorkers(): number {
-  const configured = process.env.INSIGHTALLX_E2E_WORKERS?.trim();
+  const configured = process.env.INSIGHTALL_E2E_WORKERS?.trim();
   if (!configured) return DEFAULT_E2E_WORKERS;
 
   const workers = Number(configured);
   if (!Number.isInteger(workers) || workers < 1) {
-    throw new Error('INSIGHTALLX_E2E_WORKERS must be a positive integer');
+    throw new Error('INSIGHTALL_E2E_WORKERS must be a positive integer');
   }
   return workers;
 }

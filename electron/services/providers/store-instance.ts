@@ -2,11 +2,11 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let providerStore: any = null;
 
-export async function getinsightAllXProviderStore() {
+export async function getInsightAllProviderStore() {
   if (!providerStore) {
     const Store = (await import('electron-store')).default;
     providerStore = new Store({
-      name: 'insightallx-providers',
+      name: 'insightall-providers',
       defaults: {
         schemaVersion: 0,
         providers: {} as Record<string, unknown>,

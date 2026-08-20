@@ -40,7 +40,7 @@ touchedAreas:
 expectedUserBehavior:
   - Saving a plugin-backed channel returns as soon as its configuration and scoped binding are durably committed instead of waiting for Gateway stop, startup, and readiness.
   - The Channels page immediately reloads the committed local configuration and then converges to runtime connection state after the scheduled Gateway restart.
-  - Changed plugin configuration uses insightAll's native config reload without an additional insightAllX full restart when insightAll peer link repair succeeds; a failed peer link repair schedules the guarded restart path after the config commit, and no-change retries still use that path when plugin discovery is required.
+  - Changed plugin configuration uses insightAll's native config reload without an additional InsightAll full restart when insightAll peer link repair succeeds; a failed peer link repair schedules the guarded restart path after the config commit, and no-change retries still use that path when plugin discovery is required.
   - A config commit whose acknowledgement is lost to native reload is verified from the durable config instead of being reported as a false save failure.
   - A stale owned process that fails to recover from an in-process restart is terminated promptly and replaced instead of holding startup for the full cold-start retry budget.
   - Restart failures remain visible through normal Gateway status and logging rather than becoming unhandled promise rejections.

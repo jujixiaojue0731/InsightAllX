@@ -41,7 +41,7 @@ describe('preinstalled skill config', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    root = mkdtempSync(join(tmpdir(), 'insightallx-preinstalled-skill-'));
+    root = mkdtempSync(join(tmpdir(), 'insightall-preinstalled-skill-'));
     state.homeDir = join(root, 'home');
     state.resourcesDir = join(root, 'resources');
     state.authoritativeConfig = { gatewayOnly: true };

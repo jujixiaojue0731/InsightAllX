@@ -23,7 +23,7 @@
  * agent's `sessions/` directory so a corrupt or malicious `sessions.json`
  * can never steer the unlink loop into an unrelated folder. The pointer-
  * follow path is the only deliberate exception: it walks to whatever
- * `runtimeFile` says (defended by schema + extension checks) so insightAllX can
+ * `runtimeFile` says (defended by schema + extension checks) so InsightAll can
  * cooperate with insightAll's documented `OPENCLAW_TRAJECTORY_DIR` override.
  */
 
@@ -181,7 +181,7 @@ async function readTrajectoryRuntimeFile(pointerPath: string): Promise<string | 
  * In addition to the local sidecars (`.jsonl`, `.deleted.jsonl`,
  * `.jsonl.reset.*`, `.trajectory.jsonl`, `.trajectory-path.json`), the
  * sweep follows the `.trajectory-path.json` pointer when it exists and
- * unlinks the off-disk runtime file at `runtimeFile`. This keeps insightAllX in
+ * unlinks the off-disk runtime file at `runtimeFile`. This keeps InsightAll in
  * sync with insightAll's `OPENCLAW_TRAJECTORY_DIR` override (where the
  * actual trajectory is stored outside the sessions/ folder).
  */

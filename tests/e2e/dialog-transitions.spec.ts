@@ -33,7 +33,7 @@ async function expectSubtleDialogAnimation(locator: Locator): Promise<void> {
     };
   });
 
-  expect(animation.name).toContain('insightallx-dialog-content-in');
+  expect(animation.name).toContain('insightall-dialog-content-in');
   expect(animation.duration).toContain('0.1s');
 
   const firstFrameOffset = await locator.evaluate(async (element) => {
@@ -105,8 +105,8 @@ test.describe('dialog transitions', () => {
                 modelRef: 'openai/gpt-5.5',
                 overrideModelRef: null,
                 inheritedModel: true,
-                workspace: '/tmp/insightallx-main-agent',
-                agentDir: '/tmp/insightallx-main-agent/agent',
+                workspace: '/tmp/insightall-main-agent',
+                agentDir: '/tmp/insightall-main-agent/agent',
                 mainSessionKey: 'main/default',
                 channelTypes: [],
               }],

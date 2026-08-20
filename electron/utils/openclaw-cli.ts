@@ -213,7 +213,7 @@ function getinsightAllEmbeddedExecPath(): { execPath: string; electronRunAsNode:
   if (app.isPackaged && process.platform === 'darwin') {
     const helperPath = getPackagedMacOSHelperPath();
     if (!helperPath) {
-      throw new Error('insightAllX Helper executable not found for embedded insightAll launch');
+      throw new Error('InsightAll Helper executable not found for embedded insightAll launch');
     }
     return { execPath: helperPath, electronRunAsNode: true };
   }
@@ -226,7 +226,7 @@ export function getinsightAllEmbeddedForkSpec(args: string[] = []): insightAllEm
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     OPENCLAW_NO_RESPAWN: '1',
-    OPENCLAW_EMBEDDED_IN: 'insightAllX',
+    OPENCLAW_EMBEDDED_IN: 'InsightAll',
     OPENCLAW_EXEC_SHELL_SNAPSHOT: '0',
   };
 
@@ -438,8 +438,8 @@ function ensureLocalBinInPath(): void {
     if (content.includes(marker)) return;
 
     const line = shell.includes('fish')
-      ? '\n# Added by insightAllX\nfish_add_path "$HOME/.local/bin"\n'
-      : '\n# Added by insightAllX\nexport PATH="$HOME/.local/bin:$PATH"\n';
+      ? '\n# Added by InsightAll\nfish_add_path "$HOME/.local/bin"\n'
+      : '\n# Added by InsightAll\nexport PATH="$HOME/.local/bin:$PATH"\n';
 
     appendFileSync(profileFile, line);
     logger.info(`Added ~/.local/bin to PATH in ${profileFile}`);
@@ -512,7 +512,7 @@ export function generateCompletionCache(): void {
       ...process.env,
       ELECTRON_RUN_AS_NODE: '1',
       OPENCLAW_NO_RESPAWN: '1',
-      OPENCLAW_EMBEDDED_IN: 'insightAllX',
+      OPENCLAW_EMBEDDED_IN: 'InsightAll',
     },
     stdio: 'ignore',
     detached: false,
@@ -549,7 +549,7 @@ export function installCompletionToProfile(): void {
         ...process.env,
         ELECTRON_RUN_AS_NODE: '1',
         OPENCLAW_NO_RESPAWN: '1',
-        OPENCLAW_EMBEDDED_IN: 'insightAllX',
+        OPENCLAW_EMBEDDED_IN: 'InsightAll',
       },
       stdio: 'ignore',
       detached: false,

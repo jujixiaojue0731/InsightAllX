@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ──────────────────────────────────────────────────────────────────────────
- * insightAllX design tokens — CSS variable layer
+ * InsightAll design tokens — CSS variable layer
  * ──────────────────────────────────────────────────────────────────────────
  *
  * This file is the *CSS variable layer only*. HSL channel triplets are
@@ -16,9 +16,9 @@
  *      / ...). The standard shadcn/ui palette — do not rename or remove,
  *      Radix-driven components read these directly.
  *
- *   2. insightAllX surface tokens (--surface-modal / --surface-input /
+ *   2. InsightAll surface tokens (--surface-modal / --surface-input /
  *      --surface-sidebar). Three light-mode neutral layers added
- *      by insightAllX. In dark mode each one is redirected to an existing
+ *      by InsightAll. In dark mode each one is redirected to an existing
  *      shadcn token (--card / --muted / --background) so we don't have
  *      to maintain a second dark surface palette.
  *
@@ -136,7 +136,7 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
 
-    /* ── insightAllX neutral surfaces (light) ───────────────────────────
+    /* ── InsightAll neutral surfaces (light) ───────────────────────────
      *
      * Three stacked neutral layers. The app shell stays white while
      * recessed controls and the sidebar use subtle gray contrast.
@@ -150,7 +150,7 @@
     --surface-input: 0 0% 96.5%;
     --surface-sidebar: 0 0% 96%;
 
-    /* ── insightAllX usage accents (light) ─────────────────────────────
+    /* ── InsightAll usage accents (light) ─────────────────────────────
      *
      * Three semantic accents reused everywhere that we visualise
      * token usage / activity. Mirrors the Cron page convention so
@@ -230,58 +230,58 @@
     @apply text-sm font-normal leading-4;
   }
 
-  .insightallx-skill-token-overlay {
+  .insightall-skill-token-overlay {
     background-color: color-mix(in srgb, #2f6bff 14%, hsl(var(--surface-modal)));
   }
 
-  .dark .insightallx-skill-token-overlay {
+  .dark .insightall-skill-token-overlay {
     background-color: color-mix(in srgb, #2f6bff 18%, hsl(var(--surface-modal)));
   }
 
-  .insightallx-dialog-overlay {
+  .insightall-dialog-overlay {
     @apply fixed inset-0 z-50 bg-black/30 dark:bg-black/60;
   }
 
-  .insightallx-dialog-content {
+  .insightall-dialog-content {
     @apply fixed left-1/2 top-1/2 z-50 w-full outline-none;
     transform: translate(-50%, -50%);
     transform-origin: center;
     will-change: opacity, transform;
   }
 
-  .insightallx-dialog-overlay[data-state='open'] {
-    animation: insightallx-dialog-overlay-in 100ms ease-out both;
+  .insightall-dialog-overlay[data-state='open'] {
+    animation: insightall-dialog-overlay-in 100ms ease-out both;
   }
 
-  .insightallx-dialog-overlay[data-state='closed'] {
-    animation: insightallx-dialog-overlay-out 80ms ease-in both;
+  .insightall-dialog-overlay[data-state='closed'] {
+    animation: insightall-dialog-overlay-out 80ms ease-in both;
   }
 
-  .insightallx-dialog-content[data-state='open'] {
-    animation: insightallx-dialog-content-in 100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  .insightall-dialog-content[data-state='open'] {
+    animation: insightall-dialog-content-in 100ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  .insightallx-dialog-content[data-state='closed'] {
-    animation: insightallx-dialog-content-out 80ms ease-in both;
+  .insightall-dialog-content[data-state='closed'] {
+    animation: insightall-dialog-content-out 80ms ease-in both;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .insightallx-dialog-overlay[data-state],
-    .insightallx-dialog-content[data-state] {
+    .insightall-dialog-overlay[data-state],
+    .insightall-dialog-content[data-state] {
       animation: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .insightallx-chat-thinking-dot-pulse-dot,
-    .insightallx-chat-thinking-dot-pulse-inner::before,
-    .insightallx-chat-thinking-dot-pulse-inner::after {
+    .insightall-chat-thinking-dot-pulse-dot,
+    .insightall-chat-thinking-dot-pulse-inner::before,
+    .insightall-chat-thinking-dot-pulse-inner::after {
       animation: none !important;
       transform: scale(1) !important;
     }
   }
 
-  .insightallx-chat-thinking-dot-pulse {
+  .insightall-chat-thinking-dot-pulse {
     --uib-size: 28px;
     --uib-color: hsl(var(--primary));
     --uib-speed: 1.3s;
@@ -294,7 +294,7 @@
     width: var(--uib-size);
   }
 
-  .insightallx-chat-thinking-dot-pulse-inner {
+  .insightall-chat-thinking-dot-pulse-inner {
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -303,9 +303,9 @@
     width: 100%;
   }
 
-  .insightallx-chat-thinking-dot-pulse-dot,
-  .insightallx-chat-thinking-dot-pulse-inner::before,
-  .insightallx-chat-thinking-dot-pulse-inner::after {
+  .insightall-chat-thinking-dot-pulse-dot,
+  .insightall-chat-thinking-dot-pulse-inner::before,
+  .insightall-chat-thinking-dot-pulse-inner::after {
     background-color: var(--uib-color);
     border-radius: 50%;
     content: '';
@@ -316,20 +316,20 @@
     width: var(--uib-dot-size);
   }
 
-  .insightallx-chat-thinking-dot-pulse-inner::before {
-    animation: insightallx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.375) infinite;
+  .insightall-chat-thinking-dot-pulse-inner::before {
+    animation: insightall-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.375) infinite;
   }
 
-  .insightallx-chat-thinking-dot-pulse-dot {
-    animation: insightallx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.25) infinite both;
+  .insightall-chat-thinking-dot-pulse-dot {
+    animation: insightall-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.25) infinite both;
   }
 
-  .insightallx-chat-thinking-dot-pulse-inner::after {
-    animation: insightallx-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.125) infinite;
+  .insightall-chat-thinking-dot-pulse-inner::after {
+    animation: insightall-chat-thinking-dot-pulse var(--uib-speed) ease-in-out calc(var(--uib-speed) * -0.125) infinite;
   }
 }
 
-@keyframes insightallx-chat-thinking-dot-pulse {
+@keyframes insightall-chat-thinking-dot-pulse {
   0%,
   100% {
     transform: scale(0);
@@ -340,7 +340,7 @@
   }
 }
 
-@keyframes insightallx-dialog-overlay-in {
+@keyframes insightall-dialog-overlay-in {
   from {
     opacity: 0;
   }
@@ -350,7 +350,7 @@
   }
 }
 
-@keyframes insightallx-dialog-overlay-out {
+@keyframes insightall-dialog-overlay-out {
   from {
     opacity: 1;
   }
@@ -360,7 +360,7 @@
   }
 }
 
-@keyframes insightallx-dialog-content-in {
+@keyframes insightall-dialog-content-in {
   from {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.985);
@@ -372,7 +372,7 @@
   }
 }
 
-@keyframes insightallx-dialog-content-out {
+@keyframes insightall-dialog-content-out {
   from {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -415,13 +415,13 @@
   @apply bg-muted-foreground/30;
 }
 
-/* Monaco's default light diff theme is pure white; keep it aligned with insightAllX's light app background. */
-:root:not(.dark) .insightallx-diff-editor .monaco-diff-editor,
-:root:not(.dark) .insightallx-diff-editor .monaco-editor,
-:root:not(.dark) .insightallx-diff-editor .monaco-editor-background,
-:root:not(.dark) .insightallx-diff-editor .monaco-editor .margin,
-:root:not(.dark) .insightallx-diff-editor .monaco-editor .gutter,
-:root:not(.dark) .insightallx-diff-editor .diffOverview {
+/* Monaco's default light diff theme is pure white; keep it aligned with InsightAll's light app background. */
+:root:not(.dark) .insightall-diff-editor .monaco-diff-editor,
+:root:not(.dark) .insightall-diff-editor .monaco-editor,
+:root:not(.dark) .insightall-diff-editor .monaco-editor-background,
+:root:not(.dark) .insightall-diff-editor .monaco-editor .margin,
+:root:not(.dark) .insightall-diff-editor .monaco-editor .gutter,
+:root:not(.dark) .insightall-diff-editor .diffOverview {
   background-color: hsl(var(--background)) !important;
 }
 
@@ -509,41 +509,41 @@
 }
 
 /* Streamdown's root `space-y-4` replaces both margins on sibling blocks. These
- * scoped rules restore insightAllX's prose rhythm while preserving edge resets. */
-.prose.insightallx-markdown.insightallx-streamdown > p {
+ * scoped rules restore InsightAll's prose rhythm while preserving edge resets. */
+.prose.insightall-markdown.insightall-streamdown > p {
   margin: 0 0 0.75em;
 }
 
-.prose.insightallx-streamdown > [data-streamdown='heading-1'] {
+.prose.insightall-streamdown > [data-streamdown='heading-1'] {
   margin: 1rem 0 0.6rem;
 }
 
-.prose.insightallx-streamdown > [data-streamdown='heading-2'] {
+.prose.insightall-streamdown > [data-streamdown='heading-2'] {
   margin: 0.9rem 0 0.5rem;
 }
 
-.prose.insightallx-streamdown > [data-streamdown='heading-3'] {
+.prose.insightall-streamdown > [data-streamdown='heading-3'] {
   margin: 0.8rem 0 0.45rem;
 }
 
-.prose.insightallx-streamdown > [data-streamdown='heading-4'] {
+.prose.insightall-streamdown > [data-streamdown='heading-4'] {
   margin: 0.7rem 0 0.4rem;
 }
 
-.prose.insightallx-streamdown > [data-streamdown='heading-5'],
-.prose.insightallx-streamdown > [data-streamdown='heading-6'] {
+.prose.insightall-streamdown > [data-streamdown='heading-5'],
+.prose.insightall-streamdown > [data-streamdown='heading-6'] {
   margin: 0.6rem 0 0.35rem;
 }
 
-.prose.insightallx-streamdown > [data-streamdown='horizontal-rule'] {
+.prose.insightall-streamdown > [data-streamdown='horizontal-rule'] {
   margin: 1rem 0;
 }
 
-.prose.insightallx-markdown.insightallx-streamdown > :first-child {
+.prose.insightall-markdown.insightall-streamdown > :first-child {
   margin-top: 0;
 }
 
-.prose.insightallx-markdown.insightallx-streamdown > :last-child {
+.prose.insightall-markdown.insightall-streamdown > :last-child {
   margin-bottom: 0;
 }
 
@@ -581,83 +581,83 @@
   background: hsl(var(--muted));
 }
 
-.insightallx-streamdown [data-streamdown='code-block'] {
+.insightall-streamdown [data-streamdown='code-block'] {
   @apply relative my-2 gap-0 overflow-hidden rounded-lg border-0 bg-surface-input p-0;
 }
 
-.insightallx-streamdown [data-streamdown='code-block-header'] {
+.insightall-streamdown [data-streamdown='code-block-header'] {
   @apply h-7 justify-end px-3 pr-10;
 }
 
-.insightallx-streamdown [data-streamdown='code-block-header'] > span {
+.insightall-streamdown [data-streamdown='code-block-header'] > span {
   @apply ml-0;
 }
 
-.insightallx-streamdown [data-streamdown='code-block'] > div:has(> [data-streamdown='code-block-actions']) {
+.insightall-streamdown [data-streamdown='code-block'] > div:has(> [data-streamdown='code-block-actions']) {
   @apply absolute right-0 top-0 mt-0 h-7 items-center pr-2;
 }
 
-.insightallx-streamdown [data-streamdown='code-block-actions'] {
+.insightall-streamdown [data-streamdown='code-block-actions'] {
   @apply border-0 bg-transparent p-0 shadow-none backdrop-blur-none;
 }
 
-.insightallx-streamdown [data-streamdown='code-block-body'] {
+.insightall-streamdown [data-streamdown='code-block-body'] {
   @apply min-w-0 overflow-x-auto;
 }
 
-.insightallx-streamdown [data-streamdown='code-block-body'] pre {
+.insightall-streamdown [data-streamdown='code-block-body'] pre {
   @apply max-w-full overflow-x-auto whitespace-pre-wrap bg-transparent;
   overflow-wrap: break-word;
 }
 
-.insightallx-streamdown [data-streamdown='code-block-body'] code {
+.insightall-streamdown [data-streamdown='code-block-body'] code {
   @apply whitespace-pre-wrap bg-transparent font-mono text-sm;
   overflow-wrap: break-word;
 }
 
-.insightallx-streamdown [data-streamdown='code-block-body'] code > span {
+.insightall-streamdown [data-streamdown='code-block-body'] code > span {
   @apply block;
 }
 
-.prose.insightallx-markdown.insightallx-streamdown [data-streamdown='unordered-list'],
-.prose.insightallx-markdown.insightallx-streamdown [data-streamdown='ordered-list'] {
+.prose.insightall-markdown.insightall-streamdown [data-streamdown='unordered-list'],
+.prose.insightall-markdown.insightall-streamdown [data-streamdown='ordered-list'] {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
 
-.insightallx-streamdown [data-streamdown='list-item'] {
+.insightall-streamdown [data-streamdown='list-item'] {
   @apply my-0 py-0.5;
 }
 
-.insightallx-streamdown [data-streamdown='list-item'] > p {
+.insightall-streamdown [data-streamdown='list-item'] > p {
   @apply my-0;
 }
 
-.insightallx-streamdown [data-streamdown='table-wrapper'],
-.insightallx-streamdown [data-streamdown='table-wrapper'] > div,
-.insightallx-streamdown [data-streamdown='table'] {
+.insightall-streamdown [data-streamdown='table-wrapper'],
+.insightall-streamdown [data-streamdown='table-wrapper'] > div,
+.insightall-streamdown [data-streamdown='table'] {
   @apply border-0;
 }
 
-.insightallx-streamdown [data-streamdown='table-wrapper'] {
+.insightall-streamdown [data-streamdown='table-wrapper'] {
   @apply p-0;
 }
 
-.insightallx-streamdown [data-streamdown='table-wrapper'] > div {
+.insightall-streamdown [data-streamdown='table-wrapper'] > div {
   @apply rounded-none;
 }
 
-.insightallx-streamdown [data-streamdown='table'] {
+.insightall-streamdown [data-streamdown='table'] {
   @apply my-0;
 }
 
-.insightallx-streamdown [data-streamdown='table-header'],
-.insightallx-streamdown [data-streamdown='table-header-cell'] {
+.insightall-streamdown [data-streamdown='table-header'],
+.insightall-streamdown [data-streamdown='table-header-cell'] {
   @apply bg-transparent font-bold;
 }
 
-.dark .insightallx-streamdown [data-streamdown='table-header'],
-.dark .insightallx-streamdown [data-streamdown='table-header-cell'] {
+.dark .insightall-streamdown [data-streamdown='table-header'],
+.dark .insightall-streamdown [data-streamdown='table-header-cell'] {
   @apply bg-muted;
 }
 

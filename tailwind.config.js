@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 
 /* ──────────────────────────────────────────────────────────────────────────
- * insightAllX Tailwind design tokens
+ * InsightAll Tailwind design tokens
  * ──────────────────────────────────────────────────────────────────────────
  *
- * This config layers insightAllX's own visual language on top of shadcn/ui:
+ * This config layers InsightAll's own visual language on top of shadcn/ui:
  *
  *   1. fontFamily — All three stacks (sans / serif / mono) are pinned
  *      explicitly so we never silently inherit Tailwind's evolving defaults.
@@ -18,7 +18,7 @@
  *      change only touches this file.
  *
  *   3. colors — On top of shadcn's semantic tokens (primary / destructive /
- *      ...) we add three insightAllX-private groups:
+ *      ...) we add three InsightAll-private groups:
  *        - brand        : Apple-system blue used for primary CTAs
  *        - skill        : highlight blue for inline /skill chips in chat
  *        - surface.{modal,input,sidebar}: a 3-layer neutral background
@@ -27,7 +27,7 @@
  *                          CSS variables, so callers don't need to write
  *                          `dark:bg-card` style double-declarations.
  *
- *   4. Naming — All insightAllX-private tokens live under their own top-level
+ *   4. Naming — All InsightAll-private tokens live under their own top-level
  *      key (`brand`, `skill`, `surface`) instead of being merged into
  *      the root `colors` namespace, so they're trivially distinguishable
  *      from shadcn semantic tokens.
@@ -125,8 +125,8 @@ module.exports = {
        * ──────────────────────────────────────────────────────────────
        *
        * Naming is by visual *role*, not pixel count, so a future density
-       * change only edits the values here. insightAllX's full size ladder
-       * (combining Tailwind defaults + insightAllX additions, smallest first):
+       * change only edits the values here. InsightAll's full size ladder
+       * (combining Tailwind defaults + InsightAll additions, smallest first):
        *
        *   ┌──────────────┬──────────┬─────────────┬──────────────────────────────┐
        *   │ Token        │ FontSize │ LineHeight  │ Primary use                  │
@@ -169,9 +169,9 @@ module.exports = {
        * Three groups:
        *   A. shadcn standard semantic tokens — read via `hsl(var(--xxx))`
        *      from globals.css. Kept fully compatible.
-       *   B. insightAllX brand tokens (brand / skill) — plain hex values that
+       *   B. InsightAll brand tokens (brand / skill) — plain hex values that
        *      do not change between light and dark themes.
-       *   C. insightAllX surface tokens (surface.{modal,input,sidebar}) — use
+       *   C. InsightAll surface tokens (surface.{modal,input,sidebar}) — use
        *      `hsl(var(--surface-xxx) / <alpha-value>)` so the alpha
        *      modifier still works (e.g. `bg-surface-sidebar/60`). The
        *      actual values live in globals.css, where dark mode redirects
@@ -226,7 +226,7 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
 
-        // ── B. insightAllX brand tokens ────────────────────────────────────
+        // ── B. InsightAll brand tokens ────────────────────────────────────
         // Apple-system blue used for primary CTAs. The same pixel value
         // works in both themes (sufficient WCAG-AA contrast in light
         // mode and stays vivid in dark mode), so no CSS variable needed.
@@ -247,7 +247,7 @@ module.exports = {
           'fg-dark': '#2563EB',   // chip text (dark mode)
         },
 
-        // ── C. insightAllX neutral surfaces ────────────────────────────────
+        // ── C. InsightAll neutral surfaces ────────────────────────────────
         // We use `<alpha-value>` placeholders so Tailwind auto-emits
         // `bg-surface-xxx/{alpha}` rules. Concrete pixel values live in
         // globals.css; in dark mode the same CSS variables redirect to
@@ -259,7 +259,7 @@ module.exports = {
           sidebar: 'hsl(var(--surface-sidebar) / <alpha-value>)',
         },
 
-        // ── D. insightAllX usage accents ──────────────────────────────────
+        // ── D. InsightAll usage accents ──────────────────────────────────
         // Semantic chart palette shared by the Models token-usage
         // visualisation and any future input/output/cache indicator.
         // Mirrors Cron's stat-tile palette (blue / green / yellow).

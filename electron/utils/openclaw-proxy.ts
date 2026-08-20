@@ -6,13 +6,13 @@ import { logger } from './logger';
 interface SyncProxyOptions {
   /**
    * When true, keep an existing channels.telegram.proxy value if proxy is
-   * currently disabled in insightAllX settings.
+   * currently disabled in InsightAll settings.
    */
   preserveExistingWhenDisabled?: boolean;
 }
 
 /**
- * Sync insightAllX global proxy settings into insightAll channel config where the
+ * Sync InsightAll global proxy settings into insightAll channel config where the
  * upstream runtime expects an explicit per-channel proxy knob.
  */
 export async function syncProxyConfigToinsightAll(
@@ -64,7 +64,7 @@ export async function syncProxyConfigToinsightAll(
   });
 
   if (syncState.result === 'preserved') {
-    logger.info('Skipped Telegram proxy sync because insightAllX proxy is disabled and preserve mode is enabled');
+    logger.info('Skipped Telegram proxy sync because InsightAll proxy is disabled and preserve mode is enabled');
   } else if (syncState.result === 'updated') {
     logger.info(`Synced Telegram proxy to insightAll config (${nextProxy || 'disabled'})`);
   }

@@ -13,7 +13,7 @@ import {
 const tempRoots: string[] = [];
 
 async function createTempinsightAllBundle(): Promise<string> {
-  const root = await mkdtemp(path.join(tmpdir(), 'insightallx-openclaw-self-import-'));
+  const root = await mkdtemp(path.join(tmpdir(), 'insightall-openclaw-self-import-'));
   tempRoots.push(root);
   return root;
 }

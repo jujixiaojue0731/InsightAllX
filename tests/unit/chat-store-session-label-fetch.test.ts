@@ -238,7 +238,7 @@ describe('chat store session label summary hydration', () => {
 
   it('hydrates a cwd-only truncated derived title from the session summary', async () => {
     const sessionKey = 'agent:main:session-cwd-truncated';
-    const workspacePath = '/Users/zhuoxu/workspace/insightallx-playground';
+    const workspacePath = '/Users/zhuoxu/workspace/insightall-playground';
     gatewayRpcMock.mockImplementation(async (method: string) => {
       if (method === 'sessions.list') {
         return {
@@ -246,7 +246,7 @@ describe('chat store session label summary hydration', () => {
             {
               key: sessionKey,
               displayName: 'ACP',
-              derivedTitle: '[Working directory: ~/workspace/insightallx-playground]…',
+              derivedTitle: '[Working directory: ~/workspace/insightall-playground]…',
               updatedAt: 1_783_791_638_956,
             },
             { key: 'agent:main:main', displayName: 'Main', updatedAt: 1_783_791_638_957 },
@@ -801,9 +801,9 @@ describe('chat store session label summary hydration', () => {
       if (method === 'sessions.list') {
         return {
           sessions: [
-            { key: 'agent:main:session-a', displayName: 'insightAllX', updatedAt: 1000 },
-            { key: 'agent:main:session-b', displayName: 'insightAllX', updatedAt: 1001 },
-            { key: 'agent:main:main', displayName: 'insightAllX', updatedAt: 1002 },
+            { key: 'agent:main:session-a', displayName: 'InsightAll', updatedAt: 1000 },
+            { key: 'agent:main:session-b', displayName: 'InsightAll', updatedAt: 1001 },
+            { key: 'agent:main:main', displayName: 'InsightAll', updatedAt: 1002 },
           ],
         };
       }
@@ -820,9 +820,9 @@ describe('chat store session label summary hydration', () => {
           success: true,
           result: {
             sessions: [
-              { key: 'agent:main:session-a', displayName: 'insightAllX', updatedAt: 1000 },
-              { key: 'agent:main:session-b', displayName: 'insightAllX', updatedAt: 1001 },
-              { key: 'agent:main:main', displayName: 'insightAllX', updatedAt: 1002 },
+              { key: 'agent:main:session-a', displayName: 'InsightAll', updatedAt: 1000 },
+              { key: 'agent:main:session-b', displayName: 'InsightAll', updatedAt: 1001 },
+              { key: 'agent:main:main', displayName: 'InsightAll', updatedAt: 1002 },
             ],
           },
         };

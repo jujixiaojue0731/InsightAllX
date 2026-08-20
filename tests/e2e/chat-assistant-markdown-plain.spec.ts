@@ -65,7 +65,7 @@ async function emitAcpSessionUpdates(app: ElectronApplication, updates: AcpSessi
   );
 }
 
-test.describe('insightAllX chat Markdown styling', () => {
+test.describe('InsightAll chat Markdown styling', () => {
   test('renders assistant Markdown while keeping user input literal and bubbled', async ({ launchElectronApp }, testInfo) => {
     const app = await launchElectronApp({ skipSetup: true });
 

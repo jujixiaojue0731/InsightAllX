@@ -57,7 +57,7 @@ export function createTray(mainWindow: BrowserWindow): Tray {
   tray = new Tray(icon);
   
   // Set tooltip
-  tray.setToolTip('insightAllX - AI Assistant');
+  tray.setToolTip('InsightAll - AI Assistant');
   
   const showWindow = () => {
     if (mainWindow.isDestroyed()) return;
@@ -68,7 +68,7 @@ export function createTray(mainWindow: BrowserWindow): Tray {
   // Create context menu
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Show insightAllX',
+      label: 'Show InsightAll',
       click: showWindow,
     },
     {
@@ -122,7 +122,7 @@ export function createTray(mainWindow: BrowserWindow): Tray {
       type: 'separator',
     },
     {
-      label: 'Quit insightAllX',
+      label: 'Quit InsightAll',
       click: () => {
         app.quit();
       },
@@ -157,7 +157,7 @@ export function createTray(mainWindow: BrowserWindow): Tray {
  */
 export function updateTrayStatus(status: string): void {
   if (tray) {
-    tray.setToolTip(`insightAllX - ${status}`);
+    tray.setToolTip(`InsightAll - ${status}`);
   }
 }
 

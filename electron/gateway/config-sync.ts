@@ -35,7 +35,7 @@ import { logger } from '../utils/logger';
 import { prependPathEntry } from '../utils/env-path';
 import { copyPluginFromNodeModules, fixupPluginManifest, cpSyncSafe, buildCandidateSources, repairTrustedOfficialPluginInstallRecords, removeTrustedOfficialPluginInstallRecord, resolvePluginNpmPackagePath } from '../utils/plugin-install';
 import { safeRmSync } from '../utils/safe-fs';
-import { INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY } from '../utils/openclaw-image-relay-constants';
+import { INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY } from '../utils/openclaw-image-relay-constants';
 import {
   ensureinsightAll2026_7_1UpgradeSnapshot,
   quarantineLegacyUpdateCheckState,
@@ -82,12 +82,12 @@ const CHANNEL_PLUGIN_MAP: Record<string, { dirName: string; npmName: string }> =
   whatsapp: { dirName: 'whatsapp', npmName: '@openclaw/whatsapp' },
 
   'openclaw-weixin': { dirName: 'openclaw-weixin', npmName: '@tencent-weixin/openclaw-weixin' },
-  [INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY]: { dirName: INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY, npmName: 'insightallx-openai-image-plugin' },
+  [INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY]: { dirName: INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY, npmName: 'insightall-openai-image-plugin' },
 };
 
 /**
  * insightAll ships some channel plugins as bundled extensions under
- * dist/extensions/. If insightAllX previously mirrored one of those ids into
+ * dist/extensions/. If InsightAll previously mirrored one of those ids into
  * ~/.openclaw/extensions/, the stale copy overrides the bundled plugin.
  * Only remove extension copies whose id is actually bundled in the
  * currently resolved insightAll runtime (e.g. telegram in 2026.6.10).
@@ -298,8 +298,8 @@ function withConfiguredImageGenerationPlugins(configuredChannels: string[], rawC
   const next = [...configuredChannels];
   const primary = resolveImageGenerationPrimary(rawConfig);
   const provider = primary?.includes('/') ? primary.slice(0, primary.indexOf('/')).trim() : primary;
-  if (provider === INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY && !next.includes(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY)) {
-    next.push(INSIGHTALLX_OPENAI_IMAGE_PROVIDER_KEY);
+  if (provider === INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY && !next.includes(INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY)) {
+    next.push(INSIGHTALL_OPENAI_IMAGE_PROVIDER_KEY);
   }
   return next;
 }
@@ -536,7 +536,7 @@ export async function syncGatewayConfigBeforeLaunch(
       },
     ));
     maintenance['plugin-maintenance'] = result;
-    // Always refresh trusted install metadata through insightAllX — this must not
+    // Always refresh trusted install metadata through InsightAll — this must not
     // be skipped when plugin-maintenance is cache-hit, otherwise official
     // external plugins like WhatsApp fail openKeyedStore at runtime.
     await measureAsync(timingsMs, 'trustedPluginInstallSyncMs', async () => {
@@ -649,7 +649,7 @@ export async function prepareGatewayLaunchContext(port: number): Promise<Gateway
       }
     } catch (error) {
       // insightAll also maintains migration-specific backups. Keep startup
-      // available if the additional insightAllX safety snapshot cannot be written.
+      // available if the additional InsightAll safety snapshot cannot be written.
       logger.warn('[upgrade] Failed to create insightAll 2026.7.1 pre-migration snapshot:', error);
     }
   });

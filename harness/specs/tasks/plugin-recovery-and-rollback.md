@@ -3,7 +3,7 @@ id: plugin-recovery-and-rollback
 title: Recover from plugin upgrade, migration, and activation failures
 scenario: plugin-lifecycle-management
 taskType: plugin-lifecycle
-intent: Keep insightAllX recoverable when plugin upgrades, migrations, or activation changes fail.
+intent: Keep InsightAll recoverable when plugin upgrades, migrations, or activation changes fail.
 touchedAreas:
   - electron/gateway/config-sync.ts
   - electron/utils/openclaw-auth.ts

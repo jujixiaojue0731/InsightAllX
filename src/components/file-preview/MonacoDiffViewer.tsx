@@ -29,7 +29,7 @@ function resolveMonacoTheme(theme: string | undefined): string {
 
 function diffModelPath(filePath: string, side: 'orig' | 'mod'): string {
   const key = encodeURIComponent(filePath.replace(/\\/g, '/'));
-  return `inmemory://insightallx-diff/${side}/${key}`;
+  return `inmemory://insightall-diff/${side}/${key}`;
 }
 
 export default function MonacoDiffViewer({
@@ -48,7 +48,7 @@ export default function MonacoDiffViewer({
   return (
     <div
       data-testid="monaco-diff-viewer"
-      className={cn('insightallx-diff-editor h-full w-full min-h-0', className)}
+      className={cn('insightall-diff-editor h-full w-full min-h-0', className)}
     >
       <DiffEditor
         height="100%"

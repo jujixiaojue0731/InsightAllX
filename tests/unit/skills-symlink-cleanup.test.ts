@@ -52,7 +52,7 @@ describe('cleanupAgentsSymlinkedSkills', () => {
   let workspaceAgentsSkillsDir: string;
 
   beforeEach(() => {
-    root = mkdtempSync(path.join(tmpdir(), 'insightallx-skills-cleanup-'));
+    root = mkdtempSync(path.join(tmpdir(), 'insightall-skills-cleanup-'));
     skillsDir = path.join(root, 'openclaw', 'skills');
     agentsRootDir = path.join(root, 'agents');
     agentsSkillsDir = path.join(agentsRootDir, 'skills');
@@ -339,7 +339,7 @@ describe('cleanupStalePluginRuntimeDeps', () => {
   let oldinsightAllDir: string;
 
   beforeEach(() => {
-    root = mkdtempSync(path.join(tmpdir(), 'insightallx-runtime-deps-cleanup-'));
+    root = mkdtempSync(path.join(tmpdir(), 'insightall-runtime-deps-cleanup-'));
     runtimeDepsDir = path.join(root, 'openclaw', 'plugin-runtime-deps');
     currentinsightAllDir = path.join(root, 'current-worktree', 'node_modules', 'openclaw');
     oldinsightAllDir = path.join(root, 'old-worktree', 'node_modules', 'openclaw');

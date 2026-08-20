@@ -132,11 +132,11 @@ describe('Channels page status refresh', () => {
     });
   });
 
-  it('defines exactly the eight insightAllX-supported channel integrations', () => {
+  it('defines exactly the eight InsightAll-supported channel integrations', () => {
     expect(Object.keys(CHANNEL_META).sort()).toEqual([...SUPPORTED_CHANNEL_TYPES].sort());
   });
 
-  it('filters runtime channel groups that insightAllX does not support', async () => {
+  it('filters runtime channel groups that InsightAll does not support', async () => {
     subscribeHostEventMock.mockImplementation(() => vi.fn());
     const unsupportedChannelTypes = [
       'signal',
@@ -721,7 +721,7 @@ describe('Channels page status refresh', () => {
             consecutiveHeartbeatMisses: 1,
           },
           channels: [],
-          insightallxLogTail: 'insightallx',
+          insightallLogTail: 'insightall',
           gatewayLogTail: 'gateway',
           gatewayErrLogTail: '',
         };
@@ -945,7 +945,7 @@ describe('Channels page status refresh', () => {
             consecutiveHeartbeatMisses: 1,
           },
           channels: [],
-          insightallxLogTail: `insightallx-${diagnosticsFetchCount}`,
+          insightallLogTail: `insightall-${diagnosticsFetchCount}`,
           gatewayLogTail: 'gateway',
           gatewayErrLogTail: '',
         };

@@ -6,10 +6,10 @@ import { describe, expect, it } from 'vitest';
 
 const repoRoot = process.cwd();
 
-describe('insightAllX OpenAI image plugin request shape', () => {
+describe('InsightAll OpenAI image plugin request shape', () => {
   it('does not force deprecated OpenAI Images response_format', async () => {
     const pluginSource = await readFile(
-      join(repoRoot, 'resources/openclaw-plugins/insightallx-openai-image/index.mjs'),
+      join(repoRoot, 'resources/openclaw-plugins/insightall-openai-image/index.mjs'),
       'utf8',
     );
     const packageJson = await readFile(join(repoRoot, 'package.json'), 'utf8');
@@ -36,7 +36,7 @@ describe('insightAllX OpenAI image plugin request shape', () => {
 
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
     try {
-      const plugin = await import('../../resources/openclaw-plugins/insightallx-openai-image/index.mjs');
+      const plugin = await import('../../resources/openclaw-plugins/insightall-openai-image/index.mjs');
       let provider: { generateImage: (req: Record<string, unknown>) => Promise<{ images: unknown[] }> } | undefined;
       plugin.default.register({
         registerImageGenerationProvider(nextProvider: typeof provider) {
@@ -48,7 +48,7 @@ describe('insightAllX OpenAI image plugin request shape', () => {
       if (!address || typeof address === 'string') throw new Error('Test server failed to bind to a port');
 
       const result = await provider?.generateImage({
-        provider: 'insightallx-openai-image',
+        provider: 'insightall-openai-image',
         model: 'gpt-image-2',
         prompt: 'paint a fox',
         quality: 'high',
@@ -65,14 +65,14 @@ describe('insightAllX OpenAI image plugin request shape', () => {
         cfg: {
           models: {
             providers: {
-              'insightallx-openai-image': {
+              'insightall-openai-image': {
                 apiKey: 'test-key',
                 baseUrl: `http://127.0.0.1:${address.port}/v1`,
               },
             },
           },
         },
-        agentDir: '/tmp/insightallx-openai-image-test-agent',
+        agentDir: '/tmp/insightall-openai-image-test-agent',
         ssrfPolicy: { dangerouslyAllowPrivateNetwork: true },
       });
 

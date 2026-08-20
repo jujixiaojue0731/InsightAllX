@@ -319,8 +319,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={vi.fn()}
         />
@@ -328,8 +328,8 @@ describe('ChatInput agent targeting', () => {
     );
 
     const button = screen.getByTestId('chat-workspace-selector');
-    expect(button).toHaveTextContent('~/workspace/insightAllX');
-    expect(button).toHaveAttribute('title', '/Users/alex/workspace/insightAllX');
+    expect(button).toHaveTextContent('~/workspace/InsightAll');
+    expect(button).toHaveAttribute('title', '/Users/alex/workspace/InsightAll');
     expect(button).not.toHaveAttribute('aria-disabled', 'true');
   });
 
@@ -338,8 +338,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={vi.fn()}
         />
@@ -438,8 +438,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={vi.fn()}
         />
@@ -461,8 +461,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={vi.fn()}
         />
@@ -484,8 +484,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={vi.fn()}
         />
@@ -558,8 +558,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={onSelectWorkspace}
         />
@@ -579,8 +579,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={vi.fn()}
         />
@@ -626,8 +626,8 @@ describe('ChatInput agent targeting', () => {
       <TooltipProvider>
         <ChatInput
           onSend={vi.fn()}
-          workspaceLabel="~/workspace/insightAllX"
-          workspacePath="/Users/alex/workspace/insightAllX"
+          workspaceLabel="~/workspace/InsightAll"
+          workspacePath="/Users/alex/workspace/InsightAll"
           workspaceReadOnly={false}
           onSelectWorkspace={vi.fn()}
         />

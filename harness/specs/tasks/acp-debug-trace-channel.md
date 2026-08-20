@@ -3,7 +3,7 @@ id: acp-debug-trace-channel
 title: Add ACP debug trace diagnostics channel
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Add a bounded redacted diagnostics trace for ACP bridge events and renderer image-projection decisions so insightAllX can diagnose ACP image rendering failures without modifying insightAll.
+intent: Add a bounded redacted diagnostics trace for ACP bridge events and renderer image-projection decisions so InsightAll can diagnose ACP image rendering failures without modifying insightAll.
 touchedAreas:
   - harness/specs/tasks/acp-debug-trace-channel.md
   - harness/reference/acp-generated-media-and-diagnostics.md

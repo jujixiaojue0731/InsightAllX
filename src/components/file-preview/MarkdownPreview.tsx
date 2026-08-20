@@ -67,7 +67,7 @@ export default function MarkdownPreview({ source, className }: MarkdownPreviewPr
 
   return (
     <Streamdown
-      className={cn('insightallx-markdown insightallx-markdown-preview insightallx-streamdown prose max-w-none px-6 py-4 text-sm leading-relaxed', className)}
+      className={cn('insightall-markdown insightall-markdown-preview insightall-streamdown prose max-w-none px-6 py-4 text-sm leading-relaxed', className)}
       components={previewComponents}
       controls={streamdownControls}
       lineNumbers={false}

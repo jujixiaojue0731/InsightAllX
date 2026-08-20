@@ -159,7 +159,7 @@ async function openChat(app: ElectronApplication) {
   return page;
 }
 
-test.describe('insightAllX chat run state events', () => {
+test.describe('InsightAll chat run state events', () => {
   test('renders ACP tool run-state updates inline', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 
@@ -496,7 +496,7 @@ test.describe('insightAllX chat run state events', () => {
 
   test('replays insightAll image-generation previews from historical assistant MEDIA text', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
-    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/insightallx-image-1.png';
+    const generatedPath = '/Users/me/.openclaw/media/tool-image-generation/insightall-image-1.png';
 
     try {
       await installAcpChatMocks(

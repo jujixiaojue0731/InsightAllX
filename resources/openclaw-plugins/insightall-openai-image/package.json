@@ -1,7 +1,7 @@
 {
-  "name": "insightallx-openai-image-plugin",
+  "name": "insightall-openai-image-plugin",
   "version": "0.1.3",
-  "description": "insightAllX independent OpenAI-compatible image generation provider for insightAll",
+  "description": "InsightAll independent OpenAI-compatible image generation provider for insightAll",
   "private": true,
   "type": "module",
   "main": "index.mjs",

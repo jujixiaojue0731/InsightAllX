@@ -1,6 +1,6 @@
 {
   "title": "設定",
-  "subtitle": "insightAllX の体験をカスタマイズ",
+  "subtitle": "InsightAll の体験をカスタマイズ",
   "appearance": {
     "title": "通用",
     "description": "外観とスタイルをカスタマイズ",
@@ -11,7 +11,7 @@
     "language": "言語",
     "menuLanguageUpdated": "メニューの言語を更新しました",
     "launchAtStartup": "システム起動時に自動起動",
-    "launchAtStartupDesc": "ログイン時に insightAllX を自動的に起動します"
+    "launchAtStartupDesc": "ログイン時に InsightAll を自動的に起動します"
   },
   "aiProviders": {
     "title": "AI プロバイダー",
@@ -38,7 +38,7 @@
     "notRequired": "不要",
     "empty": {
       "title": "プロバイダーが構成されていません",
-      "desc": "insightAllX の使用を開始するには AI プロバイダーを追加してください",
+      "desc": "InsightAll の使用を開始するには AI プロバイダーを追加してください",
       "cta": "最初のプロバイダーを追加"
     },
     "dialog": {
@@ -62,7 +62,7 @@
       "protocol": "プロトコル",
       "advancedConfig": "詳細設定",
       "userAgent": "User-Agent",
-      "userAgentPlaceholder": "insightAllX/1.0",
+      "userAgentPlaceholder": "InsightAll/1.0",
       "fallbackModels": "フォールバックモデル",
       "fallbackProviders": "別プロバイダーへのフォールバック",
       "fallbackModelIds": "同一プロバイダーのフォールバックモデル ID",
@@ -138,7 +138,7 @@
     "appLogs": "アプリケーションログ",
     "openFolder": "フォルダーを開く",
     "autoStart": "ゲートウェイ自動起動",
-    "autoStartDesc": "insightAllX 起動時にゲートウェイを自動起動",
+    "autoStartDesc": "InsightAll 起動時にゲートウェイを自動起動",
     "proxyTitle": "プロキシ",
     "proxyDesc": "Electron と Gateway の通信をローカルプロキシ経由にします。",
     "proxyServer": "プロキシサーバー",
@@ -159,7 +159,7 @@
   },
   "updates": {
     "title": "アップデート",
-    "description": "insightAllX を最新に保つ",
+    "description": "InsightAll を最新に保つ",
     "autoCheck": "自動更新チェック",
     "autoCheckDesc": "起動時に更新を確認",
     "autoDownload": "更新通知",
@@ -188,13 +188,13 @@
     "whatsNew": "更新内容：",
     "errorDetails": "エラー詳細：",
     "toast": {
-      "availableTitle": "insightAllX の更新があります",
+      "availableTitle": "InsightAll の更新があります",
       "availableDescription": "バージョン v{{version}} を利用できます。準備ができたらダウンロードしてください。",
-      "downloadedTitle": "insightAllX の更新準備ができました",
+      "downloadedTitle": "InsightAll の更新準備ができました",
       "downloadedDescription": "バージョン v{{version}} のダウンロードが完了しました。再起動してインストールしてください。",
       "unknownVersion": "新しい"
     },
-    "help": "insightAllX は自動的に更新を確認し、ダウンロードやインストールの前に通知します。"
+    "help": "InsightAll は自動的に更新を確認し、ダウンロードやインストールの前に通知します。"
   },
   "advanced": {
     "title": "詳細設定",
@@ -202,7 +202,7 @@
     "devMode": "開発者モード",
     "devModeDesc": "開発者ツールとショートカットを表示",
     "telemetry": "匿名利用データ",
-    "telemetryDesc": "insightAllX 改善のため、匿名の基本的な利用データの提供を許可します"
+    "telemetryDesc": "InsightAll 改善のため、匿名の基本的な利用データの提供を許可します"
   },
   "developer": {
     "title": "開発者",
@@ -260,7 +260,7 @@
   },
   "about": {
     "title": "バージョン情報",
-    "appName": "insightAllX",
+    "appName": "InsightAll",
     "tagline": "グラフィカル AI アシスタント",
     "basedOn": "insightAll ベース",
     "version": "バージョン {{version}}",

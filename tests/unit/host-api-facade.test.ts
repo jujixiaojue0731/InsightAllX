@@ -8,7 +8,7 @@ beforeEach(() => {
   hostInvoke.mockReset();
   vi.resetModules();
   vi.stubGlobal('window', {
-    insightallx: { hostInvoke },
+    insightall: { hostInvoke },
   });
 });
 
@@ -130,11 +130,11 @@ describe('hostApi facade', () => {
     hostInvoke.mockResolvedValueOnce({ id: 'req', ok: true, data: { content: 'tail' } });
     const { hostApi } = await import('@/lib/host-api');
 
-    await expect(hostApi.logs.readFile('/tmp/insightallx.log', 50)).resolves.toEqual({ content: 'tail' });
+    await expect(hostApi.logs.readFile('/tmp/insightall.log', 50)).resolves.toEqual({ content: 'tail' });
     expect(hostInvoke).toHaveBeenCalledWith(expect.objectContaining({
       module: 'logs',
       action: 'readFile',
-      payload: { path: '/tmp/insightallx.log', tailLines: 50 },
+      payload: { path: '/tmp/insightall.log', tailLines: 50 },
     }));
   });
 

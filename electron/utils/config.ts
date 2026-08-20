@@ -7,14 +7,14 @@
  * Port configuration
  */
 export const PORTS = {
-  /** insightAllX GUI development server port */
-  INSIGHTALLX_DEV: 5173,
+  /** InsightAll GUI development server port */
+  INSIGHTALL_DEV: 5173,
   
-  /** insightAllX GUI production port (for reference) */
-  INSIGHTALLX_GUI: 23333,
+  /** InsightAll GUI production port (for reference) */
+  INSIGHTALL_GUI: 23333,
 
   /** Local host API server port */
-  INSIGHTALLX_HOST_API: 13210,
+  INSIGHTALL_HOST_API: 13210,
   
   /** insightAll Gateway port */
   OPENCLAW_GATEWAY: 18789,
@@ -24,7 +24,7 @@ export const PORTS = {
  * Get port from environment or default
  */
 export function getPort(key: keyof typeof PORTS): number {
-  const envKey = `INSIGHTALLX_PORT_${key}`;
+  const envKey = `INSIGHTALL_PORT_${key}`;
   const envValue = process.env[envKey];
   return envValue ? parseInt(envValue, 10) : PORTS[key];
 }
@@ -36,11 +36,11 @@ export const APP_PATHS = {
   /** insightAll configuration directory */
   OPENCLAW_CONFIG: '~/.openclaw',
   
-  /** insightAllX configuration directory */
-  INSIGHTALLX_CONFIG: '~/.insightallx',
+  /** InsightAll configuration directory */
+  INSIGHTALL_CONFIG: '~/.insightall',
   
   /** Log files directory */
-  LOGS: '~/.insightallx/logs',
+  LOGS: '~/.insightall/logs',
 } as const;
 
 /**

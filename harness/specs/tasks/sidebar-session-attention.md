@@ -43,7 +43,7 @@ expectedUserBehavior:
   - A sidebar session shows a loading indicator while its exact Gateway session row is active.
   - An observed completion outside the visible Chat session shows an unread indicator until the conversation is opened.
   - The visible Chat session remains read when its active run completes, while retaining a current session on another route does not mark it read.
-  - Reconnect hydration and persisted observed-busy state recover only transitions that insightAllX can prove from Gateway session rows.
+  - Reconnect hydration and persisted observed-busy state recover only transitions that InsightAll can prove from Gateway session rows.
 requiredProfiles:
   - fast
   - comms

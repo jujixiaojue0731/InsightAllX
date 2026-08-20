@@ -36,7 +36,7 @@ describe('media api', () => {
     vi.resetModules();
     createFromPathMock.mockClear();
     createFromBufferMock.mockClear();
-    testDir = await mkdtemp(join(tmpdir(), 'insightallx-media-api-'));
+    testDir = await mkdtemp(join(tmpdir(), 'insightall-media-api-'));
     previousStateDir = process.env.OPENCLAW_STATE_DIR;
     process.env.OPENCLAW_STATE_DIR = testDir;
   });

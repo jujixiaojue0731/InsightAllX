@@ -23,9 +23,9 @@ import { loadExtensionsFromManifest } from '../extensions/loader';
 import { registerAllBuiltinExtensions } from '../extensions/builtin';
 import { loadExternalMainExtensions } from '../extensions/_ext-bridge.generated';
 import {
-  ensureinsightAllXContext,
-  ensureinsightAllXDefaultIdentity,
-  repairinsightAllXOnlyBootstrapFiles,
+  ensureInsightAllContext,
+  ensureInsightAllDefaultIdentity,
+  repairInsightAllOnlyBootstrapFiles,
 } from '../utils/openclaw-workspace';
 import { autoInstallCliIfNeeded, generateCompletionCache, installCompletionToProfile } from '../utils/openclaw-cli';
 import { isQuitting, setQuitting } from './app-state';
@@ -55,10 +55,10 @@ import { browserOAuthManager } from '../utils/browser-oauth';
 import { whatsAppLoginManager } from '../utils/whatsapp-login';
 import { syncAllProviderAuthToRuntime } from '../services/providers/provider-runtime-sync';
 
-const WINDOWS_APP_USER_MODEL_ID = 'app.insightallx.desktop';
-const isE2EMode = process.env.INSIGHTALLX_E2E === '1';
-const requestedUserDataDir = process.env.INSIGHTALLX_USER_DATA_DIR?.trim();
-const requestedRemoteDebuggingPort = process.env.INSIGHTALLX_REMOTE_DEBUGGING_PORT?.trim();
+const WINDOWS_APP_USER_MODEL_ID = 'app.insightall.desktop';
+const isE2EMode = process.env.INSIGHTALL_E2E === '1';
+const requestedUserDataDir = process.env.INSIGHTALL_USER_DATA_DIR?.trim();
+const requestedRemoteDebuggingPort = process.env.INSIGHTALL_REMOTE_DEBUGGING_PORT?.trim();
 
 if (requestedRemoteDebuggingPort) {
   app.commandLine.appendSwitch('remote-debugging-port', requestedRemoteDebuggingPort);
@@ -69,12 +69,12 @@ if (isE2EMode && requestedUserDataDir) {
 }
 
 // On Linux, set CHROME_DESKTOP so Chromium can find the correct .desktop file.
-// On Wayland this maps the running window to insightallx.desktop (→ icon + app grouping);
+// On Wayland this maps the running window to insightall.desktop (→ icon + app grouping);
 // on X11 it supplements the StartupWMClass matching.
 // Must be called before app.whenReady() / before any window is created.
 if (process.platform === 'linux') {
   const linuxApp = app as typeof app & { setDesktopName?: (desktopName: string) => void };
-  linuxApp.setDesktopName?.('insightallx.desktop');
+  linuxApp.setDesktopName?.('insightall.desktop');
 }
 
 // Prevent multiple instances of the app from running simultaneously.
@@ -84,7 +84,7 @@ if (process.platform === 'linux') {
 // The losing process must exit immediately so it never reaches Gateway startup.
 const gotElectronLock = isE2EMode ? true : app.requestSingleInstanceLock();
 if (!gotElectronLock) {
-  console.info('[insightAllX] Another instance already holds the single-instance lock; exiting duplicate process');
+  console.info('[InsightAll] Another instance already holds the single-instance lock; exiting duplicate process');
   app.exit(0);
 }
 let releaseProcessInstanceFileLock: () => void = () => {};
@@ -93,7 +93,7 @@ if (gotElectronLock && !isE2EMode) {
   try {
     const fileLock = acquireProcessInstanceFileLock({
       userDataDir: app.getPath('userData'),
-      lockName: 'insightallx',
+      lockName: 'insightall',
       force: true, // Electron lock already guarantees exclusivity; force-clean orphan/recycled-PID locks
     });
     gotFileLock = fileLock.acquired;
@@ -105,12 +105,12 @@ if (gotElectronLock && !isE2EMode) {
           ? 'unknown lock format/content'
           : 'unknown owner';
       console.info(
-        `[insightAllX] Another instance already holds process lock (${fileLock.lockPath}, ${ownerDescriptor}); exiting duplicate process`,
+        `[InsightAll] Another instance already holds process lock (${fileLock.lockPath}, ${ownerDescriptor}); exiting duplicate process`,
       );
       app.exit(0);
     }
   } catch (error) {
-    console.warn('[insightAllX] Failed to acquire process instance file lock; continuing with Electron single-instance lock only', error);
+    console.warn('[InsightAll] Failed to acquire process instance file lock; continuing with Electron single-instance lock only', error);
   }
 }
 const gotTheLock = gotElectronLock && gotFileLock;
@@ -213,7 +213,7 @@ function createWindow(): BrowserWindow {
 }
 
 function loadMainWindow(win: BrowserWindow): void {
-  const shouldSkipSetupForE2E = process.env.INSIGHTALLX_E2E_SKIP_SETUP === '1';
+  const shouldSkipSetupForE2E = process.env.INSIGHTALL_E2E_SKIP_SETUP === '1';
 
   if (process.env.VITE_DEV_SERVER_URL) {
     const rendererUrl = new URL(process.env.VITE_DEV_SERVER_URL);
@@ -301,7 +301,7 @@ function createMainWindow(): BrowserWindow {
 async function initialize(): Promise<void> {
   // Initialize logger first
   logger.init();
-  logger.info('=== insightAllX Application Starting ===');
+  logger.info('=== InsightAll Application Starting ===');
   logger.debug(
     `Runtime: platform=${process.platform}/${process.arch}, electron=${process.versions.electron}, node=${process.versions.node}, packaged=${app.isPackaged}, pid=${process.pid}, ppid=${process.ppid}`
   );
@@ -395,18 +395,18 @@ async function initialize(): Promise<void> {
   // so it respects the user's "Auto-check for updates" setting.
 
   // Seed a stable default IDENTITY.md before the Gateway initializes the
-  // workspace so insightAllX desktop sessions skip insightAll's chat-first bootstrap.
+  // workspace so InsightAll desktop sessions skip insightAll's chat-first bootstrap.
   if (!isE2EMode) {
-    void ensureinsightAllXDefaultIdentity().catch((error) => {
-      logger.warn('Failed to seed default insightAllX identity:', error);
+    void ensureInsightAllDefaultIdentity().catch((error) => {
+      logger.warn('Failed to seed default InsightAll identity:', error);
     });
   }
 
-  // Repair any bootstrap files that only contain insightAllX markers (no insightAll
-  // template content). This fixes a race condition where ensureinsightAllXContext()
+  // Repair any bootstrap files that only contain InsightAll markers (no insightAll
+  // template content). This fixes a race condition where ensureInsightAllContext()
   // previously created the file before the gateway could seed the full template.
   if (!isE2EMode) {
-    void repairinsightAllXOnlyBootstrapFiles().catch((error) => {
+    void repairInsightAllOnlyBootstrapFiles().catch((error) => {
       logger.warn('Failed to repair bootstrap files:', error);
     });
   }
@@ -453,8 +453,8 @@ async function initialize(): Promise<void> {
   gatewayManager.on('status', (status: { state: string }) => {
     sendMainWindowEvent('gateway:status-changed', status);
     if (status.state === 'running' && !isE2EMode) {
-      void ensureinsightAllXContext().catch((error) => {
-        logger.warn('Failed to re-merge insightAllX context after gateway reconnect:', error);
+      void ensureInsightAllContext().catch((error) => {
+        logger.warn('Failed to re-merge InsightAll context after gateway reconnect:', error);
       });
     }
   });
@@ -545,12 +545,12 @@ async function initialize(): Promise<void> {
     logger.info('Gateway auto-start disabled in settings');
   }
 
-  // Merge insightAllX context snippets into the workspace bootstrap files.
+  // Merge InsightAll context snippets into the workspace bootstrap files.
   // The gateway seeds workspace files asynchronously after its HTTP server
-  // is ready, so ensureinsightAllXContext will retry until the target files appear.
+  // is ready, so ensureInsightAllContext will retry until the target files appear.
   if (!isE2EMode) {
-    void ensureinsightAllXContext().catch((error) => {
-      logger.warn('Failed to merge insightAllX context into workspace:', error);
+    void ensureInsightAllContext().catch((error) => {
+      logger.warn('Failed to merge InsightAll context into workspace:', error);
     });
   }
 
@@ -601,7 +601,7 @@ if (gotTheLock) {
 
   // When a second instance is launched, focus the existing window instead.
   app.on('second-instance', () => {
-    logger.info('Second insightAllX instance detected; redirecting to the existing window');
+    logger.info('Second InsightAll instance detected; redirecting to the existing window');
 
     const focusRequest = requestSecondInstanceFocus(
       mainWindowFocusState,

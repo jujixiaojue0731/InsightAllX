@@ -13,12 +13,12 @@ const {
   const setLoginItemSettingsMock = vi.fn();
   const electronAppMock = {
     isPackaged: true,
-    getPath: (name: string) => (name === 'home' ? `/tmp/insightallx-launch-startup-${suffix}` : '/tmp'),
+    getPath: (name: string) => (name === 'home' ? `/tmp/insightall-launch-startup-${suffix}` : '/tmp'),
     setLoginItemSettings: setLoginItemSettingsMock,
   };
 
   return {
-    testHome: `/tmp/insightallx-launch-startup-${suffix}`,
+    testHome: `/tmp/insightall-launch-startup-${suffix}`,
     electronAppMock,
     setLoginItemSettingsMock,
   };
@@ -70,12 +70,12 @@ describe('launch-at-startup integration', () => {
     setPlatform('linux');
     const { applyLaunchAtStartupSetting } = await import('@electron/main/launch-at-startup');
 
-    const autostartPath = join(testHome, '.config', 'autostart', 'insightallx.desktop');
+    const autostartPath = join(testHome, '.config', 'autostart', 'insightall.desktop');
     await applyLaunchAtStartupSetting(true);
 
     const content = await readFile(autostartPath, 'utf8');
     expect(content).toContain('[Desktop Entry]');
-    expect(content).toContain('Name=insightAllX');
+    expect(content).toContain('Name=InsightAll');
     expect(content).toContain('Exec=');
 
     await applyLaunchAtStartupSetting(false);

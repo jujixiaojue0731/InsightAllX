@@ -14,7 +14,7 @@ const {
   deleteChannelConfigMock,
   ensureFeishuPluginInstalledMock,
   ensureScopedChannelBindingMock,
-  ensureinsightAllXContextMock,
+  ensureInsightAllContextMock,
   ensureWeChatPluginInstalledMock,
   getAllSettingsMock,
   getChannelFormValuesMock,
@@ -59,13 +59,13 @@ const {
   deleteChannelConfigMock: vi.fn(),
   ensureFeishuPluginInstalledMock: vi.fn(),
   ensureScopedChannelBindingMock: vi.fn(),
-  ensureinsightAllXContextMock: vi.fn(),
+  ensureInsightAllContextMock: vi.fn(),
   ensureWeChatPluginInstalledMock: vi.fn(),
   getAllSettingsMock: vi.fn(),
   getChannelFormValuesMock: vi.fn(),
   getSettingMock: vi.fn(),
   listLogFilesMock: vi.fn(),
-  logDir: '/tmp/insightallx-host-services-test-logs',
+  logDir: '/tmp/insightall-host-services-test-logs',
   listAgentsSnapshotFromConfigMock: vi.fn(),
   listAgentsSnapshotMock: vi.fn(),
   listConfiguredChannelAccountsFromConfigMock: vi.fn(),
@@ -119,7 +119,7 @@ const {
   syncSavedProviderToRuntimeMock: vi.fn(),
   syncLaunchAtStartupSettingFromStoreMock: vi.fn(),
   syncProxyConfigToinsightAllMock: vi.fn(),
-  testinsightAllConfigDir: '/tmp/insightallx-host-services-openclaw',
+  testinsightAllConfigDir: '/tmp/insightall-host-services-openclaw',
   updateAgentNameMock: vi.fn(),
   validateApiKeyWithProviderMock: vi.fn(),
   saveWeChatAccountStateMock: vi.fn(),
@@ -153,7 +153,7 @@ vi.mock('@electron/utils/logger', async (importOriginal) => {
       info: vi.fn(),
       warn: vi.fn(),
       getLogDir: () => logDir,
-      getLogFilePath: () => join(logDir, 'insightallx-current.log'),
+      getLogFilePath: () => join(logDir, 'insightall-current.log'),
       getRecentLogs: vi.fn(),
       listLogFiles: (...args: unknown[]) => listLogFilesMock(...args),
       readLogFile: (...args: unknown[]) => readLogFileMock(...args),
@@ -206,7 +206,7 @@ vi.mock('@electron/utils/plugin-install', () => ({
 }));
 
 vi.mock('@electron/utils/openclaw-workspace', () => ({
-  ensureinsightAllXContext: (...args: unknown[]) => ensureinsightAllXContextMock(...args),
+  ensureInsightAllContext: (...args: unknown[]) => ensureInsightAllContextMock(...args),
 }));
 
 vi.mock('@electron/services/providers/provider-runtime-sync', () => ({
@@ -344,7 +344,7 @@ describe('host services', () => {
     validateApiKeyWithProviderMock.mockResolvedValue({ valid: true });
     ensureFeishuPluginInstalledMock.mockResolvedValue({ installed: true, peerLinkOk: true });
     ensureWeChatPluginInstalledMock.mockResolvedValue({ installed: true });
-    ensureinsightAllXContextMock.mockResolvedValue(undefined);
+    ensureInsightAllContextMock.mockResolvedValue(undefined);
     rmSync(logDir, { recursive: true, force: true });
     rmSync(testinsightAllConfigDir, { recursive: true, force: true });
     mkdirSync(logDir, { recursive: true });
@@ -398,10 +398,10 @@ describe('host services', () => {
       restart: vi.fn(),
     } as never);
 
-    await expect(api.set({ key: 'chatWorkspacePath', value: '/Users/alex/workspace/insightAllX' })).resolves.toEqual({ success: true });
-    await expect(api.set({ key: 'recentWorkspacePaths', value: ['/Users/alex/workspace/insightAllX'] })).resolves.toEqual({ success: true });
-    expect(setSettingMock).toHaveBeenCalledWith('chatWorkspacePath', '/Users/alex/workspace/insightAllX');
-    expect(setSettingMock).toHaveBeenCalledWith('recentWorkspacePaths', ['/Users/alex/workspace/insightAllX']);
+    await expect(api.set({ key: 'chatWorkspacePath', value: '/Users/alex/workspace/InsightAll' })).resolves.toEqual({ success: true });
+    await expect(api.set({ key: 'recentWorkspacePaths', value: ['/Users/alex/workspace/InsightAll'] })).resolves.toEqual({ success: true });
+    expect(setSettingMock).toHaveBeenCalledWith('chatWorkspacePath', '/Users/alex/workspace/InsightAll');
+    expect(setSettingMock).toHaveBeenCalledWith('recentWorkspacePaths', ['/Users/alex/workspace/InsightAll']);
   });
 
   it('routes validated generic gateway rpc directly to the manager', async () => {
@@ -1150,7 +1150,7 @@ describe('host services', () => {
 
   it('returns diagnostics snapshot with channel view and log tails', async () => {
     writeFileSync(join(testinsightAllConfigDir, 'logs', 'gateway.log'), 'gateway-one\ngateway-two\n');
-    readLogFileMock.mockResolvedValue('insightallx-log-tail');
+    readLogFileMock.mockResolvedValue('insightall-log-tail');
     readinsightAllConfigMock.mockResolvedValue({
       channels: {
         feishu: {
@@ -1202,7 +1202,7 @@ describe('host services', () => {
           accounts: [expect.objectContaining({ accountId: 'default', agentId: 'main' })],
         }),
       ],
-      insightallxLogTail: 'insightallx-log-tail',
+      insightallLogTail: 'insightall-log-tail',
       gateway: expect.objectContaining({
         state: 'healthy',
         capabilities: { rpc: true },
@@ -1250,9 +1250,9 @@ describe('host services', () => {
   });
 
   it('reads only selected log files from the log directory', async () => {
-    const selectedLog = join(logDir, 'insightallx-selected.log');
+    const selectedLog = join(logDir, 'insightall-selected.log');
     writeFileSync(selectedLog, 'one\ntwo\nthree\n');
-    listLogFilesMock.mockResolvedValue([{ name: 'insightallx-selected.log', path: selectedLog, size: 14, modified: 'now' }]);
+    listLogFilesMock.mockResolvedValue([{ name: 'insightall-selected.log', path: selectedLog, size: 14, modified: 'now' }]);
     const { createLogsApi } = await import('@electron/services/logs-api');
 
     await expect(createLogsApi().readFile({ path: selectedLog, tailLines: 2 })).resolves.toEqual({

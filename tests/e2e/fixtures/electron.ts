@@ -222,7 +222,7 @@ async function seedE2eSettings(userDataDir: string): Promise<void> {
   await writeFile(settingsPath, JSON.stringify({ language: 'en' }, null, 2), 'utf-8');
 }
 
-async function launchinsightAllXElectron(
+async function launchInsightAllElectron(
   homeDir: string,
   userDataDir: string,
   options: LaunchElectronOptions = {},
@@ -232,8 +232,8 @@ async function launchinsightAllXElectron(
   }
   await seedE2eSettings(userDataDir);
   const inheritedEnv = { ...process.env };
-  delete inheritedEnv.INSIGHTALLX_E2E_SKIP_SETUP;
-  delete inheritedEnv.INSIGHTALLX_REMOTE_DEBUGGING_PORT;
+  delete inheritedEnv.INSIGHTALL_E2E_SKIP_SETUP;
+  delete inheritedEnv.INSIGHTALL_REMOTE_DEBUGGING_PORT;
   delete inheritedEnv.VITE_DEV_SERVER_URL;
   const electronEnv = process.platform === 'linux'
     ? {
@@ -255,11 +255,11 @@ async function launchinsightAllXElectron(
       LANG: 'en_US.UTF-8',
       LC_ALL: 'en_US.UTF-8',
       LANGUAGE: 'en',
-      INSIGHTALLX_E2E: '1',
-      INSIGHTALLX_USER_DATA_DIR: userDataDir,
+      INSIGHTALL_E2E: '1',
+      INSIGHTALL_USER_DATA_DIR: userDataDir,
       OPENCLAW_STATE_DIR: join(homeDir, '.openclaw'),
       OPENCLAW_CONFIG_PATH: join(homeDir, '.openclaw', 'openclaw.json'),
-      ...(options.skipSetup ? { INSIGHTALLX_E2E_SKIP_SETUP: '1' } : {}),
+      ...(options.skipSetup ? { INSIGHTALL_E2E_SKIP_SETUP: '1' } : {}),
     },
     timeout: 90_000,
   });
@@ -267,7 +267,7 @@ async function launchinsightAllXElectron(
 
 export const test = base.extend<ElectronFixtures>({
   homeDir: async ({ browserName: _browserName }, provideHomeDir) => {
-    const homeDir = await mkdtemp(join(tmpdir(), 'insightallx-e2e-home-'));
+    const homeDir = await mkdtemp(join(tmpdir(), 'insightall-e2e-home-'));
     await mkdir(join(homeDir, '.config'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Local'), { recursive: true });
     await mkdir(join(homeDir, 'AppData', 'Roaming'), { recursive: true });
@@ -279,7 +279,7 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   userDataDir: async ({ browserName: _browserName }, provideUserDataDir) => {
-    const userDataDir = await mkdtemp(join(tmpdir(), 'insightallx-e2e-user-data-'));
+    const userDataDir = await mkdtemp(join(tmpdir(), 'insightall-e2e-user-data-'));
     try {
       await provideUserDataDir(userDataDir);
     } finally {
@@ -288,7 +288,7 @@ export const test = base.extend<ElectronFixtures>({
   },
 
   launchElectronApp: async ({ homeDir, userDataDir }, provideLauncher) => {
-    await provideLauncher(async (options?: LaunchElectronOptions) => await launchinsightAllXElectron(homeDir, userDataDir, options));
+    await provideLauncher(async (options?: LaunchElectronOptions) => await launchInsightAllElectron(homeDir, userDataDir, options));
   },
 
   electronApp: async ({ launchElectronApp }, provideElectronApp) => {

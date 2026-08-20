@@ -1,4 +1,4 @@
-# insightAllX開発ガイド
+# InsightAll開発ガイド
 
 このドキュメントは、READMEの「開発」セクションの詳細版です。
 
@@ -15,7 +15,7 @@
 ### プロジェクト構成
 
 ```text
-insightAllX/
+InsightAll/
 ├── electron/                 # Electron Mainプロセス
 │   ├── services/            # 型付きHost API、プロバイダー、秘密情報、ランタイムサービス
 │   │   ├── providers/       # プロバイダー/アカウントのモデル同期ロジック
@@ -72,7 +72,7 @@ pnpm package:linux        # Linux向けにパッケージ化
 
 ヘッドレスLinuxではElectronテストに表示サービスが必要です。`xvfb-run -a pnpm run test:e2e`を使用してください。
 
-Electron E2E機能テストはローカルとCIの両方で既定で2つのPlaywright workerを使用します。通常の並列レーンは`INSIGHTALLX_E2E_WORKERS=<正の整数>`で調整できます。OS全体の状態に触れるテストは1 workerの`exclusive`プロジェクトを使用し、ホストのパフォーマンスプロファイルはその後単独で実行されます。新しいE2Eテストは既定で並列です。実際のクリップボードなどマシン全体で共有されるリソースを使う場合は、`tests/e2e/parallel-policy.ts`の`E2E_EXCLUSIVE_TAG`を適用してください。
+Electron E2E機能テストはローカルとCIの両方で既定で2つのPlaywright workerを使用します。通常の並列レーンは`INSIGHTALL_E2E_WORKERS=<正の整数>`で調整できます。OS全体の状態に触れるテストは1 workerの`exclusive`プロジェクトを使用し、ホストのパフォーマンスプロファイルはその後単独で実行されます。新しいE2Eテストは既定で並列です。実際のクリップボードなどマシン全体で共有されるリソースを使う場合は、`tests/e2e/parallel-policy.ts`の`E2E_EXCLUSIVE_TAG`を適用してください。
 
 独占前提を必要としない通常のspecだけを実行する場合は、`pnpm exec playwright test <spec> --project=parallel --no-deps`を使用します。
 
@@ -82,9 +82,9 @@ Electron E2E機能テストはローカルとCIの両方で既定で2つのPlayw
 
 CPUプロファイルはChrome DevToolsで開けます。アーティファクトには生成されたfixtureテキストだけが含まれ、製品テレメトリーではありません。結果はハードウェアに依存するため、単一のクロスプラットフォーム絶対閾値ではなく、同じマシンで繰り返した結果を比較してください。
 
-実際のRendererを記録するには、`INSIGHTALLX_REMOTE_DEBUGGING_PORT=9223 pnpm dev`で開発環境を起動し、PlaywrightまたはChrome DevToolsを`localhost:9223`へ接続します。実際のElectron Mainを記録するには`pnpm run profile:main`を実行し、`chrome://inspect`で`localhost:9229`を設定してElectron Mainターゲットを選びます。WebSocket trace自体を測定する場合を除き、`INSIGHTALLX_GATEWAY_WS_TRACE`は設定しないでください。
+実際のRendererを記録するには、`INSIGHTALL_REMOTE_DEBUGGING_PORT=9223 pnpm dev`で開発環境を起動し、PlaywrightまたはChrome DevToolsを`localhost:9223`へ接続します。実際のElectron Mainを記録するには`pnpm run profile:main`を実行し、`chrome://inspect`で`localhost:9229`を設定してElectron Mainターゲットを選びます。WebSocket trace自体を測定する場合を除き、`INSIGHTALL_GATEWAY_WS_TRACE`は設定しないでください。
 
-insightAllXは既定でChromiumのハードウェアアクセラレーションを有効にし、長い文書、スクロール、レイアウトアニメーションでGPUコンポジットとラスタライズを利用します。グラフィックスドライバーに問題がある場合のトラブルシューティングには、Chromium標準の`--disable-gpu`コマンドラインスイッチを使用できます。
+InsightAllは既定でChromiumのハードウェアアクセラレーションを有効にし、長い文書、スクロール、レイアウトアニメーションでGPUコンポジットとラスタライズを利用します。グラフィックスドライバーに問題がある場合のトラブルシューティングには、Chromium標準の`--disable-gpu`コマンドラインスイッチを使用できます。
 
 ### 通信回帰チェック
 
@@ -105,7 +105,7 @@ Playwright Electronスイートは`dist/`と`dist-electron/`からパッケー�
 
 - `pnpm run build:vite`でRendererとElectronのバンドルをビルド
 - 一時的な`HOME`を使ってElectronを分離E2Eモードで起動
-- 一時的なinsightAllX `userData`ディレクトリを使用
+- 一時的なInsightAll `userData`ディレクトリを使用
 - OS全体のリソースとパフォーマンステストを隔離しながら、通常のspecファイルを並列実行
 - Gateway自動起動、同梱スキルのインストール、トレイ作成、CLI自動インストールなど、重い起動副作用をスキップ
 

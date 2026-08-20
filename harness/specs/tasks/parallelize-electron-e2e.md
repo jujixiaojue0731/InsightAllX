@@ -54,4 +54,4 @@ docs:
 
 ## Scope
 
-This task changes only Electron E2E scheduling and fixture isolation. It does not change application transport behavior, production Host API routing, or user-visible insightAllX features.
+This task changes only Electron E2E scheduling and fixture isolation. It does not change application transport behavior, production Host API routing, or user-visible InsightAll features.

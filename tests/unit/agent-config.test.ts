@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/insightallx-agent-config-${suffix}`,
-    testUserData: `/tmp/insightallx-agent-config-user-data-${suffix}`,
+    testHome: `/tmp/insightall-agent-config-${suffix}`,
+    testUserData: `/tmp/insightall-agent-config-user-data-${suffix}`,
   };
 });
 
@@ -761,7 +761,7 @@ describe('agent config lifecycle', () => {
     expect(agentIds).not.toContain('1');
   });
 
-  it('seeds a default insightAllX IDENTITY.md for newly created agent workspaces', async () => {
+  it('seeds a default InsightAll IDENTITY.md for newly created agent workspaces', async () => {
     await writeinsightAllJson({
       agents: {
         list: [{ id: 'main', name: 'Main', default: true }],
@@ -772,7 +772,7 @@ describe('agent config lifecycle', () => {
 
     await createAgent('Research');
 
-    await expect(readFile(join(testHome, '.openclaw', 'workspace-research', 'IDENTITY.md'), 'utf8')).resolves.toContain('insightAllX');
+    await expect(readFile(join(testHome, '.openclaw', 'workspace-research', 'IDENTITY.md'), 'utf8')).resolves.toContain('InsightAll');
   });
 
   it('rolls back a committed agent entry when filesystem provisioning fails', async () => {

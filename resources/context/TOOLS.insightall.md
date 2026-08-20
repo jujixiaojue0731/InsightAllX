@@ -1,8 +1,8 @@
-## insightAllX Tool Notes
+## InsightAll Tool Notes
 
 ### uv (Python)
 
-- `uv` is bundled with insightAllX and on PATH. Do NOT use bare `python` or `pip`.
+- `uv` is bundled with InsightAll and on PATH. Do NOT use bare `python` or `pip`.
 - Run scripts: `uv run python <script>` | Install packages: `uv pip install <package>`
 
 ### Browser

@@ -13,7 +13,7 @@ async function readNativeMenuLabels(app: ElectronApplication) {
   });
 }
 
-test.describe('insightAllX main navigation without setup flow', () => {
+test.describe('InsightAll main navigation without setup flow', () => {
   test('keeps reload menu commands without application accelerators', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

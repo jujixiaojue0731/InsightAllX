@@ -4,7 +4,7 @@
 
 ### Overview
 
-insightAllX is a cross-platform **Electron desktop app** (React 19 + Vite + TypeScript) providing a GUI for the insightAll AI agent runtime. It uses pnpm as its package manager (pinned version in `package.json`'s `packageManager` field).
+InsightAll is a cross-platform **Electron desktop app** (React 19 + Vite + TypeScript) providing a GUI for the insightAll AI agent runtime. It uses pnpm as its package manager (pinned version in `package.json`'s `packageManager` field).
 
 ### Quick reference
 
@@ -29,8 +29,8 @@ Standard dev commands are in `package.json` scripts and `README.md`. Key ones:
 
 - **pnpm version**: The exact pnpm version is pinned via `packageManager` in `package.json`. Use `corepack enable && corepack prepare` to activate the correct version before installing.
 - **Electron on headless Linux**: The dbus errors (`Failed to connect to the bus`) are expected and harmless in a headless/cloud environment. The app still runs fine with `$DISPLAY` set (e.g., `:1` via Xvfb/VNC).
-- **Performance profiling**: `pnpm run perf:chat` writes synthetic Renderer/Main CPU profiles and versioned metrics under ignored Playwright `test-results/`. For live Renderer CDP use `INSIGHTALLX_REMOTE_DEBUGGING_PORT=9223 pnpm dev`; for live Main inspection use `pnpm run profile:main` and port 9229.
-- **E2E parallel isolation**: Functional Electron specs run concurrently with `INSIGHTALLX_E2E_WORKERS=2` by default. Keep tests parallel-safe and test-scoped; apply `E2E_EXCLUSIVE_TAG` from `tests/e2e/parallel-policy.ts` to tests that use the real clipboard or other OS-global state, and `E2E_PERFORMANCE_TAG` to host performance profiles. Extend `tests/unit/e2e-parallel-policy.test.ts` for recognizable new global APIs.
+- **Performance profiling**: `pnpm run perf:chat` writes synthetic Renderer/Main CPU profiles and versioned metrics under ignored Playwright `test-results/`. For live Renderer CDP use `INSIGHTALL_REMOTE_DEBUGGING_PORT=9223 pnpm dev`; for live Main inspection use `pnpm run profile:main` and port 9229.
+- **E2E parallel isolation**: Functional Electron specs run concurrently with `INSIGHTALL_E2E_WORKERS=2` by default. Keep tests parallel-safe and test-scoped; apply `E2E_EXCLUSIVE_TAG` from `tests/e2e/parallel-policy.ts` to tests that use the real clipboard or other OS-global state, and `E2E_PERFORMANCE_TAG` to host performance profiles. Extend `tests/unit/e2e-parallel-policy.test.ts` for recognizable new global APIs.
 - **`pnpm run lint` race condition**: If `pnpm run uv:download` was recently run, ESLint may fail with `ENOENT: no such file or directory, scandir '/workspace/temp_uv_extract'` because the temp directory was created and removed during download. Simply re-run lint after the download script finishes.
 - **Build scripts warning**: `pnpm install` may warn about ignored build scripts for `@discordjs/opus` and `koffi`. These are optional messaging-channel dependencies and the warnings are safe to ignore.
 - **`pnpm run init`**: This is a convenience script that runs `pnpm install` followed by `pnpm run uv:download`. Either run `pnpm run init` or run the two steps separately.

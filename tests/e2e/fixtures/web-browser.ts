@@ -127,7 +127,7 @@ async function createLocalWebBrowserFixture(homeDir: string): Promise<{
   const fixtureDir = join(homeDir, 'web-browser-e2e');
   const workspaceDir = join(fixtureDir, 'workspace');
   const filePath = join(fixtureDir, 'local file fixture.html');
-  const downloadFilename = `insightallx-e2e-${basename(homeDir)}.txt`;
+  const downloadFilename = `insightall-e2e-${basename(homeDir)}.txt`;
   await mkdir(workspaceDir, { recursive: true });
   await writeFile(filePath, html('Local File Fixture', '<main id="local-file">local file</main>'), 'utf8');
 
@@ -406,7 +406,7 @@ export async function prepareWebBrowserApp(app: ElectronApplication, workspaceDi
 export async function getWebBrowserMainSnapshot(app: ElectronApplication): Promise<WebBrowserMainSnapshot> {
   return await app.evaluate(async ({ app: _app }) => {
     const { BrowserWindow, session, webContents } = process.mainModule!.require('electron') as typeof import('electron');
-    const browserSession = session.fromPartition('persist:insightallx-web-browser', { cache: true });
+    const browserSession = session.fromPartition('persist:insightall-web-browser', { cache: true });
     const matchingGuests = webContents.getAllWebContents().filter((contents) => (
       contents.getType() === 'webview' && contents.session === browserSession
     ));
@@ -432,7 +432,7 @@ export async function installWebBrowserPolicyInstrumentation(
 ): Promise<WebBrowserPolicyInstrumentation> {
   await app.evaluate(async ({ app: _app }) => {
     const { clipboard, dialog, session } = process.mainModule!.require('electron') as typeof import('electron');
-    const browserSession = session.fromPartition('persist:insightallx-web-browser', { cache: true });
+    const browserSession = session.fromPartition('persist:insightall-web-browser', { cache: true });
     type ClipboardSnapshot = {
       hadContents: boolean;
       text: string;
@@ -607,7 +607,7 @@ export async function installWebBrowserPolicyInstrumentation(
         state.restored = true;
         const instrumentedDialog = dialog as unknown as { showMessageBox: typeof dialog.showMessageBox };
         instrumentedDialog.showMessageBox = state.originalShowMessageBox;
-        session.fromPartition('persist:insightallx-web-browser', { cache: true })
+        session.fromPartition('persist:insightall-web-browser', { cache: true })
           .off('will-download', state.downloadObserver as never);
         if (state.clipboardWritten && state.clipboard.hadContents) {
           const hasBookmark = state.clipboard.bookmark.url.length > 0;
@@ -648,7 +648,7 @@ export async function getWebBrowserCookieValue(
 ): Promise<string | null> {
   return await app.evaluate(async ({ app: _app }, input) => {
     const { session } = process.mainModule!.require('electron') as typeof import('electron');
-    const browserSession = session.fromPartition('persist:insightallx-web-browser', { cache: true });
+    const browserSession = session.fromPartition('persist:insightall-web-browser', { cache: true });
     const cookies = await browserSession.cookies.get({ url: input.url, name: input.name });
     return cookies[0]?.value ?? null;
   }, { url, name });

@@ -124,7 +124,7 @@ describe('chat session catalog startup', () => {
         sessionKey: 'agent:main:session-a',
         firstUserText: 'Summarize this workspace',
         lastTimestamp: 1_700_000_000_000,
-        workspacePath: '/Users/alex/workspace/insightAllX',
+        workspacePath: '/Users/alex/workspace/InsightAll',
       }],
     });
 
@@ -141,7 +141,7 @@ describe('chat session catalog startup', () => {
       expect(useChatStore.getState().sessionLabels['agent:main:session-a']).toBe('Summarize this workspace');
     });
 
-    expect(useChatStore.getState().sessions[0]?.workspacePath).toBe('/Users/alex/workspace/insightAllX');
+    expect(useChatStore.getState().sessions[0]?.workspacePath).toBe('/Users/alex/workspace/InsightAll');
     expect(useChatStore.getState().sessionLastActivity['agent:main:session-a']).toBe(1_700_000_000_000);
   });
 
@@ -436,14 +436,14 @@ describe('chat session catalog startup', () => {
       sessionLabels: {},
       sessionLastActivity: {},
     });
-    useChatStore.getState().selectAcpSession(pendingKey, '/Users/alex/workspace/insightAllX');
+    useChatStore.getState().selectAcpSession(pendingKey, '/Users/alex/workspace/InsightAll');
 
     await useChatStore.getState().loadSessions();
 
     expect(useChatStore.getState().currentSessionKey).toBe(pendingKey);
     expect(useChatStore.getState().sessions.find((session) => session.key === pendingKey)).toMatchObject({
       createdLocally: true,
-      workspacePath: '/Users/alex/workspace/insightAllX',
+      workspacePath: '/Users/alex/workspace/InsightAll',
     });
   });
 
@@ -454,7 +454,7 @@ describe('chat session catalog startup', () => {
       sessions: [
         {
           key: 'agent:main:main',
-          displayName: 'insightAllX',
+          displayName: 'InsightAll',
           lastMessagePreview: '[insightAll heartbeat poll]',
           updatedAt: 9_000,
         },

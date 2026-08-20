@@ -11,8 +11,8 @@ import { homedir } from 'os';
 import { logger } from './logger';
 import { getResourcesDir } from './paths';
 
-const INSIGHTALLX_BEGIN = '<!-- insightallx:begin -->';
-const INSIGHTALLX_END = '<!-- insightallx:end -->';
+const INSIGHTALL_BEGIN = '<!-- insightall:begin -->';
+const INSIGHTALL_END = '<!-- insightall:end -->';
 const DEFAULT_BOOTSTRAP_FILENAME = 'BOOTSTRAP.md';
 const DEFAULT_IDENTITY_FILENAME = 'IDENTITY.md';
 
@@ -28,17 +28,17 @@ function isCurrentinsightAllPath(p: string): boolean {
   return workspaceDir === openclawDir || workspaceDir.startsWith(openclawDir + sep);
 }
 
-export function buildDefaultinsightAllXIdentityContent(): string {
+export function buildDefaultInsightAllIdentityContent(): string {
   return [
-    '# IDENTITY.md - insightAllX',
+    '# IDENTITY.md - InsightAll',
     '',
-    '- **Name:** insightAllX',
+    '- **Name:** InsightAll',
     '- **Creature:** desktop AI assistant',
     '- **Vibe:** concise, capable, and practical',
     '- **Emoji:** 🐾',
     '- **Avatar:**',
     '',
-    'insightAllX uses a default desktop identity instead of chat-first bootstrap.',
+    'InsightAll uses a default desktop identity instead of chat-first bootstrap.',
     '',
   ].join('\n');
 }
@@ -64,10 +64,10 @@ async function writeFileIfMissing(path: string, content: string): Promise<boolea
 }
 
 /**
- * Ensure insightAllX-managed workspaces have a non-template IDENTITY.md before the
+ * Ensure InsightAll-managed workspaces have a non-template IDENTITY.md before the
  * Gateway initializes them. Existing custom identities are preserved.
  */
-export async function ensureinsightAllXIdentityFile(
+export async function ensureInsightAllIdentityFile(
   workspaceDir: string,
   options: { createDir?: boolean } = {},
 ): Promise<void> {
@@ -79,7 +79,7 @@ export async function ensureinsightAllXIdentityFile(
   }
 
   const identityPath = join(resolvedWorkspaceDir, DEFAULT_IDENTITY_FILENAME);
-  const defaultIdentity = buildDefaultinsightAllXIdentityContent();
+  const defaultIdentity = buildDefaultInsightAllIdentityContent();
   let wroteIdentity = await writeFileIfMissing(identityPath, defaultIdentity);
 
   if (!wroteIdentity) {
@@ -100,35 +100,35 @@ export async function ensureinsightAllXIdentityFile(
   if (await fileExists(bootstrapPath)) {
     try {
       await unlink(bootstrapPath);
-      logger.info(`Removed chat-first bootstrap file from insightAllX workspace (${resolvedWorkspaceDir})`);
+      logger.info(`Removed chat-first bootstrap file from InsightAll workspace (${resolvedWorkspaceDir})`);
     } catch {
       logger.warn(`Failed to remove chat-first bootstrap file: ${bootstrapPath}`);
     }
   } else if (wroteIdentity) {
-    logger.info(`Seeded default insightAllX identity for workspace (${resolvedWorkspaceDir})`);
+    logger.info(`Seeded default InsightAll identity for workspace (${resolvedWorkspaceDir})`);
   }
 }
 
-export async function ensureinsightAllXDefaultIdentity(): Promise<void> {
+export async function ensureInsightAllDefaultIdentity(): Promise<void> {
   const workspaceDirs = await resolveAllWorkspaceDirs();
   for (const { dir: workspaceDir, waitForGatewaySeed } of workspaceDirs) {
-    await ensureinsightAllXIdentityFile(workspaceDir, { createDir: waitForGatewaySeed });
+    await ensureInsightAllIdentityFile(workspaceDir, { createDir: waitForGatewaySeed });
   }
 }
 
 // ── Pure helpers (no I/O) ────────────────────────────────────────
 
 /**
- * Merge a insightAllX context section into an existing file's content.
+ * Merge a InsightAll context section into an existing file's content.
  * If markers already exist, replaces the section in-place.
  * Otherwise appends it at the end.
  */
-export function mergeinsightAllXSection(existing: string, section: string): string {
-  const wrapped = `${INSIGHTALLX_BEGIN}\n${section.trim()}\n${INSIGHTALLX_END}`;
-  const beginIdx = existing.indexOf(INSIGHTALLX_BEGIN);
-  const endIdx = existing.indexOf(INSIGHTALLX_END);
+export function mergeInsightAllSection(existing: string, section: string): string {
+  const wrapped = `${INSIGHTALL_BEGIN}\n${section.trim()}\n${INSIGHTALL_END}`;
+  const beginIdx = existing.indexOf(INSIGHTALL_BEGIN);
+  const endIdx = existing.indexOf(INSIGHTALL_END);
   if (beginIdx !== -1 && endIdx !== -1) {
-    return existing.slice(0, beginIdx) + wrapped + existing.slice(endIdx + INSIGHTALLX_END.length);
+    return existing.slice(0, beginIdx) + wrapped + existing.slice(endIdx + INSIGHTALL_END.length);
   }
   return existing.trimEnd() + '\n\n' + wrapped + '\n';
 }
@@ -136,7 +136,7 @@ export function mergeinsightAllXSection(existing: string, section: string): stri
 /**
  * Strip the "## First Run" section from workspace AGENTS.md content.
  * This section is seeded by the insightAll Gateway but is unnecessary
- * for insightAllX-managed workspaces.  Removes everything from the heading
+ * for InsightAll-managed workspaces.  Removes everything from the heading
  * line until the next markdown heading (any level) or end of content.
  */
 export function stripFirstRunSection(content: string): string {
@@ -263,10 +263,10 @@ async function resolveAllWorkspaceDirs(): Promise<WorkspaceDir[]> {
 // ── Bootstrap file repair ────────────────────────────────────────
 
 /**
- * Detect and remove bootstrap .md files that contain only insightAllX markers
+ * Detect and remove bootstrap .md files that contain only InsightAll markers
  * with no meaningful insightAll content outside them.
  */
-export async function repairinsightAllXOnlyBootstrapFiles(): Promise<void> {
+export async function repairInsightAllOnlyBootstrapFiles(): Promise<void> {
   const workspaceDirs = await resolveAllWorkspaceDirs();
   for (const { dir: workspaceDir } of workspaceDirs) {
     if (!(await fileExists(workspaceDir))) continue;
@@ -286,18 +286,18 @@ export async function repairinsightAllXOnlyBootstrapFiles(): Promise<void> {
       } catch {
         continue;
       }
-      const beginIdx = content.indexOf(INSIGHTALLX_BEGIN);
-      const endIdx = content.indexOf(INSIGHTALLX_END);
+      const beginIdx = content.indexOf(INSIGHTALL_BEGIN);
+      const endIdx = content.indexOf(INSIGHTALL_END);
       if (beginIdx === -1 || endIdx === -1) continue;
 
       const before = content.slice(0, beginIdx).trim();
-      const after = content.slice(endIdx + INSIGHTALLX_END.length).trim();
+      const after = content.slice(endIdx + INSIGHTALL_END.length).trim();
       if (before === '' && after === '') {
         try {
           await unlink(filePath);
-          logger.info(`Removed insightAllX-only bootstrap file for re-seeding: ${file} (${workspaceDir})`);
+          logger.info(`Removed InsightAll-only bootstrap file for re-seeding: ${file} (${workspaceDir})`);
         } catch {
-          logger.warn(`Failed to remove insightAllX-only bootstrap file: ${filePath}`);
+          logger.warn(`Failed to remove InsightAll-only bootstrap file: ${filePath}`);
         }
       }
     }
@@ -307,7 +307,7 @@ export async function repairinsightAllXOnlyBootstrapFiles(): Promise<void> {
 // ── Context merging ──────────────────────────────────────────────
 
 /**
- * Merge insightAllX context snippets into workspace bootstrap files that already
+ * Merge InsightAll context snippets into workspace bootstrap files that already
  * exist on disk. Missing files are only retryable for startup-owned workspaces.
  */
 type MergeResult = {
@@ -315,7 +315,7 @@ type MergeResult = {
   retryableMissing: number;
 };
 
-type EnsureinsightAllXContextOptions = {
+type EnsureInsightAllContextOptions = {
   /**
    * Startup should only wait for the default workspace. Explicit provisioning
    * flows can opt in so a freshly-created agent workspace gets patched after
@@ -324,16 +324,16 @@ type EnsureinsightAllXContextOptions = {
   waitForAllConfiguredWorkspaces?: boolean;
 };
 
-async function mergeinsightAllXContextOnce(options: EnsureinsightAllXContextOptions = {}): Promise<MergeResult> {
+async function mergeInsightAllContextOnce(options: EnsureInsightAllContextOptions = {}): Promise<MergeResult> {
   const contextDir = join(getResourcesDir(), 'context');
   if (!(await fileExists(contextDir))) {
-    logger.debug('insightAllX context directory not found, skipping context merge');
+    logger.debug('InsightAll context directory not found, skipping context merge');
     return { missing: 0, retryableMissing: 0 };
   }
 
   let files: string[];
   try {
-    files = (await readdir(contextDir)).filter((f) => f.endsWith('.insightallx.md'));
+    files = (await readdir(contextDir)).filter((f) => f.endsWith('.insightall.md'));
   } catch {
     return { missing: 0, retryableMissing: 0 };
   }
@@ -357,7 +357,7 @@ async function mergeinsightAllXContextOnce(options: EnsureinsightAllXContextOpti
     }
 
     for (const file of files) {
-      const targetName = file.replace('.insightallx.md', '.md');
+      const targetName = file.replace('.insightall.md', '.md');
       const targetPath = join(workspaceDir, targetName);
 
       if (!(await fileExists(targetPath))) {
@@ -381,12 +381,12 @@ async function mergeinsightAllXContextOnce(options: EnsureinsightAllXContextOpti
         }
       }
 
-      const merged = mergeinsightAllXSection(existing, section);
+      const merged = mergeInsightAllSection(existing, section);
       // Compare against on-disk content so we persist changes even when only
-      // First Run stripping happened and the insightAllX section stayed identical.
+      // First Run stripping happened and the InsightAll section stayed identical.
       if (merged !== originalExisting) {
         await writeFile(targetPath, merged, 'utf-8');
-        logger.info(`Merged insightAllX context into ${targetName} (${workspaceDir})`);
+        logger.info(`Merged InsightAll context into ${targetName} (${workspaceDir})`);
       }
     }
   }
@@ -396,47 +396,47 @@ async function mergeinsightAllXContextOnce(options: EnsureinsightAllXContextOpti
 
 const RETRY_INTERVAL_MS = 2000;
 const MAX_RETRIES = 5;
-let ensureinsightAllXContextPromise: Promise<void> | null = null;
-let ensureinsightAllXContextWaitsForAll = false;
+let ensureInsightAllContextPromise: Promise<void> | null = null;
+let ensureInsightAllContextWaitsForAll = false;
 
 /**
- * Ensure insightAllX context snippets are merged into the openclaw workspace
+ * Ensure InsightAll context snippets are merged into the openclaw workspace
  * bootstrap files.
  */
-export async function ensureinsightAllXContext(options: EnsureinsightAllXContextOptions = {}): Promise<void> {
-  if (ensureinsightAllXContextPromise) {
-    if (options.waitForAllConfiguredWorkspaces && !ensureinsightAllXContextWaitsForAll) {
-      return ensureinsightAllXContextPromise.then(() => ensureinsightAllXContext(options));
+export async function ensureInsightAllContext(options: EnsureInsightAllContextOptions = {}): Promise<void> {
+  if (ensureInsightAllContextPromise) {
+    if (options.waitForAllConfiguredWorkspaces && !ensureInsightAllContextWaitsForAll) {
+      return ensureInsightAllContextPromise.then(() => ensureInsightAllContext(options));
     }
-    return ensureinsightAllXContextPromise;
+    return ensureInsightAllContextPromise;
   }
 
-  ensureinsightAllXContextWaitsForAll = options.waitForAllConfiguredWorkspaces === true;
-  ensureinsightAllXContextPromise = runEnsureinsightAllXContext(options).finally(() => {
-    ensureinsightAllXContextPromise = null;
-    ensureinsightAllXContextWaitsForAll = false;
+  ensureInsightAllContextWaitsForAll = options.waitForAllConfiguredWorkspaces === true;
+  ensureInsightAllContextPromise = runEnsureInsightAllContext(options).finally(() => {
+    ensureInsightAllContextPromise = null;
+    ensureInsightAllContextWaitsForAll = false;
   });
-  return ensureinsightAllXContextPromise;
+  return ensureInsightAllContextPromise;
 }
 
-async function runEnsureinsightAllXContext(options: EnsureinsightAllXContextOptions): Promise<void> {
-  let result = await mergeinsightAllXContextOnce(options);
+async function runEnsureInsightAllContext(options: EnsureInsightAllContextOptions): Promise<void> {
+  let result = await mergeInsightAllContextOnce(options);
   if (result.retryableMissing === 0) {
     if (result.missing > 0) {
-      logger.debug(`insightAllX context merge skipped ${result.missing} non-ready file(s)`);
+      logger.debug(`InsightAll context merge skipped ${result.missing} non-ready file(s)`);
     }
     return;
   }
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     await new Promise((r) => setTimeout(r, RETRY_INTERVAL_MS));
-    result = await mergeinsightAllXContextOnce(options);
+    result = await mergeInsightAllContextOnce(options);
     if (result.retryableMissing === 0) {
-      logger.info(`insightAllX context merge completed after ${attempt} retry(ies)`);
+      logger.info(`InsightAll context merge completed after ${attempt} retry(ies)`);
       return;
     }
-    logger.debug(`insightAllX context merge: ${result.retryableMissing} startup file(s) still missing (retry ${attempt}/${MAX_RETRIES})`);
+    logger.debug(`InsightAll context merge: ${result.retryableMissing} startup file(s) still missing (retry ${attempt}/${MAX_RETRIES})`);
   }
 
-  logger.warn(`insightAllX context merge: ${result.retryableMissing} startup file(s) still missing after ${MAX_RETRIES} retries`);
+  logger.warn(`InsightAll context merge: ${result.retryableMissing} startup file(s) still missing after ${MAX_RETRIES} retries`);
 }

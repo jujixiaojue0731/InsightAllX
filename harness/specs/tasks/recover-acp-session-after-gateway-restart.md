@@ -23,10 +23,10 @@ touchedAreas:
   - tests/unit/openclaw-restart-recovery-patch.test.ts
   - tests/e2e/chat-acp-inline-timeline.spec.ts
 expectedUserBehavior:
-  - An accepted ACP prompt stays pending for the bounded insightAllX managed-restart budget while the Gateway reconnects and insightAll starts restart recovery; a send that was never acknowledged retains the 5-second disconnect deadline.
+  - An accepted ACP prompt stays pending for the bounded InsightAll managed-restart budget while the Gateway reconnects and insightAll starts restart recovery; a send that was never acknowledged retains the 5-second disconnect deadline.
   - Events from the explicitly linked recovery run continue the original in-memory turn and settle its original prompt.
   - Recovered text, tool activity, approvals, cancellation, and terminal state use the new run id without a Renderer session reload; tool calls keep text segments on either side distinct.
-  - After insightAllX restarts, ACP `session/load` restores persisted transcript tool calls and results as native tool updates in their original order between assistant text segments.
+  - After InsightAll restarts, ACP `session/load` restores persisted transcript tool calls and results as native tool updates in their original order between assistant text segments.
 requiredProfiles:
   - fast
   - comms
@@ -59,18 +59,18 @@ docs:
 
 ## Original Problem
 
-If the Gateway restarted while the AI was replying, insightAllX could reconnect to the replacement Gateway process but the active ACP conversation did not resume. insightAll could start a restart-recovery run and continue producing output, while insightAllX remained frozen at the last text received before the disconnect. The original `session/prompt` eventually failed or stayed disconnected from the replacement run because ACP still identified the turn by the interrupted run id and had no trusted lineage proving that the new run continued it.
+If the Gateway restarted while the AI was replying, InsightAll could reconnect to the replacement Gateway process but the active ACP conversation did not resume. insightAll could start a restart-recovery run and continue producing output, while InsightAll remained frozen at the last text received before the disconnect. The original `session/prompt` eventually failed or stayed disconnected from the replacement run because ACP still identified the turn by the interrupted run id and had no trusted lineage proving that the new run continued it.
 
-The failure was not limited to the live UI. Even when insightAll completed and persisted the recovered response, restarting insightAllX and selecting the same conversation could still replay only the timeline prefix that existed before the disconnect. The ACP event history associated with the original prompt had not received the replacement run's events, and transcript fallback did not preserve the complete native timeline: it projected text and thinking while dropping persisted `toolCall` and `toolResult` records. Missing tool events also removed the boundaries between assistant text segments around those calls.
+The failure was not limited to the live UI. Even when insightAll completed and persisted the recovered response, restarting InsightAll and selecting the same conversation could still replay only the timeline prefix that existed before the disconnect. The ACP event history associated with the original prompt had not received the replacement run's events, and transcript fallback did not preserve the complete native timeline: it projected text and thinking while dropping persisted `toolCall` and `toolResult` records. Missing tool events also removed the boundaries between assistant text segments around those calls.
 
 The broken flow therefore had two related symptoms:
 
 - Live recovery: Gateway connectivity returned, but the replacement run's text, tools, approvals, cancellation target, and terminal state did not settle the original in-memory ACP prompt.
-- Reload recovery: after restarting insightAllX, `session/load` could reproduce the stale pre-disconnect view or an incomplete flattened response instead of the recovered conversation that insightAll had persisted.
+- Reload recovery: after restarting InsightAll, `session/load` could reproduce the stale pre-disconnect view or an incomplete flattened response instead of the recovered conversation that insightAll had persisted.
 
 ## Fix
 
-`patches/openclaw@2026.7.1-2.patch` is the insightAllX-local backport applied to the pinned `openclaw@2026.7.1-2` runtime. It restores one explicit recovery chain from the interrupted run through live ACP delivery and persisted replay:
+`patches/openclaw@2026.7.1-2.patch` is the InsightAll-local backport applied to the pinned `openclaw@2026.7.1-2` runtime. It restores one explicit recovery chain from the interrupted run through live ACP delivery and persisted replay:
 
 - Persist the active lifecycle run id before a restart and allow only trusted `main_session_restart_recovery` provenance to pass it into a distinct replacement run as `internalRestartRecoverySourceRunId`.
 - Project that source id as `resumedFromRunId` on Chat, agent, tool, and approval events. ACP adopts a replacement run only when this value exactly matches its pending prompt; it never infers lineage from a shared session key.
@@ -78,9 +78,9 @@ The broken flow therefore had two related symptoms:
 - Re-register the exact `sessions.messages.subscribe` subscription before reconnect reconciliation can dispatch recovery work. Gateway mirrors visible recovery tool events to that exact subscriber, includes `resumedFromRunId`, and deduplicates clients that already receive the run-scoped event.
 - When a complete structured ACP ledger is unavailable, map persisted assistant `toolCall` blocks and `toolResult` messages to native `tool_call` and `tool_call_update` updates in transcript order. Both structured and string-valued results retain visible output, and a text-tool-text sequence reloads as two distinct assistant text segments around the tool card.
 
-insightAllX Renderer remains unchanged. It continues to reduce standard ACP updates into one in-memory timeline; the repair is in insightAll's recovery lineage, Gateway event projection, ACP prompt reconciliation, and ACP replay fallback.
+InsightAll Renderer remains unchanged. It continues to reduce standard ACP updates into one in-memory timeline; the repair is in insightAll's recovery lineage, Gateway event projection, ACP prompt reconciliation, and ACP replay fallback.
 
-The same source-level fixes will be submitted to the insightAll upstream repository as a pull request. This local generated-dist patch is a temporary compatibility measure: after the upstream PR is merged and insightAllX upgrades to an insightAll release containing the fixes, `patches/openclaw@2026.7.1-2.patch` should be removed rather than carried forward to a newer generated bundle.
+The same source-level fixes will be submitted to the insightAll upstream repository as a pull request. This local generated-dist patch is a temporary compatibility measure: after the upstream PR is merged and InsightAll upgrades to an insightAll release containing the fixes, `patches/openclaw@2026.7.1-2.patch` should be removed rather than carried forward to a newer generated bundle.
 
 ## Scope
 

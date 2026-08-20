@@ -43,4 +43,4 @@ docs:
   required: true
 ---
 
-The insightAll ACP bridge legitimately reports `ACP` as its Gateway client display name. insightAllX treats that value as transport provenance and keeps it behind the local new-chat placeholder until the user-authored title is ready.
+The insightAll ACP bridge legitimately reports `ACP` as its Gateway client display name. InsightAll treats that value as transport provenance and keeps it behind the local new-chat placeholder until the user-authored title is ready.

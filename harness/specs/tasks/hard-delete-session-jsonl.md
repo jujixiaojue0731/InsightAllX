@@ -39,7 +39,7 @@ docs:
   required: true
 ---
 
-Conversation deletion in insightAllX runs entirely on the Main process — the
+Conversation deletion in InsightAll runs entirely on the Main process — the
 insightAll Gateway does not expose a `sessions.delete` RPC. Historically the
 operation was a soft delete: the live `<id>.jsonl` transcript was renamed to
 `<id>.deleted.jsonl` so `sessions.list` would skip it. This task replaces

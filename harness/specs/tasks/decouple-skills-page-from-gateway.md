@@ -15,7 +15,7 @@ touchedAreas:
   - electron/extensions/builtin/index.ts
   - electron/extensions/builtin/clawhub-marketplace.ts
   - electron/extensions/types.ts
-  - insightallx-extensions.json
+  - insightall-extensions.json
   - package.json
   - pnpm-lock.yaml
   - playground/clawhub-skillshub-gateway-analysis.md

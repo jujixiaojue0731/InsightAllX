@@ -1,4 +1,4 @@
-# insightAllX — Windows-only build (unsigned), manual trigger.
+# InsightAll — Windows-only build (unsigned), manual trigger.
 # No SignPath token in the fork, so produce an unsigned NSIS installer.
 
 name: Build Windows

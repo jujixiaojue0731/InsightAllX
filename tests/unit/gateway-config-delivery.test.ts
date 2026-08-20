@@ -46,7 +46,7 @@ describe('insightAll config delivery coordinator', () => {
   beforeEach(async () => {
     renameMock.mockClear();
     resetinsightAllConfigCoordinatorForTests();
-    testDir = await mkdtemp(join(tmpdir(), 'insightallx-config-delivery-'));
+    testDir = await mkdtemp(join(tmpdir(), 'insightall-config-delivery-'));
     configPath = join(testDir, 'configured-openclaw.json5');
     previousConfigPath = process.env.OPENCLAW_CONFIG_PATH;
     process.env.OPENCLAW_CONFIG_PATH = configPath;
@@ -485,9 +485,9 @@ describe('insightAll config delivery coordinator', () => {
       throw new Error(`Unexpected RPC method: ${method}`);
     });
     gatewayManager.getStatus.mockReturnValue({ state: 'running' });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await expect(mutateOpenClawConfig((config) => {
+    await expect(mutateinsightAllConfig((config) => {
       (config.channels as Record<string, unknown>).feishu = { enabled: true };
     })).resolves.toBe(true);
 
@@ -510,9 +510,9 @@ describe('insightAll config delivery coordinator', () => {
       throw new Error(`Unexpected RPC method: ${method}`);
     });
     gatewayManager.getStatus.mockReturnValue({ state: 'running' });
-    registerOpenClawConfigCoordinator(gatewayManager);
+    registerinsightAllConfigCoordinator(gatewayManager);
 
-    await expect(mutateOpenClawConfig((config) => {
+    await expect(mutateinsightAllConfig((config) => {
       (config.channels as Record<string, unknown>).feishu = { enabled: true };
     })).resolves.toBe(true);
   });

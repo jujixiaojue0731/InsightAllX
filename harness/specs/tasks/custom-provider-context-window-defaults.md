@@ -42,7 +42,7 @@ docs:
 
 ## Background
 
-insightAllX wrote custom-provider model rows with only `{ id, name, input }`. Without
+InsightAll wrote custom-provider model rows with only `{ id, name, input }`. Without
 `contextWindow` (or `contextTokens`), insightAll's embedded runner cannot budget
 preemptive compaction or the context-window guard, so long sessions on custom
 providers only fail at the provider with "Context overflow: prompt too large

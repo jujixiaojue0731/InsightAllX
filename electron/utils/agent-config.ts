@@ -7,7 +7,7 @@ import type { insightAllConfig } from './channel-config';
 import { expandPath, getinsightAllConfigDir } from './paths';
 import * as logger from './logger';
 import { toUiChannelType } from './channel-alias';
-import { ensureinsightAllXIdentityFile } from './openclaw-workspace';
+import { ensureInsightAllIdentityFile } from './openclaw-workspace';
 
 const MAIN_AGENT_ID = 'main';
 const MAIN_AGENT_NAME = 'Main Agent';
@@ -428,12 +428,12 @@ async function provisionAgentFilesystem(
   // When inheritWorkspace is true, copy the main agent's workspace bootstrap
   // files (SOUL.md, AGENTS.md, etc.) so the new agent inherits the same
   // personality / instructions. Otherwise insightAll will seed the missing files
-  // on first use, but insightAllX still pre-seeds IDENTITY.md so desktop workspaces
+  // on first use, but InsightAll still pre-seeds IDENTITY.md so desktop workspaces
   // skip the chat-first bootstrap flow.
   if (options?.inheritWorkspace && targetWorkspace !== sourceWorkspace) {
     await copyBootstrapFiles(sourceWorkspace, targetWorkspace);
   }
-  await ensureinsightAllXIdentityFile(targetWorkspace, { createDir: true });
+  await ensureInsightAllIdentityFile(targetWorkspace, { createDir: true });
   if (targetAgentDir !== sourceAgentDir) {
     await copyRuntimeFiles(sourceAgentDir, targetAgentDir);
   }

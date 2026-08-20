@@ -1,10 +1,10 @@
 {
-  "name": "@insightallx/harness",
+  "name": "@insightall/harness",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "bin": {
-    "insightallx-harness": "./src/cli.mjs"
+    "insightall-harness": "./src/cli.mjs"
   },
   "scripts": {
     "start": "node src/cli.mjs"

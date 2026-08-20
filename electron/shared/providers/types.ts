@@ -63,7 +63,7 @@ export const OPENCLAW_API_PROTOCOLS = [
 
 export type insightAllApiProtocol = (typeof OPENCLAW_API_PROTOCOLS)[number];
 
-/** Legacy api values insightAllX previously wrote that insightAll no longer accepts. */
+/** Legacy api values InsightAll previously wrote that insightAll no longer accepts. */
 export const LEGACY_OPENCLAW_API_PROTOCOL_MIGRATIONS = {
   'openai-codex-responses': 'openai-chatgpt-responses',
 } as const satisfies Record<string, insightAllApiProtocol>;

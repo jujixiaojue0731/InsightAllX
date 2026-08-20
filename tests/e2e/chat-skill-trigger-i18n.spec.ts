@@ -23,7 +23,7 @@ async function openChatWithInstalledMocks(app: ElectronApplication) {
   return page;
 }
 
-test.describe('insightAllX chat skill trigger', () => {
+test.describe('InsightAll chat skill trigger', () => {
   test('renders the localized Chinese skill label after the @ trigger', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

@@ -3,7 +3,7 @@ id: use-openclaw-native-config-delivery
 title: Use insightAll-native config delivery and restart planning
 scenario: gateway-backend-communication
 taskType: runtime-bridge
-intent: Make one Main-owned coordinator the only insightAllX path for insightAll config mutation, using config.get and config.set while running and a file fallback before startup.
+intent: Make one Main-owned coordinator the only InsightAll path for insightAll config mutation, using config.get and config.set while running and a file fallback before startup.
 touchedAreas:
   - harness/specs/tasks/use-openclaw-native-config-delivery.md
   - harness/specs/rules/openclaw-config-delivery.md
@@ -36,7 +36,7 @@ touchedAreas:
   - README.ja-JP.md
 expectedUserBehavior:
   - Saving providers, agents, channels, bindings, skills, or other hot-applicable insightAll configuration does not replace the Gateway process.
-  - Every insightAllX mutation of the active insightAll config goes through one coordinator-owned read-modify-write transaction.
+  - Every InsightAll mutation of the active insightAll config goes through one coordinator-owned read-modify-write transaction.
   - A running Gateway mutation uses config.get as its baseline and config.set as its commit instead of writing the file directly.
   - Saving config while the Gateway is stopped does not start it.
   - Proxy and other process-launch environment changes still replace the running Gateway process.

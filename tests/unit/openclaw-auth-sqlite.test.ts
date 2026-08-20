@@ -6,7 +6,7 @@ import { join } from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { testHome } = vi.hoisted(() => ({
-  testHome: `/tmp/insightallx-auth-sqlite-${Math.random().toString(36).slice(2)}`,
+  testHome: `/tmp/insightall-auth-sqlite-${Math.random().toString(36).slice(2)}`,
 }));
 
 vi.mock('os', async () => {

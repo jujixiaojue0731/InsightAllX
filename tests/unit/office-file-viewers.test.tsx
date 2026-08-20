@@ -83,7 +83,7 @@ function deferred<T = void>() {
 
 function appendRenderedPage(body: HTMLElement, width = 800, text = 'Rendered document') {
   const page = body.ownerDocument.createElement('section');
-  page.className = 'insightallx-docx';
+  page.className = 'insightall-docx';
   page.textContent = text;
   Object.defineProperty(page, 'offsetWidth', { configurable: true, value: width });
   body.append(page);
@@ -261,7 +261,7 @@ describe('DocxViewer', () => {
     expect(body.parentNode).toBeNull();
     expect(styles.parentNode).toBeNull();
     expect(options).toEqual({
-      className: 'insightallx-docx',
+      className: 'insightall-docx',
       inWrapper: true,
       ignoreWidth: false,
       ignoreHeight: false,

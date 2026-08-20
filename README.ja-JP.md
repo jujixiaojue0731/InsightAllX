@@ -1,16 +1,16 @@
 
 <p align="center">
-  <img src="src/assets/logo.svg" width="128" height="128" alt="insightAllX Logo" />
+  <img src="src/assets/logo.svg" width="128" height="128" alt="InsightAll Logo" />
 </p>
 
-<h1 align="center">insightAllX</h1>
+<h1 align="center">InsightAll</h1>
 
 <p align="center">
   <strong>insightAll AIエージェントのためのデスクトップインターフェース</strong>
 </p>
 
 <p align="center">
-  <a href="#insightallxを選ぶ理由">insightAllXを選ぶ理由</a> •
+  <a href="#insightallを選ぶ理由">InsightAllを選ぶ理由</a> •
   <a href="#はじめに">はじめに</a> •
   <a href="#アーキテクチャ">アーキテクチャ</a> •
   <a href="#開発">開発</a> •
@@ -24,7 +24,7 @@
   <a href="https://discord.com/invite/84Kex3GGAh" target="_blank">
   <img src="https://img.shields.io/discord/1399603591471435907?logo=discord&labelColor=%20%235462eb&logoColor=%20%23f5f5f5&color=%20%235462eb" alt="chat on Discord" />
   </a>
-  <img src="https://img.shields.io/github/downloads/ValueCell-ai/insightAllX/total?color=%23027DEB" alt="Downloads" />
+  <img src="https://img.shields.io/github/downloads/ValueCell-ai/InsightAll/total?color=%23027DEB" alt="Downloads" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
 </p>
 
@@ -36,11 +36,11 @@
 
 ## 概要
 
-**insightAllX**は、強力なAIエージェントと日常のユーザーとの間のギャップを埋めます。[insightAll](https://github.com/insightAll)をベースに構築されており、コマンドラインによるAIオーケストレーションを、使いやすく美しいデスクトップ体験に変換します。ターミナルは必要ありません。
+**InsightAll**は、強力なAIエージェントと日常のユーザーとの間のギャップを埋めます。[insightAll](https://github.com/insightAll)をベースに構築されており、コマンドラインによるAIオーケストレーションを、使いやすく美しいデスクトップ体験に変換します。ターミナルは必要ありません。
 
-ワークフローの自動化、AI搭載チャネルの管理、インテリジェントなタスクのスケジューリングなど、insightAllXはAIエージェントを効果的に活用するために必要なインターフェースを提供します。
+ワークフローの自動化、AI搭載チャネルの管理、インテリジェントなタスクのスケジューリングなど、InsightAllはAIエージェントを効果的に活用するために必要なインターフェースを提供します。
 
-insightAllXにはベストプラクティスに基づくモデルプロバイダーがあらかじめ設定されており、Windowsと多言語設定をネイティブにサポートしています。高度な設定は **設定 → 詳細設定 → 開発者モード** から調整できます。
+InsightAllにはベストプラクティスに基づくモデルプロバイダーがあらかじめ設定されており、Windowsと多言語設定をネイティブにサポートしています。高度な設定は **設定 → 詳細設定 → 開発者モード** から調整できます。
 
 <p align="center"><strong style="font-size:1.1em; text-decoration: underline;">完全なエンタープライズ版、専用サービスサポート、またはビジネスシナリオに合わせた導入支援が必要な場合は、<a href="mailto:public@valuecell.ai">public@valuecell.ai</a> までお問い合わせください。</strong></p>
 
@@ -61,11 +61,11 @@ insightAllXにはベストプラクティスに基づくモデルプロバイダ
   </tr>
 </table>
 
-## insightAllXを選ぶ理由
+## InsightAllを選ぶ理由
 
-AIエージェントの構築にコマンドラインの習得は不要であるべきです。insightAllXはシンプルな哲学のもとに設計されました：**強力な技術には、あなたの時間を尊重するインターフェースがふさわしい。** insightAllXは公式の **insightAll** コアを直接ベースに構築されています。別途インストールする必要はなく、ランタイムをアプリケーション内に組み込むことで、シームレスな「すべて込み」の体験を提供します。上流のinsightAllと緊密に連携し、公式の最新機能、安定性の改善、エコシステムとの互換性を利用できるようにしています。
+AIエージェントの構築にコマンドラインの習得は不要であるべきです。InsightAllはシンプルな哲学のもとに設計されました：**強力な技術には、あなたの時間を尊重するインターフェースがふさわしい。** InsightAllは公式の **insightAll** コアを直接ベースに構築されています。別途インストールする必要はなく、ランタイムをアプリケーション内に組み込むことで、シームレスな「すべて込み」の体験を提供します。上流のinsightAllと緊密に連携し、公式の最新機能、安定性の改善、エコシステムとの互換性を利用できるようにしています。
 
-| 課題 | insightAllXのソリューション |
+| 課題 | InsightAllのソリューション |
 |------|----------------------|
 | 複雑なCLIセットアップ | ガイド付きセットアップウィザードによるワンクリックインストール |
 | 設定ファイル | リアルタイム検証付きのビジュアル設定 |
@@ -107,14 +107,14 @@ AIエージェントの構築にコマンドラインの習得は不要である
 
 #### ビルド済みリリース（推奨）
 
-[Releases](https://github.com/ValueCell-ai/insightAllX/releases) ページから、お使いのプラットフォーム向けの最新リリースをダウンロードしてください。
+[Releases](https://github.com/ValueCell-ai/InsightAll/releases) ページから、お使いのプラットフォーム向けの最新リリースをダウンロードしてください。
 
 #### ソースからビルド
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/ValueCell-ai/insightAllX.git
-cd insightAllX
+git clone https://github.com/ValueCell-ai/InsightAll.git
+cd InsightAll
 
 # プロジェクトを初期化
 pnpm run init
@@ -125,7 +125,7 @@ pnpm dev
 
 ### 初回起動
 
-insightAllXを初めて起動すると、**セットアップウィザード**が次の手順を案内します。
+InsightAllを初めて起動すると、**セットアップウィザード**が次の手順を案内します。
 
 1. **言語と地域**：使用するロケールを設定
 2. **AIプロバイダー**：ブラウザまたはデバイスログインに対応したプロバイダーでは、APIキーまたはOAuthで追加
@@ -134,13 +134,13 @@ insightAllXを初めて起動すると、**セットアップウィザード**�
 
 サポートされている場合、ウィザードはシステム言語を初期選択し、対応していない場合は英語にフォールバックします。
 
-> Web検索について：insightAllXはAgentとGatewayの両方のポリシーレイヤーで、insightAllの汎用 `web_search` ツールを無効にします。Moonshot（Kimi）検索も対象です。管理対象のブラウザ自動化と `web_fetch` は引き続き利用できます。
+> Web検索について：InsightAllはAgentとGatewayの両方のポリシーレイヤーで、insightAllの汎用 `web_search` ツールを無効にします。Moonshot（Kimi）検索も対象です。管理対象のブラウザ自動化と `web_fetch` は引き続き利用できます。
 >
-> 内部ツールについて：insightAllXは両方のポリシーレイヤーで、Agentに対して `gateway`、`nodes`、`create_goal`、`get_goal`、`update_goal` も無効にします。insightAllXアプリケーション自身のGateway RPCに加え、メッセージング、セッションオーケストレーション、Agent検出ツールは引き続き利用できます。
+> 内部ツールについて：InsightAllは両方のポリシーレイヤーで、Agentに対して `gateway`、`nodes`、`create_goal`、`get_goal`、`update_goal` も無効にします。InsightAllアプリケーション自身のGateway RPCに加え、メッセージング、セッションオーケストレーション、Agent検出ツールは引き続き利用できます。
 
 ### プロキシ設定
 
-insightAllXには、Electron、insightAll Gateway、Telegramなどのチャネルがローカルプロキシクライアント経由でインターネットにアクセスする必要がある環境向けの、組み込みプロキシ設定があります。
+InsightAllには、Electron、insightAll Gateway、Telegramなどのチャネルがローカルプロキシクライアント経由でインターネットにアクセスする必要がある環境向けの、組み込みプロキシ設定があります。
 
 **設定 → Gateway → プロキシ**を開き、既定のプロキシ、バイパスルール、開発者モードでのHTTP・HTTPS・`ALL_PROXY` / SOCKSの上書きを設定します。ローカル設定の例は `http://127.0.0.1:7890` です。
 
@@ -148,7 +148,7 @@ insightAllXには、Electron、insightAll Gateway、Telegramなどのチャネ�
 
 ## アーキテクチャ
 
-insightAllXは **Host API統一レイヤーを備えたデュアルプロセスアーキテクチャ**を採用しています。React Rendererは単一のクライアント抽象を呼び出し、Electron Mainがプロトコル選択、Gatewayのライフサイクル、ACP Chatのstdio bridgeを管理します。
+InsightAllは **Host API統一レイヤーを備えたデュアルプロセスアーキテクチャ**を採用しています。React Rendererは単一のクライアント抽象を呼び出し、Electron Mainがプロトコル選択、Gatewayのライフサイクル、ACP Chatのstdio bridgeを管理します。
 
 - **プロセスモデル**：Electron Mainがウィンドウ、Gateway監視、システム統合、更新を管理します。insightAll GatewayはAIオーケストレーション、チャネル、スキル機能を提供し、Rendererはローカルエンドポイントへ直接アクセスしません。
 - **設定の配信**：Gateway実行中は `config.get` / `config.set` を使い、停止中または起動中は解決済みJSON5設定を更新します。通常のプロバイダー、Agent、スキル、モデル変更ではプロセスを置き換えず、認証情報は `secrets.reload` でホットリロードされます。ハートビートが4回連続で失敗した場合は、ライフサイクルで保護された復旧を要求します。
@@ -182,7 +182,7 @@ pnpm package         # 現在のプラットフォーム向けにパッケージ
 
 ## コントリビューション
 
-コミュニティからの貢献を歓迎します。バグ修正、新機能、ドキュメントの改善、翻訳など、あらゆる貢献がinsightAllXをより良くします。
+コミュニティからの貢献を歓迎します。バグ修正、新機能、ドキュメントの改善、翻訳など、あらゆる貢献がInsightAllをより良くします。
 
 ### 貢献方法
 
@@ -201,7 +201,7 @@ pnpm package         # 現在のプラットフォーム向けにパッケージ
 
 ## 謝辞
 
-insightAllXは次の優れたオープンソースプロジェクトの上に構築されています。
+InsightAllは次の優れたオープンソースプロジェクトの上に構築されています。
 
 - [insightAll](https://github.com/insightAll) - AIエージェントランタイム
 - [Electron](https://www.electronjs.org/) - クロスプラットフォームデスクトップフレームワーク
@@ -217,23 +217,23 @@ insightAllXは次の優れたオープンソースプロジェクトの上に構
 | :---: | :---: | :---: |
 | <img src="src/assets/community/wecom-qr.png" width="150" alt="WeChat QRコード" /> | <img src="src/assets/community/feishu-qr.png" width="150" alt="Feishu QRコード" /> | <img src="src/assets/community/20260212-185822.png" width="150" alt="Discord QRコード" /> |
 
-### insightAllXパートナープログラム
+### InsightAllパートナープログラム
 
-insightAllXをより多くのお客様、特にカスタムAIエージェントや自動化のニーズを持つお客様に紹介してくださるパートナーを募集しています。
+InsightAllをより多くのお客様、特にカスタムAIエージェントや自動化のニーズを持つお客様に紹介してくださるパートナーを募集しています。
 
-パートナーは見込みユーザーやプロジェクトとの接点づくりを担い、insightAllXチームは技術サポート、カスタマイズ、統合を全面的に提供します。AIツールや自動化に関心のあるお客様と仕事をされている方は、ぜひご一緒ください。
+パートナーは見込みユーザーやプロジェクトとの接点づくりを担い、InsightAllチームは技術サポート、カスタマイズ、統合を全面的に提供します。AIツールや自動化に関心のあるお客様と仕事をされている方は、ぜひご一緒ください。
 
 詳細はDM、または [public@valuecell.ai](mailto:public@valuecell.ai) までお問い合わせください。
 
 ## Star History
 
 <p align="center">
-  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/insightAllX&type=Date" alt="Star History Chart" />
+  <img src="https://api.star-history.com/svg?repos=ValueCell-ai/InsightAll&type=Date" alt="Star History Chart" />
 </p>
 
 ## ライセンス
 
-insightAllXは [MITライセンス](LICENSE) のもとで公開されています。本ソフトウェアは自由に使用、変更、配布できます。
+InsightAllは [MITライセンス](LICENSE) のもとで公開されています。本ソフトウェアは自由に使用、変更、配布できます。
 
 <hr>
 

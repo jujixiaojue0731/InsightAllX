@@ -81,7 +81,7 @@ src/extensions/_ext-bridge.generated.ts
 # Local playground artifacts
 playground/
 
-# insightAllX-biz bridge workspace artifacts
+# InsightAll-biz bridge workspace artifacts
 resources/enterprise-skills/
 resources/openclaw-plugins/skillshub/
 

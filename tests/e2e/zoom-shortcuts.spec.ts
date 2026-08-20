@@ -22,7 +22,7 @@ async function sendZoomShortcut(app: ElectronApplication, action: 'in' | 'out'):
   }, action);
 }
 
-test.describe('insightAllX window zoom shortcuts', () => {
+test.describe('InsightAll window zoom shortcuts', () => {
   test('can zoom back in after zooming out with keyboard shortcuts', async ({ launchElectronApp }) => {
     const app = await launchElectronApp({ skipSetup: true });
 

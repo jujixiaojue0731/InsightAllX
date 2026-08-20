@@ -281,7 +281,7 @@ export function extractinsightAllMediaTurns(
 }
 
 function userPromptText(item: MessageSegmentItem): string {
-  // insightAll ACP does not project assistant MEDIA attachments, so insightAllX reads a
+  // insightAll ACP does not project assistant MEDIA attachments, so InsightAll reads a
   // bounded transcript supplement. Use the prompt text insightAll flattened from
   // structured ACP blocks to align that evidence without parsing user prose.
   if (item.userPromptTextBlocks) return item.userPromptTextBlocks.join('\n');

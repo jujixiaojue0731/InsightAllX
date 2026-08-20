@@ -8,7 +8,7 @@ import { isCronSessionKey } from './cron-session-utils';
 import type { ChatSession } from './types';
 
 const CHANNEL_SESSION_SEGMENTS = new Set<string>(Object.keys(CHANNEL_NAMES));
-const NON_USER_SESSION_LABELS = new Set(['insightallx', 'main']);
+const NON_USER_SESSION_LABELS = new Set(['insightall', 'main']);
 
 function stripHeartbeatSentinel(value: string | undefined): string {
   return (value ?? '').replaceAll(OPENCLAW_HEARTBEAT_POLL_SENTINEL, '').trim();
@@ -32,13 +32,13 @@ export function isChannelSessionKey(sessionKey: string): boolean {
   return CHANNEL_SESSION_SEGMENTS.has(parts[2] ?? '');
 }
 
-export function isinsightAllXDesktopSessionKey(sessionKey: string): boolean {
+export function isInsightAllDesktopSessionKey(sessionKey: string): boolean {
   return !isCronSessionKey(sessionKey) && !isChannelSessionKey(sessionKey);
 }
 
 /**
  * Gateway may register channel sessions before any real user message (e.g. bot
- * added to a group, webhook ping). Hide those placeholder entries from insightAllX
+ * added to a group, webhook ping). Hide those placeholder entries from InsightAll
  * sidebar — they have no preview text, no derived title, and no display name.
  */
 export function isPlaceholderChannelSession(session: ChatSession): boolean {
@@ -50,7 +50,7 @@ export function isPlaceholderChannelSession(session: ChatSession): boolean {
 }
 
 export function isinsightAllHeartbeatOnlySession(session: ChatSession): boolean {
-  if (!isinsightAllXDesktopSessionKey(session.key)) return false;
+  if (!isInsightAllDesktopSessionKey(session.key)) return false;
 
   const hasHeartbeat = [session.label, session.displayName, session.derivedTitle, session.lastMessagePreview]
     .some(containsinsightAllHeartbeatPollSentinel);

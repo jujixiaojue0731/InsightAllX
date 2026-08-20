@@ -1,5 +1,5 @@
 /**
- * Persist insightAllX-managed plugin install records into insightAll's SQLite
+ * Persist InsightAll-managed plugin install records into insightAll's SQLite
  * installed_plugin_index store (openclaw.sqlite).
  *
  * insightAll 2026.6+ reads trusted install metadata from SQLite at runtime,
@@ -80,7 +80,7 @@ function openStateDatabase(sqlitePath: string): DatabaseSync {
 
 /**
  * Upsert trusted install records into openclaw.sqlite.
- * insightAllX-authored records win over stale SQLite entries for the same plugin id.
+ * InsightAll-authored records win over stale SQLite entries for the same plugin id.
  */
 export function upsertPluginInstallRecordsIntoSqlite(
   records: Record<string, Record<string, unknown>>,
@@ -136,8 +136,8 @@ export function upsertPluginInstallRecordsIntoSqlite(
           migration_version, policy_hash, generated_at_ms, refresh_reason,
           install_records_json, plugins_json, diagnostics_json, warning, updated_at_ms
         ) VALUES (
-          ?, 1, 'insightallx-managed', 'insightallx-managed',
-          1, 'insightallx-managed', ?, 'source-changed',
+          ?, 1, 'insightall-managed', 'insightall-managed',
+          1, 'insightall-managed', ?, 'source-changed',
           ?, '[]', '[]', ?, ?
         )
       `).run(
@@ -162,9 +162,9 @@ export function upsertPluginInstallRecordsIntoSqlite(
 }
 
 /**
- * Remove install records that must remain insightAllX-managed rather than updated
+ * Remove install records that must remain InsightAll-managed rather than updated
  * from their raw upstream npm package. Also clean the legacy root-level DB
- * previously written by insightAllX before insightAll 2026.7.1 moved state to state/.
+ * previously written by InsightAll before insightAll 2026.7.1 moved state to state/.
  */
 export function removePluginInstallRecordsFromSqlite(pluginIds: string[]): boolean {
   if (pluginIds.length === 0) return false;

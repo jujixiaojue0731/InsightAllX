@@ -2,7 +2,7 @@
  * Memory search default seeding for openclaw.json.
  *
  * insightAll defaults to the `openai` embedding provider. When no OpenAI key is
- * available, insightAllX explicitly selects insightAll's keyword-only FTS provider so
+ * available, InsightAll explicitly selects insightAll's keyword-only FTS provider so
  * memory_search remains useful without making an embedding request.
  */
 
@@ -31,7 +31,7 @@ export function hasUserMemorySearchConfig(config: Record<string, unknown>): bool
 
 /**
  * Seed insightAll's explicit FTS-only mode when no memorySearch config exists.
- * When requested, also migrate the exact legacy insightAllX-managed disabled
+ * When requested, also migrate the exact legacy InsightAll-managed disabled
  * default. Objects with any additional fields and per-agent overrides remain
  * user-owned.
  */

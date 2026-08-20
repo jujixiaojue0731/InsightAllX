@@ -31,7 +31,7 @@ describe('bundled insightAll skill trimming', () => {
   });
 
   it('physically trims non-allowlisted bundled skills from a bundled skills root', async () => {
-    const root = mkdtempSync(join(tmpdir(), 'insightallx-bundled-skills-'));
+    const root = mkdtempSync(join(tmpdir(), 'insightall-bundled-skills-'));
     mkdirSync(join(root, 'skill-creator'), { recursive: true });
     mkdirSync(join(root, 'browser-use'), { recursive: true });
     writeFileSync(join(root, 'skill-creator', 'SKILL.md'), '---\nname: skill-creator\ndescription: keep\n---\n');

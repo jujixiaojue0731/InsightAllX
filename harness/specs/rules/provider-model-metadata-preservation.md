@@ -6,7 +6,7 @@ appliesTo:
   - gateway-backend-communication
 ---
 
-When insightAllX rewrites an explicit `models.providers.*` entry, existing model rows
+When InsightAll rewrites an explicit `models.providers.*` entry, existing model rows
 must be merged by exact model ID instead of reconstructed from only `id` and
 `name`.
 

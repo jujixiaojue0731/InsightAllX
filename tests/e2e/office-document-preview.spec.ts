@@ -203,19 +203,19 @@ test.describe('real Office document previews', () => {
       await expect.poll(async () => docxHost.evaluate((host) => {
         const root = host.shadowRoot;
         return {
-          pageCount: root?.querySelectorAll('section.insightallx-docx').length ?? 0,
+          pageCount: root?.querySelectorAll('section.insightall-docx').length ?? 0,
           tableCount: root?.querySelectorAll('table').length ?? 0,
           text: root?.textContent ?? '',
         };
       })).toMatchObject({ pageCount: 2, tableCount: 1 });
       const renderedDocxText = await docxHost.evaluate((host) => host.shadowRoot?.textContent ?? '');
-      expect(renderedDocxText).toContain('insightAllX Office Preview Header');
+      expect(renderedDocxText).toContain('InsightAll Office Preview Header');
       expect(renderedDocxText).toContain('Quarterly Office Preview');
       expect(renderedDocxText).toContain('This deterministic document verifies real DOCX rendering in Electron.');
       expect(renderedDocxText).toContain('North');
       expect(renderedDocxText).toContain('Ready');
       expect(renderedDocxText).toContain('Second Preview Page');
-      expect(renderedDocxText).toContain('insightAllX Office Preview Footer');
+      expect(renderedDocxText).toContain('InsightAll Office Preview Footer');
 
       await workspaceTree.getByTitle('slides-a.pptx', { exact: true }).click();
       const canvas = page.getByTestId('pptx-canvas');

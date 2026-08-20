@@ -10,9 +10,9 @@ touchedAreas:
   - harness/specs/rules/web-browser-security-and-lifecycle.md
   - harness/reference/web-browser.md
 expectedUserBehavior:
-  - insightAllX has no standalone Web Browser tab, Home surface, address input, browsing history, site-data controls, or custom guest link menu.
+  - InsightAll has no standalone Web Browser tab, Home surface, address input, browsing history, site-data controls, or custom guest link menu.
   - The retained guest appears only while Preview displays an authorized local HTML file.
-  - Every link is inert; users may only choose to preview the HTML file in insightAllX or open that file in the system browser.
+  - Every link is inert; users may only choose to preview the HTML file in InsightAll or open that file in the system browser.
 requiredProfiles:
   - fast
 requiredRules:

@@ -3,7 +3,7 @@ import { join } from 'path';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 
 const { testHome } = vi.hoisted(() => ({
-  testHome: `/tmp/insightallx-openclaw-workspace-${Math.random().toString(36).slice(2)}`,
+  testHome: `/tmp/insightall-openclaw-workspace-${Math.random().toString(36).slice(2)}`,
 }));
 
 vi.mock('os', async () => {
@@ -19,10 +19,10 @@ vi.mock('os', async () => {
 });
 
 import {
-  ensureinsightAllXContext,
-  ensureinsightAllXDefaultIdentity,
-  ensureinsightAllXIdentityFile,
-  mergeinsightAllXSection,
+  ensureInsightAllContext,
+  ensureInsightAllDefaultIdentity,
+  ensureInsightAllIdentityFile,
+  mergeInsightAllSection,
   stripFirstRunSection,
 } from '../../electron/utils/openclaw-workspace';
 
@@ -133,9 +133,9 @@ describe('stripFirstRunSection', () => {
 
   it('still changes AGENTS content when only First Run is removed', () => {
     const section = [
-      '## insightAllX Environment',
+      '## InsightAll Environment',
       '',
-      'You are insightAllX.',
+      'You are InsightAll.',
     ].join('\n');
     const original = [
       '# AGENTS.md',
@@ -148,33 +148,33 @@ describe('stripFirstRunSection', () => {
       '',
       'Read SOUL.md first.',
       '',
-      '<!-- insightallx:begin -->',
-      '## insightAllX Environment',
+      '<!-- insightall:begin -->',
+      '## InsightAll Environment',
       '',
-      'You are insightAllX.',
-      '<!-- insightallx:end -->',
+      'You are InsightAll.',
+      '<!-- insightall:end -->',
       '',
     ].join('\n');
 
     const stripped = stripFirstRunSection(original);
-    const merged = mergeinsightAllXSection(stripped, section);
+    const merged = mergeInsightAllSection(stripped, section);
 
     expect(merged).not.toBe(original);
     expect(merged).not.toContain('## First Run');
     expect(merged).toContain('## Session Startup');
-    expect(merged).toContain('<!-- insightallx:begin -->');
-    expect(merged).toContain('<!-- insightallx:end -->');
+    expect(merged).toContain('<!-- insightall:begin -->');
+    expect(merged).toContain('<!-- insightall:end -->');
   });
 });
 
-describe('ensureinsightAllXIdentityFile', () => {
-  it('writes a default insightAllX identity when the workspace has none', async () => {
+describe('ensureInsightAllIdentityFile', () => {
+  it('writes a default InsightAll identity when the workspace has none', async () => {
     const workspaceDir = join(testHome, '.openclaw', 'workspace');
     await mkdir(workspaceDir, { recursive: true });
 
-    await ensureinsightAllXIdentityFile(workspaceDir);
+    await ensureInsightAllIdentityFile(workspaceDir);
 
-    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('insightAllX');
+    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('InsightAll');
   });
 
   it('replaces the untouched insightAll identity template but preserves custom identities', async () => {
@@ -200,12 +200,12 @@ describe('ensureinsightAllXIdentityFile', () => {
       'utf-8',
     );
 
-    await ensureinsightAllXIdentityFile(workspaceDir);
-    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('insightAllX');
+    await ensureInsightAllIdentityFile(workspaceDir);
+    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('InsightAll');
     await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.not.toContain('pick something you like');
 
     await writeFile(join(workspaceDir, 'IDENTITY.md'), '# IDENTITY.md\n\n- **Name:** Paisley\n', 'utf-8');
-    await ensureinsightAllXIdentityFile(workspaceDir);
+    await ensureInsightAllIdentityFile(workspaceDir);
     await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toBe('# IDENTITY.md\n\n- **Name:** Paisley\n');
   });
 
@@ -214,22 +214,22 @@ describe('ensureinsightAllXIdentityFile', () => {
     await mkdir(workspaceDir, { recursive: true });
     await writeFile(join(workspaceDir, 'BOOTSTRAP.md'), 'chat-first bootstrap', 'utf-8');
 
-    await ensureinsightAllXIdentityFile(workspaceDir);
+    await ensureInsightAllIdentityFile(workspaceDir);
 
     await expect(access(join(workspaceDir, 'BOOTSTRAP.md'))).rejects.toThrow();
-    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('insightAllX');
+    await expect(readFile(join(workspaceDir, 'IDENTITY.md'), 'utf-8')).resolves.toContain('InsightAll');
   });
 });
 
-describe('ensureinsightAllXDefaultIdentity', () => {
+describe('ensureInsightAllDefaultIdentity', () => {
   it('creates the default workspace and seeds IDENTITY.md for startup-owned workspaces', async () => {
-    await ensureinsightAllXDefaultIdentity();
+    await ensureInsightAllDefaultIdentity();
 
-    await expect(readFile(join(testHome, '.openclaw', 'workspace', 'IDENTITY.md'), 'utf-8')).resolves.toContain('insightAllX');
+    await expect(readFile(join(testHome, '.openclaw', 'workspace', 'IDENTITY.md'), 'utf-8')).resolves.toContain('InsightAll');
   });
 });
 
-describe('ensureinsightAllXContext', () => {
+describe('ensureInsightAllContext', () => {
   it('does not wait for missing files in non-default agent workspaces', async () => {
     const openclawDir = join(testHome, '.openclaw');
     const defaultWorkspace = join(openclawDir, 'workspace-main');
@@ -250,13 +250,13 @@ describe('ensureinsightAllXContext', () => {
     );
 
     const result = await Promise.race([
-      ensureinsightAllXContext().then(() => 'done'),
+      ensureInsightAllContext().then(() => 'done'),
       new Promise((resolve) => setTimeout(() => resolve('timeout'), 200)),
     ]);
 
     expect(result).toBe('done');
-    await expect(readFile(join(defaultWorkspace, 'AGENTS.md'), 'utf-8')).resolves.toContain('## insightAllX Environment');
-    await expect(readFile(join(defaultWorkspace, 'TOOLS.md'), 'utf-8')).resolves.toContain('## insightAllX Tool Notes');
+    await expect(readFile(join(defaultWorkspace, 'AGENTS.md'), 'utf-8')).resolves.toContain('## InsightAll Environment');
+    await expect(readFile(join(defaultWorkspace, 'TOOLS.md'), 'utf-8')).resolves.toContain('## InsightAll Tool Notes');
     await expect(access(join(agentWorkspace, 'AGENTS.md'))).rejects.toThrow();
     await expect(access(join(agentWorkspace, 'TOOLS.md'))).rejects.toThrow();
   });
@@ -276,7 +276,7 @@ describe('ensureinsightAllXContext', () => {
     );
 
     const result = await Promise.race([
-      ensureinsightAllXContext().then(() => 'done'),
+      ensureInsightAllContext().then(() => 'done'),
       new Promise((resolve) => setTimeout(() => resolve('timeout'), 200)),
     ]);
 

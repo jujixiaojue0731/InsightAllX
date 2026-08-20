@@ -9,9 +9,9 @@ export type GatewayEnv = Record<string, string | undefined>;
 
 /**
  * insightAll CLI treats certain environment variables as systemd supervisor hints.
- * When present in insightAllX-owned child-process launches, it can mistakenly enter
+ * When present in InsightAll-owned child-process launches, it can mistakenly enter
  * a supervised process retry loop. Strip those variables so startup follows
- * insightAllX lifecycle.
+ * InsightAll lifecycle.
  */
 export function stripSystemdSupervisorEnv(env: GatewayEnv): GatewayEnv {
   const next = { ...env };

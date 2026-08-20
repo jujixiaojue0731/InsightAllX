@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const { testHome, testUserData, getSettingMock, setSettingMock } = vi.hoisted(() => {
   const suffix = Math.random().toString(36).slice(2);
   return {
-    testHome: `/tmp/insightallx-openclaw-auth-${suffix}`,
-    testUserData: `/tmp/insightallx-openclaw-auth-user-data-${suffix}`,
+    testHome: `/tmp/insightall-openclaw-auth-${suffix}`,
+    testUserData: `/tmp/insightall-openclaw-auth-user-data-${suffix}`,
     getSettingMock: vi.fn(),
     setSettingMock: vi.fn(),
   };
@@ -49,7 +49,7 @@ vi.mock('@electron/utils/paths', async () => {
   };
 });
 
-const INSIGHTALLX_DESKTOP_TOOL_DENY = [
+const INSIGHTALL_DESKTOP_TOOL_DENY = [
   'skill_workshop',
   'web_search',
   'gateway',
@@ -441,7 +441,7 @@ describe('sanitizeinsightAllConfig', () => {
 
   it('properly sanitizes a genuinely empty {} config (fresh install)', async () => {
     // A fresh install with {} is a valid config — sanitize should proceed
-    // and enforce the insightAllX tool and skill defaults.
+    // and enforce the InsightAll tool and skill defaults.
     await writeinsightAllJson({});
 
     const { sanitizeinsightAllConfig } = await import('@electron/utils/openclaw-auth');
@@ -454,10 +454,10 @@ describe('sanitizeinsightAllConfig', () => {
     // Fresh install should get tools settings enforced
     const tools = result.tools as Record<string, unknown>;
     expect(tools.profile).toBe('full');
-    expect(tools.deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
+    expect(tools.deny).toEqual(INSIGHTALL_DESKTOP_TOOL_DENY);
     const gateway = result.gateway as Record<string, unknown>;
     const gatewayTools = gateway.tools as Record<string, unknown>;
-    expect(gatewayTools.deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
+    expect(gatewayTools.deny).toEqual(INSIGHTALL_DESKTOP_TOOL_DENY);
     const skills = result.skills as Record<string, unknown>;
     const workshop = skills.workshop as Record<string, unknown>;
     const autonomous = workshop.autonomous as Record<string, unknown>;
@@ -492,9 +492,9 @@ describe('sanitizeinsightAllConfig', () => {
     // tools settings should now be enforced
     const tools = result.tools as Record<string, unknown>;
     expect(tools.profile).toBe('full');
-    expect(tools.deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
+    expect(tools.deny).toEqual(INSIGHTALL_DESKTOP_TOOL_DENY);
     const gateway = result.gateway as Record<string, unknown>;
-    expect((gateway.tools as Record<string, unknown>).deny).toEqual(INSIGHTALLX_DESKTOP_TOOL_DENY);
+    expect((gateway.tools as Record<string, unknown>).deny).toEqual(INSIGHTALL_DESKTOP_TOOL_DENY);
     const skills = result.skills as Record<string, unknown>;
     expect(((skills.workshop as Record<string, unknown>).autonomous as Record<string, unknown>).enabled).toBe(false);
     expect((skills.entries as Record<string, Record<string, unknown>>)['skill-creator'].enabled).toBe(true);
@@ -502,7 +502,7 @@ describe('sanitizeinsightAllConfig', () => {
     logSpy.mockRestore();
   });
 
-  it('preserves existing denied tools while adding insightAllX-required deny entries', async () => {
+  it('preserves existing denied tools while adding InsightAll-required deny entries', async () => {
     await writeinsightAllJson({
       tools: {
         deny: ['browser'],
@@ -520,11 +520,11 @@ describe('sanitizeinsightAllConfig', () => {
 
     const result = await readinsightAllJson();
     const tools = result.tools as Record<string, unknown>;
-    expect(tools.deny).toEqual(['browser', ...INSIGHTALLX_DESKTOP_TOOL_DENY]);
+    expect(tools.deny).toEqual(['browser', ...INSIGHTALL_DESKTOP_TOOL_DENY]);
     const gateway = result.gateway as Record<string, unknown>;
     expect((gateway.tools as Record<string, unknown>).deny).toEqual([
       'custom_gateway_tool',
-      ...INSIGHTALLX_DESKTOP_TOOL_DENY,
+      ...INSIGHTALL_DESKTOP_TOOL_DENY,
     ]);
   });
 
@@ -2327,7 +2327,7 @@ describe('syncOpenAiCompatibleImageRelay', () => {
     await rm(testUserData, { recursive: true, force: true });
   });
 
-  it('writes a insightAllX-owned provider with a custom image base URL without changing OpenAI chat config', async () => {
+  it('writes a InsightAll-owned provider with a custom image base URL without changing OpenAI chat config', async () => {
     await writeinsightAllJson({
       models: {
         providers: {
@@ -2347,7 +2347,7 @@ describe('syncOpenAiCompatibleImageRelay', () => {
     const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     const openai = providers.openai as Record<string, unknown>;
-    const imageRelay = providers['insightallx-openai-image'] as Record<string, unknown>;
+    const imageRelay = providers['insightall-openai-image'] as Record<string, unknown>;
     expect(openai.baseUrl).toBe('https://api.openai.com/v1');
     expect(openai.api).toBe('openai-responses');
     expect(imageRelay.baseUrl).toBe('https://relay.example.com/v1');
@@ -2357,17 +2357,17 @@ describe('syncOpenAiCompatibleImageRelay', () => {
 
     const plugins = result.plugins as Record<string, unknown>;
     const entries = plugins.entries as Record<string, unknown>;
-    expect((entries['insightallx-openai-image'] as Record<string, unknown>).enabled).toBe(true);
+    expect((entries['insightall-openai-image'] as Record<string, unknown>).enabled).toBe(true);
 
     const auth = await readAuthProfiles('main');
-    expect((auth.profiles['insightallx-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
+    expect((auth.profiles['insightall-openai-image:default'] as Record<string, unknown>).key).toBe('sk-relay-test');
   });
 
   it('preserves metadata for retained relay models while dropping deselected models', async () => {
     await writeinsightAllJson({
       models: {
         providers: {
-          'insightallx-openai-image': {
+          'insightall-openai-image': {
             baseUrl: 'https://old-relay.example.com/v1',
             api: 'openai-completions',
             models: [
@@ -2388,26 +2388,26 @@ describe('syncOpenAiCompatibleImageRelay', () => {
 
     const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
-    const imageRelay = providers['insightallx-openai-image'] as Record<string, unknown>;
+    const imageRelay = providers['insightall-openai-image'] as Record<string, unknown>;
     expect(imageRelay.models).toEqual([
       { id: 'gpt-image-2', name: 'GPT Image 2', contextWindow: 1234 },
     ]);
   });
 
-  it('removes only the insightAllX image provider when relay is disabled', async () => {
+  it('removes only the InsightAll image provider when relay is disabled', async () => {
     await writeinsightAllJson({
       models: {
         providers: {
           openai: { baseUrl: 'https://api.openai.com/v1', api: 'openai-responses', models: [] },
-          'insightallx-openai-image': { baseUrl: 'https://relay.example.com/v1', api: 'openai-completions', models: [] },
+          'insightall-openai-image': { baseUrl: 'https://relay.example.com/v1', api: 'openai-completions', models: [] },
         },
       },
       agents: {
         defaults: {
           imageGenerationModel: {
-            primary: 'insightallx-openai-image/gpt-image-2',
+            primary: 'insightall-openai-image/gpt-image-2',
             fallbacks: [
-              'insightallx-openai-image/old-image',
+              'insightall-openai-image/old-image',
               'google/gemini-3.1-flash-image-preview',
             ],
             timeoutMs: 180000,
@@ -2416,8 +2416,8 @@ describe('syncOpenAiCompatibleImageRelay', () => {
         },
       },
       plugins: {
-        allow: ['insightallx-openai-image'],
-        entries: { 'insightallx-openai-image': { enabled: true } },
+        allow: ['insightall-openai-image'],
+        entries: { 'insightall-openai-image': { enabled: true } },
       },
     });
 
@@ -2427,7 +2427,7 @@ describe('syncOpenAiCompatibleImageRelay', () => {
     const result = await readinsightAllJson();
     const providers = (result.models as Record<string, unknown>).providers as Record<string, unknown>;
     expect(providers.openai).toEqual({ baseUrl: 'https://api.openai.com/v1', api: 'openai-responses', models: [] });
-    expect(providers['insightallx-openai-image']).toBeUndefined();
+    expect(providers['insightall-openai-image']).toBeUndefined();
     const defaults = (result.agents as Record<string, unknown>).defaults as Record<string, unknown>;
     expect(defaults.imageGenerationModel).toEqual({
       primary: 'google/gemini-3.1-flash-image-preview',

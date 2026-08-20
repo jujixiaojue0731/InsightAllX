@@ -1,4 +1,4 @@
-; insightAllX Custom NSIS Installer/Uninstaller Script
+; InsightAll Custom NSIS Installer/Uninstaller Script
 ;
 ; Install: enables long paths, adds resources\cli to user PATH for openclaw CLI.
 ; Uninstall: removes the PATH entry and optionally deletes user data.
@@ -9,7 +9,7 @@
   !include "nsProcess.nsh"
 !endif
 
-Var /GLOBAL insightallxRollbackDir
+Var /GLOBAL insightallRollbackDir
 
 !macro customHeader
   ; Show install details by default so users can see what stage is running.
@@ -18,18 +18,18 @@ Var /GLOBAL insightallxRollbackDir
 !macroend
 
 !ifndef BUILD_UNINSTALLER
-Function insightAllXMoveLegacyInstallDir
+Function InsightAllMoveLegacyInstallDir
   Exch $R6
 
   ${if} $R6 == ""
-    Goto _insightallx_legacy_move_done
+    Goto _insightall_legacy_move_done
   ${endIf}
   ${if} $R6 == $INSTDIR
-    Goto _insightallx_legacy_move_done
+    Goto _insightall_legacy_move_done
   ${endIf}
 
-  IfFileExists "$R6\" 0 _insightallx_legacy_move_done
-    DetailPrint "Moving previous insightAllX installation at $R6 out of the way..."
+  IfFileExists "$R6\" 0 _insightall_legacy_move_done
+    DetailPrint "Moving previous InsightAll installation at $R6 out of the way..."
     SetOutPath $TEMP
     nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$R6', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
     Pop $0
@@ -37,15 +37,15 @@ Function insightAllXMoveLegacyInstallDir
     Sleep 1000
     StrCpy $R8 0
 
-  _insightallx_legacy_find_free_stale:
-    IfFileExists "$R6._stale_$R8\" 0 _insightallx_legacy_found_free_stale
+  _insightall_legacy_find_free_stale:
+    IfFileExists "$R6._stale_$R8\" 0 _insightall_legacy_found_free_stale
     IntOp $R8 $R8 + 1
-    Goto _insightallx_legacy_find_free_stale
+    Goto _insightall_legacy_find_free_stale
 
-  _insightallx_legacy_found_free_stale:
+  _insightall_legacy_found_free_stale:
     ClearErrors
     Rename "$R6" "$R6._stale_$R8"
-    IfErrors 0 _insightallx_legacy_stale_moved
+    IfErrors 0 _insightall_legacy_stale_moved
       DetailPrint "Waiting for file locks at $R6 to clear..."
       nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.ExecutablePath -and $$_.ExecutablePath.StartsWith('$R6', [System.StringComparison]::OrdinalIgnoreCase) } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"`
       Pop $0
@@ -53,24 +53,24 @@ Function insightAllXMoveLegacyInstallDir
       Sleep 2000
       ClearErrors
       Rename "$R6" "$R6._stale_$R8"
-      IfErrors 0 _insightallx_legacy_stale_moved
-      DetailPrint "Removing previous insightAllX installation at $R6..."
+      IfErrors 0 _insightall_legacy_stale_moved
+      DetailPrint "Removing previous InsightAll installation at $R6..."
       nsExec::ExecToStack 'cmd.exe /c rd /s /q "$R6"'
       Pop $0
       Pop $1
-      Goto _insightallx_legacy_move_done
-  _insightallx_legacy_stale_moved:
+      Goto _insightall_legacy_move_done
+  _insightall_legacy_stale_moved:
     ExecShell "" "cmd.exe" `/c ping -n 61 127.0.0.1 >nul & rd /s /q "$R6._stale_$R8"` SW_HIDE
 
-  _insightallx_legacy_move_done:
+  _insightall_legacy_move_done:
     ClearErrors
     Pop $R6
 FunctionEnd
 
-!macro insightallxMoveLegacyInstallDir ROOT_KEY
+!macro insightallMoveLegacyInstallDir ROOT_KEY
   ReadRegStr $R6 ${ROOT_KEY} "${INSTALL_REGISTRY_KEY}" InstallLocation
   Push $R6
-  Call insightAllXMoveLegacyInstallDir
+  Call InsightAllMoveLegacyInstallDir
 !macroend
 !endif
 
@@ -79,7 +79,7 @@ FunctionEnd
   ; Make stage logs visible on assisted installers (defaults to hidden).
   SetDetailsPrint both
   DetailPrint "Preparing installation..."
-  DetailPrint "Extracting insightAllX runtime files. This can take a few minutes on slower disks or while antivirus scanning is active."
+  DetailPrint "Extracting InsightAll runtime files. This can take a few minutes on slower disks or while antivirus scanning is active."
 
   ${nsProcess::FindProcess} "${APP_EXECUTABLE_FILENAME}" $R0
 
@@ -107,7 +107,7 @@ FunctionEnd
     DetailPrint `Closing running "${PRODUCT_NAME}"...`
 
     # Kill ALL processes whose executable lives inside $INSTDIR.
-    # This covers insightAllX.exe (multiple Electron processes), openclaw-gateway.exe,
+    # This covers InsightAll.exe (multiple Electron processes), openclaw-gateway.exe,
     # python.exe (skills runtime), uv.exe (package manager), and any other
     # child process that might hold file locks in the installation directory.
     #
@@ -140,7 +140,7 @@ FunctionEnd
       ${nsProcess::Unload}
   ${endIf}
 
-  ; Even if insightAllX.exe was not detected as running, orphan child processes
+  ; Even if InsightAll.exe was not detected as running, orphan child processes
   ; (python.exe, openclaw-gateway.exe, uv.exe, etc.) from a previous crash
   ; or unclean shutdown may still hold file locks inside $INSTDIR.
   ; Unconditionally kill any process whose executable lives in the install dir.
@@ -149,7 +149,7 @@ FunctionEnd
   Pop $1
 
   ; Always kill known process names as a belt-and-suspenders approach.
-  ; PowerShell path-based kill may miss processes if the old insightAllX was installed
+  ; PowerShell path-based kill may miss processes if the old InsightAll was installed
   ; in a different directory than $INSTDIR (e.g., per-machine -> per-user migration).
   ; taskkill is name-based and catches processes regardless of their install location.
   nsExec::ExecToStack 'taskkill /F /T /IM "${APP_EXECUTABLE_FILENAME}"'
@@ -168,11 +168,11 @@ FunctionEnd
   ; Do not continue while the old UI process is still alive. Continuing in that
   ; state can leave the running old process/window in place, making the user see
   ; the old version after an otherwise successful extract.  Use process-list
-  ; commands instead of nsProcess here: field diagnostics showed insightAllX.exe can
+  ; commands instead of nsProcess here: field diagnostics showed InsightAll.exe can
   ; remain alive while the old installer still reports success; this check must
   ; fail closed even when taskkill or the nsProcess plugin misses/elevates poorly.
   StrCpy $R7 0
-  _insightallx_verify_closed:
+  _insightall_verify_closed:
     nsExec::ExecToStack `"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "if (Get-CimInstance -ClassName Win32_Process | Where-Object { $$_.Name -ieq '${APP_EXECUTABLE_FILENAME}' }) { exit 0 } else { exit 1 }"`
     Pop $R0
     Pop $R1
@@ -192,15 +192,15 @@ FunctionEnd
       Pop $1
       Sleep 2000
       ${if} $R7 < 5
-        Goto _insightallx_verify_closed
+        Goto _insightall_verify_closed
       ${endIf}
-      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "insightAllX is still running and cannot be replaced safely. Please close insightAllX and retry installation." /SD IDCANCEL IDRETRY _insightallx_verify_closed
+      MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "InsightAll is still running and cannot be replaced safely. Please close InsightAll and retry installation." /SD IDCANCEL IDRETRY _insightall_verify_closed
       SetErrorLevel 2
       Quit
     ${endIf}
 
   !ifndef BUILD_UNINSTALLER
-    StrCpy $insightallxRollbackDir ""
+    StrCpy $insightallRollbackDir ""
 
     ; Release NSIS's CWD on $INSTDIR BEFORE the rename check.
     ; NSIS sets CWD to $INSTDIR in .onInit; Windows refuses to rename a directory
@@ -210,15 +210,15 @@ FunctionEnd
     ; Move legacy installs discovered in both registry hives before handling the
     ; current $INSTDIR.  This covers per-user <-> per-machine migrations and
     ; custom install directories where the new $INSTDIR is not the old location.
-    !insertmacro insightallxMoveLegacyInstallDir HKCU
-    !insertmacro insightallxMoveLegacyInstallDir HKLM
+    !insertmacro insightallMoveLegacyInstallDir HKCU
+    !insertmacro insightallMoveLegacyInstallDir HKLM
 
     ; Pre-emptively clear the old installation directory so that the 7z
   ; extraction `CopyFiles` step in extractAppPackage.nsh won't fail on
   ; locked files.  electron-builder's extractUsing7za macro extracts to a
   ; temp folder first, then uses `CopyFiles /SILENT` to copy into $INSTDIR.
   ; If ANY file in $INSTDIR is still locked, CopyFiles fails and triggers a
-  ; "Can't modify insightAllX's files" retry loop -> "insightAllX 无法关闭" dialog.
+  ; "Can't modify InsightAll's files" retry loop -> "InsightAll 无法关闭" dialog.
   ;
   ; Strategy: rename (move) the old $INSTDIR out of the way.  Rename works
   ; even when AV/indexer have files open for reading (they use
@@ -260,14 +260,14 @@ FunctionEnd
       RMDir "$INSTDIR"
       IfFileExists "$INSTDIR\" 0 _recreate_clean_instdir
         DetailPrint "Failed to remove previous installation directory; aborting to avoid leaving the old version installed."
-        MessageBox MB_OK|MB_ICONEXCLAMATION "Unable to replace the previous insightAllX installation because files are still locked. Please close insightAllX and retry installation." /SD IDOK
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Unable to replace the previous InsightAll installation because files are still locked. Please close InsightAll and retry installation." /SD IDOK
         SetErrorLevel 2
         Quit
       _recreate_clean_instdir:
       CreateDirectory "$INSTDIR"
       Goto _instdir_clean
   _stale_moved:
-    StrCpy $insightallxRollbackDir "$INSTDIR._stale_$R8"
+    StrCpy $insightallRollbackDir "$INSTDIR._stale_$R8"
     CreateDirectory "$INSTDIR"
   _instdir_clean:
 
@@ -291,7 +291,7 @@ FunctionEnd
 !macroend
 
 ; Override electron-builder's handleUninstallResult to prevent the
-; "insightAllX 无法关闭" retry dialog when the old uninstaller fails.
+; "InsightAll 无法关闭" retry dialog when the old uninstaller fails.
 ;
 ; During upgrades, electron-builder copies the old uninstaller to a temp dir
 ; and runs it silently.  The old uninstaller uses atomicRMDir to rename every
@@ -326,7 +326,7 @@ FunctionEnd
   ; Now that the new files and current-hive registry entries have been written,
   ; remove stale entries from the opposite hive so Windows Apps & Features does
   ; not continue showing the old version after cross-hive upgrades.
-  DetailPrint "Clearing stale insightAllX registry entries from the opposite install scope..."
+  DetailPrint "Clearing stale InsightAll registry entries from the opposite install scope..."
   ${if} $installMode == "all"
     DeleteRegKey HKCU "${UNINSTALL_REGISTRY_KEY}"
     DeleteRegKey HKCU "${INSTALL_REGISTRY_KEY}"
@@ -343,7 +343,7 @@ FunctionEnd
   ClearErrors
 
   ; Async cleanup of old dirs left by the rename loop in customCheckAppRunning.
-  ; Wait 60s before starting deletion to avoid I/O contention with insightAllX's
+  ; Wait 60s before starting deletion to avoid I/O contention with InsightAll's
   ; first launch (Windows Defender scan, ASAR mapping, etc.).
   ; ExecShell SW_HIDE is completely detached from NSIS and avoids pipe blocking.
   IfFileExists "$INSTDIR._stale_0\" 0 _ci_stale_cleaned
@@ -416,11 +416,11 @@ FunctionEnd
 
   ; Ask user if they want to remove AppData (preserves .openclaw)
   MessageBox MB_YESNO|MB_ICONQUESTION \
-    "Do you want to remove insightAllX application data?$\r$\n$\r$\nThis will delete:$\r$\n  • AppData\Local\insightallx (local app data)$\r$\n  • AppData\Roaming\insightallx (roaming app data)$\r$\n$\r$\nYour .openclaw folder (configuration & skills) will be preserved.$\r$\nSelect 'No' to keep all data for future reinstallation." \
+    "Do you want to remove InsightAll application data?$\r$\n$\r$\nThis will delete:$\r$\n  • AppData\Local\insightall (local app data)$\r$\n  • AppData\Roaming\insightall (roaming app data)$\r$\n$\r$\nYour .openclaw folder (configuration & skills) will be preserved.$\r$\nSelect 'No' to keep all data for future reinstallation." \
     /SD IDNO IDYES _cu_removeData IDNO _cu_skipRemove
 
   _cu_removeData:
-    ; Kill any lingering insightAllX processes (and their child process trees) to
+    ; Kill any lingering InsightAll processes (and their child process trees) to
     ; release file locks on electron-store JSON files, Gateway sockets, etc.
     ${nsProcess::FindProcess} "${APP_EXECUTABLE_FILENAME}" $R0
     ${if} $R0 == 0
@@ -435,37 +435,37 @@ FunctionEnd
 
     ; --- Always remove current user's AppData first ---
     ; NOTE: .openclaw directory is intentionally preserved (user configuration & skills)
-    RMDir /r "$LOCALAPPDATA\insightallx"
-    RMDir /r "$APPDATA\insightallx"
+    RMDir /r "$LOCALAPPDATA\insightall"
+    RMDir /r "$APPDATA\insightall"
 
     ; --- Retry: if directories still exist (locked files), wait and try again ---
 
-    ; Check AppData\Local\insightallx
-    IfFileExists "$LOCALAPPDATA\insightallx\*.*" 0 _cu_localDone
+    ; Check AppData\Local\insightall
+    IfFileExists "$LOCALAPPDATA\insightall\*.*" 0 _cu_localDone
       Sleep 3000
-      RMDir /r "$LOCALAPPDATA\insightallx"
-      IfFileExists "$LOCALAPPDATA\insightallx\*.*" 0 _cu_localDone
-        nsExec::ExecToStack 'cmd.exe /c rd /s /q "$LOCALAPPDATA\insightallx"'
+      RMDir /r "$LOCALAPPDATA\insightall"
+      IfFileExists "$LOCALAPPDATA\insightall\*.*" 0 _cu_localDone
+        nsExec::ExecToStack 'cmd.exe /c rd /s /q "$LOCALAPPDATA\insightall"'
         Pop $0
         Pop $1
     _cu_localDone:
 
-    ; Check AppData\Roaming\insightallx
-    IfFileExists "$APPDATA\insightallx\*.*" 0 _cu_roamingDone
+    ; Check AppData\Roaming\insightall
+    IfFileExists "$APPDATA\insightall\*.*" 0 _cu_roamingDone
       Sleep 3000
-      RMDir /r "$APPDATA\insightallx"
-      IfFileExists "$APPDATA\insightallx\*.*" 0 _cu_roamingDone
-        nsExec::ExecToStack 'cmd.exe /c rd /s /q "$APPDATA\insightallx"'
+      RMDir /r "$APPDATA\insightall"
+      IfFileExists "$APPDATA\insightall\*.*" 0 _cu_roamingDone
+        nsExec::ExecToStack 'cmd.exe /c rd /s /q "$APPDATA\insightall"'
         Pop $0
         Pop $1
     _cu_roamingDone:
 
     ; --- Final check: warn user if any directories could not be removed ---
     StrCpy $R3 ""
-    IfFileExists "$LOCALAPPDATA\insightallx\*.*" 0 +2
-      StrCpy $R3 "$R3$\r$\n  • $LOCALAPPDATA\insightallx"
-    IfFileExists "$APPDATA\insightallx\*.*" 0 +2
-      StrCpy $R3 "$R3$\r$\n  • $APPDATA\insightallx"
+    IfFileExists "$LOCALAPPDATA\insightall\*.*" 0 +2
+      StrCpy $R3 "$R3$\r$\n  • $LOCALAPPDATA\insightall"
+    IfFileExists "$APPDATA\insightall\*.*" 0 +2
+      StrCpy $R3 "$R3$\r$\n  • $APPDATA\insightall"
     StrCmp $R3 "" _cu_cleanupOk
       MessageBox MB_OK|MB_ICONEXCLAMATION \
         "Some data directories could not be removed (files may be in use):$\r$\n$R3$\r$\n$\r$\nPlease delete them manually after restarting your computer."
@@ -486,8 +486,8 @@ FunctionEnd
     StrCmp $R3 $PROFILE _cu_enumNext
 
     ; NOTE: .openclaw directory is intentionally preserved for all users
-    RMDir /r "$R3\AppData\Local\insightallx"
-    RMDir /r "$R3\AppData\Roaming\insightallx"
+    RMDir /r "$R3\AppData\Local\insightall"
+    RMDir /r "$R3\AppData\Roaming\insightall"
 
   _cu_enumNext:
     IntOp $R0 $R0 + 1

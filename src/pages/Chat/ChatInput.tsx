@@ -105,7 +105,7 @@ function removeSkillToken(value: string, skillName: string): string {
 }
 
 const SKILL_TOKEN_CLASS =
-  'insightallx-skill-token-overlay pointer-events-auto cursor-pointer rounded-md text-skill-fg underline-offset-2 hover:underline [-webkit-box-decoration-break:clone] [box-decoration-break:clone] [text-shadow:0_0_10px_rgba(47,107,255,0.38)] dark:text-skill-fg-dark dark:[text-shadow:0_0_12px_rgba(37,99,235,0.42)]';
+  'insightall-skill-token-overlay pointer-events-auto cursor-pointer rounded-md text-skill-fg underline-offset-2 hover:underline [-webkit-box-decoration-break:clone] [box-decoration-break:clone] [text-shadow:0_0_10px_rgba(47,107,255,0.38)] dark:text-skill-fg-dark dark:[text-shadow:0_0_12px_rgba(37,99,235,0.42)]';
 
 function renderHighlightedComposerText(
   value: string,
@@ -888,10 +888,10 @@ export function ChatInput({
             <span
               data-testid="chat-composer-dot-pulse"
               aria-hidden="true"
-              className="insightallx-chat-thinking-dot-pulse"
+              className="insightall-chat-thinking-dot-pulse"
             >
-              <span className="insightallx-chat-thinking-dot-pulse-inner">
-                <span className="insightallx-chat-thinking-dot-pulse-dot" />
+              <span className="insightall-chat-thinking-dot-pulse-inner">
+                <span className="insightall-chat-thinking-dot-pulse-dot" />
               </span>
             </span>
             <span>{t('composer.thinking')}</span>
@@ -909,10 +909,10 @@ export function ChatInput({
             <span
               data-testid="chat-composer-image-generation-dot-pulse"
               aria-hidden="true"
-              className="insightallx-chat-thinking-dot-pulse"
+              className="insightall-chat-thinking-dot-pulse"
             >
-              <span className="insightallx-chat-thinking-dot-pulse-inner">
-                <span className="insightallx-chat-thinking-dot-pulse-dot" />
+              <span className="insightall-chat-thinking-dot-pulse-inner">
+                <span className="insightall-chat-thinking-dot-pulse-dot" />
               </span>
             </span>
             <span>{t('imageGeneration.generating')}</span>

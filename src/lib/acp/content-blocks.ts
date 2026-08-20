@@ -47,15 +47,15 @@ function uriBasename(uri: string): string {
   return withoutQuery.split(/[\\/]/).filter(Boolean).at(-1) ?? uri;
 }
 
-function insightallxUserMetadata(block: ContentBlock, role: ContentBlockRenderContext['role']): {
+function insightallUserMetadata(block: ContentBlock, role: ContentBlockRenderContext['role']): {
   stagingId?: string;
   fileName?: string;
 } {
   if (role !== 'user') return {};
   const meta = recordValue(block._meta);
-  const insightallx = recordValue(meta?.insightallx);
-  const stagingId = nonEmptyString(insightallx?.stagingId);
-  const fileName = nonEmptyString(insightallx?.fileName);
+  const insightall = recordValue(meta?.insightall);
+  const stagingId = nonEmptyString(insightall?.stagingId);
+  const fileName = nonEmptyString(insightall?.fileName);
   return {
     ...(stagingId ? { stagingId } : {}),
     ...(fileName ? { fileName } : {}),
@@ -91,14 +91,14 @@ export function contentBlockToRenderPart(block: ContentBlock, context: ContentBl
       return { kind: 'markdown', text: block.text };
     case 'image': {
       const uri = optionalString(block.uri);
-      const insightallx = insightallxUserMetadata(block, context.role);
+      const insightall = insightallUserMetadata(block, context.role);
       if (context.role === 'user' && uri) {
         return attachmentPart({
           context,
           uri,
-          name: insightallx.fileName,
+          name: insightall.fileName,
           mimeType: block.mimeType,
-          stagingId: insightallx.stagingId,
+          stagingId: insightall.stagingId,
         });
       }
       const source = isSafeImageUri(uri)
@@ -107,7 +107,7 @@ export function contentBlockToRenderPart(block: ContentBlock, context: ContentBl
       return { kind: 'image', source, mimeType: block.mimeType };
     }
     case 'resource_link': {
-      const insightallx = insightallxUserMetadata(block, context.role);
+      const insightall = insightallUserMetadata(block, context.role);
       return attachmentPart({
         context,
         uri: block.uri,
@@ -115,7 +115,7 @@ export function contentBlockToRenderPart(block: ContentBlock, context: ContentBl
         title: nonEmptyString(block.title),
         mimeType: block.mimeType ?? undefined,
         size: block.size ?? undefined,
-        stagingId: insightallx.stagingId,
+        stagingId: insightall.stagingId,
       });
     }
     case 'resource': {

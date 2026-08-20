@@ -18,7 +18,7 @@ import {
 } from './chat/session-catalog';
 import {
   findHiddeninsightAllHeartbeatSession,
-  isinsightAllXDesktopSessionKey,
+  isInsightAllDesktopSessionKey,
   isinsightAllHeartbeatOnlySession,
   shouldIncludeSessionInSidebarList,
 } from './chat/session-key-utils';
@@ -209,7 +209,7 @@ function isHeartbeatOnlySummaryForSession(
   session: ChatSession | undefined,
   summary: SessionLabelSummary,
 ): boolean {
-  if (!session || !isinsightAllXDesktopSessionKey(session.key)) return false;
+  if (!session || !isInsightAllDesktopSessionKey(session.key)) return false;
   if (!summary.heartbeatOnly && !isinsightAllHeartbeatPollText(summary.firstUserText)) return false;
   return isinsightAllHeartbeatOnlySession({
     ...session,
@@ -756,7 +756,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
                 };
             let sessionsWithCurrent = !visibleMergedSessions.some((session) => session.key === nextSessionKey)
               && nextSessionKey
-              && isinsightAllXDesktopSessionKey(nextSessionKey)
+              && isInsightAllDesktopSessionKey(nextSessionKey)
               ? [
                   ...visibleMergedSessions,
                   currentSessionToInsert,

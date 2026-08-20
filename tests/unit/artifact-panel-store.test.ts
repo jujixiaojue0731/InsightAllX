@@ -41,7 +41,7 @@ describe('artifact panel store', () => {
     useArtifactPanel.getState().openPreview();
     useArtifactPanel.getState().setHtmlPreviewAnchor(document.createElement('div'));
 
-    expect(JSON.parse(window.localStorage.getItem('insightallx.artifact-panel') ?? '{}')).toEqual({
+    expect(JSON.parse(window.localStorage.getItem('insightall.artifact-panel') ?? '{}')).toEqual({
       state: { widthPct: 52 },
       version: 0,
     });

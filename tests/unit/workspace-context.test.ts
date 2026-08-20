@@ -16,7 +16,7 @@ describe('workspace context helpers', () => {
     expect(isDefaultWorkspacePath('/Users/alex/.openclaw/workspace')).toBe(true);
     expect(isDefaultWorkspacePath('/home/alex/.openclaw/workspace')).toBe(true);
     expect(isDefaultWorkspacePath('C:/Users/alex/.openclaw/workspace')).toBe(true);
-    expect(isDefaultWorkspacePath('/Users/alex/workspace/insightAllX')).toBe(false);
+    expect(isDefaultWorkspacePath('/Users/alex/workspace/InsightAll')).toBe(false);
   });
 
   it('preserves root-like paths while trimming ordinary trailing separators', () => {
@@ -50,11 +50,11 @@ describe('workspace context helpers', () => {
 
   it('formats labels for default and non-default workspaces', () => {
     expect(getWorkspaceDisplayLabel('~/.openclaw/workspace', '默认工作空间')).toBe('默认工作空间');
-    expect(getWorkspaceDisplayLabel('/Users/alex/workspace/insightAllX', '默认工作空间')).toBe('insightAllX');
+    expect(getWorkspaceDisplayLabel('/Users/alex/workspace/InsightAll', '默认工作空间')).toBe('InsightAll');
     expect(getWorkspaceDisplayLabel(
-      '/Users/alex/workspace/insightAllX',
+      '/Users/alex/workspace/InsightAll',
       '默认工作空间',
-      { '/Users/alex/workspace/insightAllX': '我的项目' },
+      { '/Users/alex/workspace/InsightAll': '我的项目' },
     )).toBe('我的项目');
     expect(formatWorkspacePath('/home/alex/project')).toBe('~/project');
   });
