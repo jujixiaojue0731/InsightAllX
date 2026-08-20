@@ -25,8 +25,11 @@ await fs.ensureDir(ICONS_DIR);
 
 try {
   // 1. Generate Master PNG Buffer (1024x1024)
-  echo`  Processing SVG source...`;
-  const masterPngBuffer = await sharp(SVG_SOURCE)
+  // Prefer a raster source (icon-source.png) when present, else the SVG source.
+  const PNG_SOURCE = path.join(ICONS_DIR, 'icon-source.png');
+  const sourcePath = fs.existsSync(PNG_SOURCE) ? PNG_SOURCE : SVG_SOURCE;
+  echo`  Processing ${path.basename(sourcePath)} source...`;
+  const masterPngBuffer = await sharp(sourcePath)
     .resize(1024, 1024)
     .png() // Ensure it's PNG
     .toBuffer();
